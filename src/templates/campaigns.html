@@ -1,0 +1,62 @@
+{% extends 'common/two_col.html' %}
+{% set active = 'homepage' %}
+
+{% block content %}
+{% for message in app.session.getFlashBag.get('msg') %}
+{{ message }}
+{% endfor %}
+
+<!-- Page Content -->
+<div id="new-campaign">
+    <div class="row mbl pll prl">
+        <div class="col-lg-12 pbl">
+            <a href="/dashboard/new" class="btn btn-primary btn-sm"><i class="fa fa-plus" aria-hidden="true"></i> New Campaign</a>
+            <a href="#" disabled class="campaign-btns-state btn btn-danger pull-right btn-sm mrx"><i class="fa fa-archive" aria-hidden="true"></i> Archive</a>
+            <a href="#" disabled class="campaign-btns-state btn btn-primary pull-right btn-sm mrx"><i class="fa fa-files-o" aria-hidden="true"></i> Duplicate</a>
+        </div>
+        <div class="col-lg-12">
+            <div class="panel panel-white">
+                <div class="panel-heading">Campaign List</div>
+                <div class="panel-body">
+                    <table class="table table-hover table-bordered">
+                        <thead>
+                        <tr>
+                            <th><input type="checkbox" class="custom-cb select-all-campaign"></th>
+                            <th>#</th>
+                            <th>Experiment Name</th>
+                            <th>Created By</th>
+                            <th>Created On</th>
+                            <th>Status</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+
+                        {% for key, campaign in data %}
+                            <tr style="cursor: pointer;" class="campaign-row" data-href="/dashboard/campaign/edit/{{ campaign.id }}">
+                                <td style="width: 40px;" class="cb">
+                                    <input type="checkbox" class="custom-cb campaign-select-cb" data-id="{{ campaign.id }}">
+                                </td>
+                                <td>{{ campaign.id }}</td>
+                                <td>{{ campaign.campaign_name }}</td>
+                                <td>Abhi</td>
+                                <td>15th Aug, 1947</td>
+                                <td class="running-switch-td">
+                                    <div class="material-switch" data-id="{{ campaign.id }}">
+                                        <input id="power-switch-{{ campaign.id }}" class="power-switch-cb" name="power-switch" type="checkbox" {{ (campaign.status) ? "checked":"" }}/>
+                                        <label for="power-switch-{{ campaign.id }}" class="label-success"></label>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="col-lg-12">
+    <a href="" class="text-red"><strong>View Archived Experiments</strong></a>
+</div>
+{% endblock %}

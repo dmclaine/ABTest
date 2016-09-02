@@ -1,0 +1,87 @@
+<?php
+$campaign = $this->campaign;
+$cid = $campaign['id'];
+function aasort (&$array, $key) {
+$sorter=array();
+$ret=array();
+reset($array);
+foreach ($array as $ii => $va) {
+$sorter[$ii]=strtoupper($va[$key]);
+}
+asort($sorter);
+foreach ($sorter as $ii => $va) {
+$ret[$ii]=$array[$ii];
+}
+$array=$ret;
+}
+?>
+<form class="form-horizontal" onSubmit="goal.saveGoals(this,<?php echo $cid; ?>); return false;" id="analytics-form" action="<?php echo configItem('site')['url']; ?>Post/saveGoals">
+    <div class="panel panel-default">
+        <div class="panel-heading">Google Analytics Connection</div>
+        <div class="panel-body">
+            <div class="form-group">
+                <label for="inputEmail3" class="col-sm-2 control-label">Status</label>
+                <div class="col-sm-10">
+                    <?php if($this->analytics->tokenExist): ?>
+                    <button disabled class="btn btn-success btn-sm">Connected</button>
+                    <?php else: ?>
+                    <a href="<?php echo $this->analytics->authUrl; ?>" class="btn btn-warning btn-sm">Connect</a>
+                    <?php endif; ?>
+                </div>
+            </div>
+            <?php if($this->analytics->tokenExist): ?>
+
+
+            <div class="form-group">
+                <label for="inputEmail3" class="col-sm-2 control-label">Select Account</label>
+                <div class="col-sm-10">
+                    <?php
+	                    	$accounts = $this->ga->getAccounts();
+                    aasort($accounts['items'], 'name');
+                    ?>
+                    <select class="form-control" id="account" onChange="analytics.changeProperty();">
+                        <?php foreach($accounts['items'] as $key => $account): ?>
+                        <?php $selected = ($campaign->account == $account['id'])? " selected ":""; ?>
+                        <option <?php echo $selected; ?> value="<?php echo $account['id']; ?>"><?php echo $account['name']; ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="inputEmail3" class="col-sm-2 control-label">Select Property</label>
+                <div class="col-sm-10">
+
+                    <textarea class="hide" id="props"><?php //echo json_encode($properties); ?></textarea>
+                    <select data-value="<?php echo $campaign->property; ?>" class="form-control" id="property" data-props='<?php //echo json_encode($props); ?>' onChange="analytics.changeView();">
+
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="inputEmail3" class="col-sm-2 control-label">Select View</label>
+                <div class="col-sm-10">
+                    <?php $views = $this->ga->getProfiles();?>
+                    <textarea class="hidden" id="view-data"><?php //echo json_encode($views['items']); ?></textarea>
+                    <select data-value="<?php echo $campaign->view; ?>" class="form-control" id="view">
+
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="inputEmail3" class="col-sm-2 control-label"></label>
+                <?php if($this->role == "rw"): ?>
+                <div class="col-sm-10">
+                    <button onClick="analytics.setDomain(<?php echo $cid; ?>);return false;" class="btn btn-default btn-md">Select</button>
+                </div>
+                <?php endif; ?>
+
+            </div>
+            <?php endif; ?>
+        </div>
+    </div>
+
+
+
+</form>

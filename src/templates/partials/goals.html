@@ -1,0 +1,82 @@
+<div class="panel panel-white">
+    <div class="panel-heading">Goals</div>
+    <div class="panel-body">
+        <form class="form-horizontal">
+            <div class="form-group">
+                <label for="inputEmail3" class="col-sm-3 control-label">Name</label>
+                <div class="col-sm-8">
+                    <input type="text" name="name" class="form-control mandat goal-name" placeholder="Enter the name of the goal">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="inputEmail3" class="col-sm-3 control-label">Goal Type</label>
+                <div class="col-sm-4">
+                    <select class="form-control goal-type">
+                        <option value="0">Select</option>
+                        <option value="page-visits">Track Page Visits On</option>
+                    </select>
+                </div>
+                <div class="col-sm-4 temp-hide result-actions" >
+                    <select class="form-control goal-item">
+                        <option value="0">Select</option>
+                        <option value="url">Target Page URL</option>
+                        <option value="event">Target Page Event</option>
+                        <option value="segment-sequence">Define Segment sequence</option>
+                        <option value="segment-condition">Define Segment condition</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group temp-hide result-action-item result-action-url" >
+                <label for="inputEmail3" class="col-sm-3 control-label">Landing Page URL</label>
+                <div class="col-sm-8">
+                    <input type="text" name="result-action-url" class="form-control mandat" placeholder="Enter the landing page url">
+                </div>
+            </div>
+
+            <div class="form-group temp-hide  result-action-item result-action-event" >
+                <label for="inputEmail3" class="col-sm-3 control-label">Event Category</label>
+                <div class="col-sm-8">
+                    <span class="twitter-typeahead" style="position: relative; display: inline-block;"><input type="text" class="form-control mandat typeahead result-action-goal-category tt-hint" readonly="" autocomplete="off" spellcheck="false" tabindex="-1" dir="ltr" style="position: absolute; top: 0px; left: 0px; border-color: transparent; box-shadow: none; opacity: 1; background: none 0% 0% / auto repeat scroll padding-box border-box rgb(255, 255, 255);"><input type="text" name="result-action-goal-category" class="form-control mandat typeahead result-action-goal-category tt-input" autocomplete="off" spellcheck="false" dir="auto" style="position: relative; vertical-align: top; background-color: transparent;"><pre aria-hidden="true" style="position: absolute; visibility: hidden; white-space: pre; font-family: &quot;PT Sans&quot;, sans-serif; font-size: 12px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; word-spacing: 0px; letter-spacing: 0px; text-indent: 0px; text-rendering: auto; text-transform: none;"></pre><div class="tt-menu" style="position: absolute; top: 100%; left: 0px; z-index: 100; display: none;"><div class="tt-dataset tt-dataset-0"></div></div></span>
+                </div>
+            </div>
+            <div class="form-group temp-hide  result-action-item result-action-event" >
+                <label for="inputEmail3" class="col-sm-3 control-label">Event Action</label>
+                <div class="col-sm-8">
+                    <input disabled="" type="text" name="result-action-goal-action" class="form-control mandat typeahead result-action-goal-action">
+                </div>
+            </div>
+            <div class="form-group temp-hide  result-action-item result-action-event" >
+                <label for="inputEmail3" class="col-sm-3 control-label">Event Label</label>
+                <div class="col-sm-8">
+                    <input disabled="" type="text" name="result-action-goal-label" class="form-control mandat typeahead result-action-goal-label">
+                </div>
+            </div>
+            <div class="form-group temp-hide result-action-item result-action-segment-sequence" >
+                <label for="inputEmail3" class="col-sm-3 control-label">Filter</label>
+                <div class="col-sm-8">
+                    <input type="text" name="result-action-segment-sequence-filter" class="form-control mandat result-action-segment-sequence-filter" placeholder="Define a filter">
+                </div>
+            </div>
+            <div class="form-group temp-hide result-action-item result-action-segment-sequence" >
+                <label for="inputEmail3" class="col-sm-3 control-label">Segment</label>
+                <div class="col-sm-8">
+                    <input type="text" name="result-action-segment-sequence" class="form-control mandat result-action-segment-sequence" placeholder="Define a segment sequence">
+                </div>
+            </div>
+            <div class="form-group temp-hide result-action-item result-action-segment-condition" >
+                <label for="inputEmail3" class="col-sm-3 control-label">Filter</label>
+                <div class="col-sm-8">
+                    <input type="text" name="result-action-segment-condition-filter" class="form-control mandat result-action-segment-sequence-filter" placeholder="Define a filter">
+                </div>
+            </div>
+            <div class="form-group temp-hide result-action-item result-action-segment-condition" >
+                <label for="inputEmail3" class="col-sm-3 control-label">Segment</label>
+                <div class="col-sm-8">
+                    <input type="text" name="result-action-segment-condition" class="form-control mandat result-action-segment-condition" placeholder="Define a segment condition">
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<input type="hidden" id="h-events-data" value='{{ eventCategory }}'>

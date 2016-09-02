@@ -1,0 +1,13 @@
+<ul id="varTab{{ num }}" class="nav nav-tabs responsive">
+    <li class="active"><a href="#js-tab{{ num }}" data-toggle="tab">JS</a></li>
+    <li class=""><a href="#css-tab{{ num }}" data-toggle="tab">CSS</a></li>
+</ul>
+
+<div id="varTabContent{{ num }}" class="tab-content responsive">
+    <div id="js-tab{{ num }}" class="tab-pane fade active in js-content">
+        <div class="editor">{{ variation.js }}</div>
+    </div>
+    <div id="css-tab{{ num }}" class="tab-pane fade in css-content">
+        <div class="editor">{{ variation.css }}</div>
+    </div>
+</div>

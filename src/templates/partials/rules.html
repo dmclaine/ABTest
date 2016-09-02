@@ -1,0 +1,162 @@
+<div class="panel panel-white" id="url-block">
+    <div class="panel-heading">URL Settings</div>
+    <div class="panel-body">
+        <div class="form-group">
+            <label class="col-sm-3 control-label">URL</label>
+            <div class="col-md-9 controls">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <input id="url" type="text" class="url-block-input tagsinput" value="{{ data.url.url|join(',') }}" placeholder="Enter multiple urls" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">Also include if URL contains</label>
+            <div class="col-md-9 controls">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <input id="url_contains" class="url-block-input tagsinput" type="text" value="{{ data.url.url_contains|join(',') }}" placeholder="Enter multiple words" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">But exclude if URL contains</label>
+            <div class="col-md-9 controls">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <input id="url_excludes" class="url-block-input tagsinput" type="text" value="{{ data.url.url_excludes|join(',') }}" placeholder="Enter multiple words" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="panel panel-white" id="device-block">
+    <div class="panel-heading">Device Settings</div>
+    <div class="panel-body">
+        <div class="form-group">
+            <div class="checkbox">
+                <label class="col-sm-3 control-label"></label>
+                <input type="checkbox" class="device-block-input custom-cb" name="allow-desktop" id="allow_desktop" {{data.device.allow_desktop ? 'checked' : ''}} ><label for="allow_desktop">Allow Desktop</label>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="checkbox">
+                <label class="col-sm-3 control-label"></label>
+                <input type="checkbox" class="device-block-input custom-cb" name="allow-mobile" id="allow_mobile" {{data.device.allow_mobile ? 'checked' : ''}}><label for="allow_mobile">Allow Mobile</label>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="panel panel-white" id="browser-block">
+    <div class="panel-heading">Browser Settings</div>
+    <div class="panel-body">
+        <div class="form-group">
+            <div class="checkbox">
+                <label class="col-sm-3 control-label"></label>
+                <input type="checkbox" class="browser-block-input custom-cb" id="all" {{data.browser.all ? 'checked' : ''}} ><label for="all">Allow all browsers</label>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="checkbox">
+                <label class="col-sm-3 control-label"></label>
+                <input type="checkbox" class="browser-block-input custom-cb" id="ie" {{ (data.browser.ie == "false") ? '' : 'checked'}}><label for="ie">Dont Allow IE</label>
+            </div>
+            <div class="checkbox">
+                <label class="col-sm-3 control-label"></label>
+                <input type="checkbox" class="browser-block-input custom-cb" id="ff" {{ (data.browser.ff == "false") ? '' : 'checked'}}><label for="ff">Dont Allow Firefox</label>
+            </div>
+            <div class="checkbox">
+                <label class="col-sm-3 control-label"></label>
+                <input type="checkbox" class="browser-block-input custom-cb" id="safari" {{ (data.browser.safari == "false") ? '' : 'checked'}}><label for="safari">Dont Allow Safari</label>
+            </div>
+            <div class="checkbox">
+                <label class="col-sm-3 control-label"></label>
+                <input type="checkbox" class="browser-block-input custom-cb" id="chrome" {{ (data.browser.chrome == "false") ? '' : 'checked'}}><label for="chrome">Dont Allow Chrome</label>
+            </div>
+            <div class="checkbox">
+                <label class="col-sm-3 control-label"></label>
+                <input type="checkbox" class="browser-block-input custom-cb" id="opera" {{ (data.browser.opera == "false") ? '' : 'checked'}}><label for="opera">Dont Allow Opera</label>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="panel panel-white" id="geo-block">
+    <div class="panel-heading">Geographic Settings</div>
+    <div class="panel-body">
+        <div class="form-group">
+            <div class="checkbox">
+                <label class="col-sm-3 control-label"></label>
+                <input type="checkbox" id="all_countries" class="geo-block-input" {{data.geographic.all_countries ? 'checked' : ''}}><label>Allow all countries</label>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">Only Allow</label>
+            <div class="col-md-4 controls">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <input id="allowed_countries" type="text" class="geo-block-input tagsinput" value="{{ data.geographic.allowed_countries|join(',') }}" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">But exclude</label>
+            <div class="col-md-4 controls">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <input id="exclude_countries" type="text" class="geo-block-input tagsinput" value="{{ data.geographic.exclude_countries|join(',') }}" />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="panel panel-white" id="cookie-block">
+    <div class="panel-heading">Cookie Settings</div>
+    <div class="panel-body">
+        <div class="form-group">
+            <label class="col-sm-3 control-label">Exclude users if cookie name contains</label>
+            <div class="col-sm-9 controls">
+                <div class="row">
+                    <div class="col-md-4">
+                        <input type="text" placeholder="eg. ga_, fb" id="exclude_cookie" class="form-control cookie-block-input">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">Include users only if cookie name contains</label>
+            <div class="col-sm-9 controls">
+                <div class="row">
+                    <div class="col-md-4">
+                        <input type="text" placeholder="eg. abtest" id="include_cookie" class="form-control cookie-block-input">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="panel panel-white" id="function-block">
+    <div class="panel-heading">Custom function</div>
+    <div class="panel-body">
+        <div class="form-group">
+            <label class="col-sm-3 control-label">Run campaign only if the function returns true</label>
+            <div class="col-sm-9 controls">
+                <div class="row">
+                    <div class="col-md-6">
+                        <textarea id="script_fn" class="form-control" rows="15" cols="10">{{ data.script.js }}</textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

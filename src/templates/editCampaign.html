@@ -1,0 +1,54 @@
+{% extends 'common/two_col.html' %}
+{% set active = 'homepage' %}
+
+{% block content %}
+{% for message in app.session.getFlashBag.get('msg') %}
+{{ message }}
+{% endfor %}
+
+<script src="{{ base_path }}third-party/js/ace/ace.js"></script>
+<!-- Page Content -->
+<div id="new-campaign">
+    <div class="row mbl pll prl">
+        <div class="col-lg-12">
+            <ul id="generalTab" class="nav nav-tabs responsive">
+                <li class="active"><a href="#general-tab" data-toggle="tab">General</a></li>
+                <li class=""><a href="#rules-tab" data-toggle="tab">Rules</a></li>
+                <li class=""><a href="#variations-tab" data-toggle="tab">Variations</a></li>
+                <li class=""><a href="#analytics-tab" data-toggle="tab">Analytics</a></li>
+                <li class=""><a href="#goals-tab" data-toggle="tab">Goals</a></li>
+                <li class=""><a href="#reports-tab" data-toggle="tab">Reports</a></li>
+            </ul>
+            <form action="#" class="form-horizontal">
+                <div id="generalTabContent" class="tab-content responsive">
+                    <div id="general-tab" class="tab-pane fade active in">
+                        {% include 'partials/general.html' %}
+                    </div>
+                    <div id="rules-tab" class="tab-pane fade">
+                        {% include 'partials/rules.html' %}
+                    </div>
+                    <div id="variations-tab" class="tab-pane fade">
+                        {% include 'partials/variations.html' %}
+                    </div>
+                    <div id="analytics-tab" class="tab-pane fade">
+                        {% include 'partials/analytics.html' %}
+                    </div>
+                    <div id="goals-tab" class="tab-pane fade">
+                        {% include 'partials/goals.html' %}
+                    </div>
+                    <div id="reports-tab" class="tab-pane fade">
+                        {% include 'partials/reports.html' %}
+                    </div>
+                </div>
+
+
+                <input id="campaign-id" value="{{ id }}" type="hidden">
+            </form>
+            <button id="campaign-save-btn" type="submit" class="btn btn-primary">Finish</button>
+        </div>
+    </div>
+</div>
+<!-- /.container -->
+
+{% endblock %}
+

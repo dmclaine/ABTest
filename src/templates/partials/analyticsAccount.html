@@ -1,0 +1,57 @@
+<script>
+
+    var authData = {{ authData|json_encode|raw }};
+    var analyticsAccounts = {{ jsonData|raw }};
+</script>
+<input type="hidden" id="analytics-connection" value="connected" />
+<div class="form-group">
+    <label class="col-sm-3 control-label">Analytics Status</label>
+    <div class="col-sm-9 controls">
+        <div class="row">
+            <div class="col-xs-12">
+                <a href="#" id="disconnect-analytics" class="btn btn-primary btn-sm">Disconnect</a>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="form-group">
+    <label class="col-sm-3 control-label">Account</label>
+    <div class="col-sm-9 controls">
+        <div class="row">
+            <div class="col-xs-4">
+                <select class="form-control" id="account-select">
+                        <option value="0">Select</option>
+                    {% for key,value in data.accounts %}
+                        <option {{ (value.id == authData.account) ? 'selected' }} value="{{ value.id }}">{{ value.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="form-group">
+    <label class="col-sm-3 control-label">Property</label>
+    <div class="col-sm-9 controls">
+        <div class="row">
+            <div class="col-xs-4">
+                <select class="form-control" id="property-select">
+
+                </select>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="form-group">
+    <label class="col-sm-3 control-label">View</label>
+    <div class="col-sm-9 controls">
+        <div class="row">
+            <div class="col-xs-4">
+                <select class="form-control" id="profile-select">
+
+                </select>
+            </div>
+        </div>
+    </div>
+</div>

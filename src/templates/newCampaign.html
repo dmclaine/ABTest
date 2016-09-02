@@ -1,0 +1,30 @@
+{% extends 'common/two_col.html' %}
+{% set active = 'homepage' %}
+
+{% block content %}
+{% for message in app.session.getFlashBag.get('msg') %}
+{{ message }}
+{% endfor %}
+
+<!-- Page Content -->
+<div id="new-campaign">
+    <div class="row mbl pll prl">
+        <div class="col-lg-12">
+            <ul id="generalTab" class="nav nav-tabs responsive hidden-xs hidden-sm">
+                <li class="active"><a href="#general-tab" data-toggle="tab">General</a></li>
+            </ul>
+            <form action="#" class="form-horizontal">
+                <div id="generalTabContent" class="tab-content responsive hidden-xs hidden-sm">
+                    <div id="general-tab" class="tab-pane fade active in">
+                        {% include 'partials/general.html' %}
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">Finish</button>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- /.container -->
+
+{% endblock %}
+

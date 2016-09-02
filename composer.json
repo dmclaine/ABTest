@@ -1,0 +1,34 @@
+{
+
+    "require": {
+        "silex/silex": "~2.0",
+        "symfony/security": "~2.3",
+        "twig/twig": "^1.24",
+        "symfony/twig-bridge": "^3.1",
+        "gabordemooij/redbean": "4.3",
+        "google/apiclient": "^2.0"
+    },
+    "repositories": [
+        {
+            "type": "package",
+            "package": {
+                "name": "gabordemooij/redbean",
+                "version": "4.3",
+                "dist": {
+                    "url": "http://www.redbeanphp.com/downloadredbean.php",
+                    "type": "tar"
+                }
+            }
+        }
+    ],
+    "config": {
+        "secure-http": false
+    },
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-4": {"src\\": "src/"},
+        "files": [
+            "vendor/gabordemooij/redbean/rb.php"
+        ]
+    }
+}

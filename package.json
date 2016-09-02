@@ -1,0 +1,14 @@
+{
+  "name": "MyApp",
+  "title": "My App",
+  "version": "0.0.1",
+  "devDependencies": {
+    "grunt": "0.4.5",
+    "grunt-contrib-concat": "*",
+    "grunt-contrib-uglify": "*",
+    "grunt-contrib-cssmin": "*",
+    "grunt-contrib-watch": "*",
+    "grunt-contrib-clean": "*",
+    "grunt-contrib-copy": "*"
+  }
+}
