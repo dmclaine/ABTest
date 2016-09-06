@@ -55,7 +55,7 @@ class CampaignModel
             $rules = R::dispense('rules');
         }
 
-        $rules_data = $data['rules'];
+        $rules_data = $data['targets'];
 
         $rules['campaign_id'] = $id;
         foreach($rules_data as $col => $value) {

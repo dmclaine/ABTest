@@ -99,7 +99,9 @@ class AnalyticsController implements ControllerProviderInterface
 
             $app['session']->set('access_token',$data['access_token']);
 
-            $id = $this->analyticsService->manageAuthData($data);
+            $me = $this->analyticsService->getMe();
+            $data['account_name'] = $me['familyName'];
+            $this->analyticsService->manageAuthData($data);
 
             return $app->redirect('/dashboard/campaign/edit/' . $data['campaign_id']);
 

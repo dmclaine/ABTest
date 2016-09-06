@@ -6,6 +6,7 @@
     var current_variation = 'control';
 
     var init = function () {
+
         $('.tagsinput').tagsinput({
             tagClass: function(item) {
                 return 'label label-light';
@@ -13,12 +14,37 @@
         });
 
         applyViewPortClass();
-        variationTabEvents();
-        analyticsTabEvents();
-        goalTabEvents();
+        /**
+         * Page Events
+         */
         campaignsPageEvents();
-        activateCampaignSave();
+        editCampaignPageEvents();
+
+        /**
+         * Actions
+         */
+        campaignSaveEvents();
+
         $('[data-role="tagsinput"]')
+    }
+
+    var editCampaignPageEvents = function() {
+
+        /**
+         * Tab Events
+         */
+        overviewTabEvents();
+        variationTabEvents();
+        targetingTabEvents();
+        //goalTabEvents();
+    }
+    var targetingTabEvents = function() {
+        $('.closeall').click(function(){
+            $('.panel-collapse.in').collapse('hide');
+        });
+        $('.openall').click(function(){
+            $('.panel-collapse:not(".in")').collapse('show');
+        });
     }
 
     var goalTabEvents = function() {
@@ -183,19 +209,24 @@
 
     }
 
-    var analyticsTabEvents = function() {
+    var overviewTabEvents = function() {
+
+        function requestContent()
+        {
+            var campaign_id = $('#campaign-id').val();
+            $.get('/analytics/display/' + campaign_id, function(data){
+                $('#overview-tab .panel-body').html(data);
+                $('#account-select').trigger('change');
+            })
+        }
+
+        requestContent();
 
         $('[data-toggle="tab"]').on('shown.bs.tab', function (e) {
             var target = $(e.target).attr("href");
-            if(target == '#analytics-tab')
+            if(target == '#overview-tab')
             {
-                var campaign_id = $('#campaign-id').val();
-                $.get('/analytics/display/' + campaign_id, function(data){
-                    $('#analytics-tab .panel-body').html(data);
-                    $('#account-select').trigger('change');
-                    //$('#property-select').val($('#account-select').val());
-                    //$('#profile-select').val( $('#property-select').val());
-                })
+                requestContent();
             }
         });
 
@@ -208,23 +239,27 @@
                 options += '<option value="'+ item.id+'">'+item.name+'</option>';
             })
             $("#property-select").html(options);
+            $("#profile-select").html('');
             if(authData.property) {
-                $('#property-select').val(authData.property);
+                $('#property-select').val(0);
+                if($("#property-select option[value='"+authData.property+"']").length > 0) {
+                    $('#property-select').val(authData.property);
+                }
                 $('#property-select').trigger('change');
-                $("#profile-select").html('');
             }
         });
 
         $(document).on('change','#property-select', function(){
             var property = $(this).val();
-            if(property == "0") return;
+            if(property == "0" || property === null) return;
             var profiles = analyticsAccounts.profiles[property];
             var options = '<option value="0">Select</option>';
             profiles.forEach(function(item){
                 options += '<option value="'+ item.id+'">'+item.name+'</option>';
-            })
+            });
             $("#profile-select").html(options);
-            if(authData.profile) {
+            $('#profile-select').val(0);
+            if(authData.profile && $("#profile-select option[value='"+authData.profile+"']").length > 0) {
                 $('#profile-select').val( authData.profile);
             }
 
@@ -302,10 +337,23 @@
 
     var variationTabEvents = function() {
 
+        var showLastTab = function() {
+            $('.nav-variations > li > a:last').tab('show');
+        }
         $(document).on('shown.bs.tab', 'a.variationTab' ,function (e) {
             var target = $(e.target).attr("href") // activated tab
-            current_variation = target.replace('#','');
+            current_variation = target.replace('#', '');
             console.log(current_variation);
+        });
+
+        $(document).on('click', '.dd', function(e) {
+            e.stopPropagation();
+            $('.nav-variations li').removeClass('open');
+            $(this).parents('li').addClass('open');
+        });
+
+        $(document).on('click',function(event) {
+            $('.nav-variations li').removeClass('open');
         });
 
         $('.editor').each(function (index) {
@@ -320,23 +368,47 @@
             $('#modal-new-variation').modal('show');
         });
 
-        $('#remove-variation-btn').click(function(e){
+        $(document).on('click','.delete-variation', function(e){
             e.preventDefault();
             $('a[href="#'+current_variation+'"]').parents('li').remove();
             $('#'+current_variation).remove();
-            $('.nav-variations a:last').tab('show');
+            showLastTab();
+        });
+
+        $(document).on('click','.duplicate-variation', function(e){
+            e.preventDefault();
+            var varId = $(this).parents('.dropdown').find('.variationTab').attr('href');
+
+            var jsEditor = ace.edit($(varId).find('.js-content .editor')[0]);
+            var cssEditor = ace.edit($(varId).find('.css-content .editor')[0]);
+            addVariation('New Variation',jsEditor.getValue(),cssEditor.getValue());
         });
 
         $('#add-variation-btn').click(function(e){
             e.preventDefault();
             $('#modal-new-variation').modal('hide');
             var name = $('#new-variation-name').val();
-            var num = $('.nav-variations li').length;
+            addVariation(name);
+        });
+
+        var addVariation = function(name, js, css) {
+            var js = (typeof js == "undefined") ? "":js;
+            var css = (typeof css == "undefined") ? "":css;
+            var num = $('.nav-variations > li').length;
             var newVarId = 'variation-' + num;
             current_variation = newVarId;
 
             //add the tab
-            $('<li><a href="#'+newVarId+'" class="variationTab" data-variation="'+newVarId+'" data-toggle="tab">'+name+'</a></li>')
+            $('<li><a href="#'+newVarId+'" class="variationTab" data-variation="'+newVarId+'" data-toggle="tab">'+name+'</a>' +
+                '<div class="dd"><span class="caret"></span></div>' +
+                '<ul class="dropdown-menu">' +
+                '<li><a href="#" class="duplicate-variation">Duplicate Variation</a></li>' +
+                '<li><a href="#" class="rename-variation">Rename Variation</a></li>' +
+                '<li><a href="#"  class="delete-variation">Delete Variation</a></li>' +
+                '<li><a href="#">Pause Variation</a></li>' +
+                '<li><a href="#" class="preview-variation">Preview Variation</a></li>' +
+                '</ul>' +
+                '</li>')
                 .appendTo('.nav-variations');
 
             //add the content
@@ -347,10 +419,10 @@
                                 </ul> \
                                 <div id="varTabContent'+num+'" class="tab-content responsive"> \
                                     <div id="js-tab'+num+'" class="tab-pane fade active in"> \
-                                        <div class="editor"></div> \
+                                        <div class="editor">'+js+'</div> \
                                     </div> \
                                     <div id="css-tab'+num+'" class="tab-pane fade in"> \
-                                        <div class="editor"></div> \
+                                        <div class="editor">'+css+'</div> \
                                     </div> \
                                 </div> \
                             </div>';
@@ -363,8 +435,8 @@
                 editor.getSession().setMode("ace/mode/javascript");
             });
 
-            $('.nav-variations a:last').tab('show');
-        });
+            showLastTab();
+        }
     }
 
     var applyViewPortClass = function () {
@@ -395,7 +467,8 @@
         });
         $window.trigger('resize');
     }
-    var activateCampaignSave = function () {
+
+    var campaignSaveEvents = function () {
 
         var generalData = function () {
 
@@ -409,30 +482,40 @@
             return data;
         }
 
-        var rulesData = function () {
+        var targetingData = function () {
 
             var data = {};
             var obj = {};
 
+            /*---------- User Block----------- */
+            $("#user-block .user-block-input").each(function () {
+                obj[$(this).attr('id')] = $(this).is(':checked')
+            })
+            data['user'] = obj;
+
+            /*---------- URL Block----------- */
+            obj = {}
             $("#url-block .url-block-input").each(function () {
                 var tagsInput = $(this).tagsinput('items');
                 obj[$(this).attr('id')] = tagsInput;
             })
             data['url'] = obj;
 
+            /*---------- Device Block----------- */
             obj = {}
             $("#device-block .device-block-input").each(function () {
                 obj[$(this).attr('id')] = $(this).val();
             })
             data['device'] = obj;
 
-
+            /*---------- Browser Block----------- */
             obj = {}
             $("#browser-block .browser-block-input").each(function () {
                 obj[$(this).attr('id')] = $(this).is(':checked')
             })
             data['browser'] = obj;
 
+            /*---------- Geographic Block----------- */
             obj = {}
             $("#geo-block .geo-block-input").each(function () {
                 if($(this).data('role') == "tagsinput") {
@@ -444,12 +527,28 @@
             })
             data['geographic'] = obj;
 
+            /*---------- Cookie Block----------- */
             var obj = {}
             $("#cookie-block .cookie-block-input").each(function () {
-                obj[$(this).attr('id')] = $(this).val();
+                obj[$(this).attr('id')] = $(this).tagsinput('items');
             })
             data['cookie'] = obj;
 
+            /*---------- IP Block----------- */
+            var obj = {}
+            $("#ip-block .ip-block-input").each(function () {
+                obj[$(this).attr('id')] = $(this).tagsinput('items');
+            })
+            data['ip'] = obj;
+
+            /*---------- Language Block----------- */
+            var obj = {}
+            $("#language-block .language-block-input").each(function () {
+                obj[$(this).attr('id')] = $(this).tagsinput('items');
+            })
+            data['language'] = obj;
+
+            /*---------- Script Block----------- */
             data['script'] = {
                 js: $("#script_fn").val()
             }
@@ -460,7 +559,7 @@
         var variationsData = function () {
             var data = {};
 
-            $('.nav-variations li').each(function(){
+            $('.nav-variations > li').each(function(){
                 var $variationObj = $(this).find('.variationTab');
                 var variationName = $variationObj.data('variation');
                 var varId = $variationObj.attr('href');
@@ -492,73 +591,14 @@
         var goalsData = function () {
 
 
-            //var saveGoal = function(id) {
-            //    $container = $("#goal-results tbody");
-            //    $goalModalItem = $("#goal-modal .goal-item");
-            //    $goalModal = $("#goal-modal");
-            //
-            //    var goalObj = {
-            //        name: $goalModalItem.find('.goal-name').val(),
-            //        type: $goalModalItem.find('.goal-type').val(),
-            //        action: $goalModalItem.find('.result-actions select').val(),
-            //        url:  $goalModalItem.find('.result-action-url input').val(),
-            //        eLabel:  $goalModalItem.find('.result-action-goal-label.tt-input').val(),
-            //        eAction:  $goalModalItem.find('.result-action-goal-action.tt-input').val(),
-            //        eCategory:  $goalModalItem.find('.result-action-goal-category.tt-input').val(),
-            //        segmentSequence:  $goalModalItem.find('input.result-action-segment-sequence').val(),
-            //        segmentSequenceFilter:  $goalModalItem.find('.result-action-segment-sequence-filter').val(),
-            //        segmentCondition:  $goalModalItem.find('input.result-action-segment-condition').val(),
-            //        segmentConditionFilter:  $goalModalItem.find('.result-action-segment-condition-filter').val()
-            //    }
-            //    var goalString = JSON.stringify(goalObj);
-            //    if($goalModal.attr('action') == "edit") {
-            //        var index = $goalModal.attr('row-no');
-            //        $row = $container.children().eq(index);
-            //        $row.attr('data-goal',goalString);
-            //    }else{
-            //        $container.append("<tr class='goal-row' data-goal='"+goalString+"'>\
-				//		<td>"+goalObj.name+" <br/>\
-				//			<a href='' onClick='goal.removeGoal(this,"+id+"); return false;'>Remove</a> | \
-	         //       		<a href='' onClick='goal.editGoal(\'#goal-modal\',goalObj.name,this);return false;'>Edit</a> \
-				//		</td>\
-				//		<td></td>\
-				//		<td></td>\
-				//	</tr>");
-            //    }
-            //    $goalModal.modal('hide');
-            //    this.saveGoals(id);
-            //}
-            //var saveGoals = function(id) {
-            //
-            //    var data = [];
-            //    $("#goal-results .goal-row").each(function(){
-            //
-            //        var goalObj = JSON.parse($(this).attr('data-goal'));
-            //        data.push(goalObj);
-            //    });
-            //
-            //    $.ajax({
-            //        url: '/post/saveGoals',
-            //        dataType: 'json',
-            //        data: "id="+id+"&goals="+JSON.stringify(data),
-            //        type:"POST",
-            //        success: function(data) {
-            //            admin.showMessage("Goal saved");
-            //        }
-            //    });
-            //}
-            //var removeGoal =  function(obj,cid) {
-            //
-            //    $(obj).parents('tr').remove();
-            //    this.saveGoals(cid);
-            //}
+
 
         }
 
         var campaignSaveClicked = function () {
             var data = {};
             data.general = generalData();
-            data.rules = rulesData();
+            data.targets = targetingData();
             data.variations = variationsData();
             data.analytics = analyticsData();
             //data.goals = goalsData();
@@ -587,3 +627,65 @@
 
     };
 })();
+
+
+//var saveGoal = function(id) {
+//    $container = $("#goal-results tbody");
+//    $goalModalItem = $("#goal-modal .goal-item");
+//    $goalModal = $("#goal-modal");
+//
+//    var goalObj = {
+//        name: $goalModalItem.find('.goal-name').val(),
+//        type: $goalModalItem.find('.goal-type').val(),
+//        action: $goalModalItem.find('.result-actions select').val(),
+//        url:  $goalModalItem.find('.result-action-url input').val(),
+//        eLabel:  $goalModalItem.find('.result-action-goal-label.tt-input').val(),
+//        eAction:  $goalModalItem.find('.result-action-goal-action.tt-input').val(),
+//        eCategory:  $goalModalItem.find('.result-action-goal-category.tt-input').val(),
+//        segmentSequence:  $goalModalItem.find('input.result-action-segment-sequence').val(),
+//        segmentSequenceFilter:  $goalModalItem.find('.result-action-segment-sequence-filter').val(),
+//        segmentCondition:  $goalModalItem.find('input.result-action-segment-condition').val(),
+//        segmentConditionFilter:  $goalModalItem.find('.result-action-segment-condition-filter').val()
+//    }
+//    var goalString = JSON.stringify(goalObj);
+//    if($goalModal.attr('action') == "edit") {
+//        var index = $goalModal.attr('row-no');
+//        $row = $container.children().eq(index);
+//        $row.attr('data-goal',goalString);
+//    }else{
+//        $container.append("<tr class='goal-row' data-goal='"+goalString+"'>\
+//		<td>"+goalObj.name+" <br/>\
+//			<a href='' onClick='goal.removeGoal(this,"+id+"); return false;'>Remove</a> | \
+//       		<a href='' onClick='goal.editGoal(\'#goal-modal\',goalObj.name,this);return false;'>Edit</a> \
+//		</td>\
+//		<td></td>\
+//		<td></td>\
+//	</tr>");
+//    }
+//    $goalModal.modal('hide');
+//    this.saveGoals(id);
+//}
+//var saveGoals = function(id) {
+//
+//    var data = [];
+//    $("#goal-results .goal-row").each(function(){
+//
+//        var goalObj = JSON.parse($(this).attr('data-goal'));
+//        data.push(goalObj);
+//    });
+//
+//    $.ajax({
+//        url: '/post/saveGoals',
+//        dataType: 'json',
+//        data: "id="+id+"&goals="+JSON.stringify(data),
+//        type:"POST",
+//        success: function(data) {
+//            admin.showMessage("Goal saved");
+//        }
+//    });
+//}
+//var removeGoal =  function(obj,cid) {
+//
+//    $(obj).parents('tr').remove();
+//    this.saveGoals(cid);
+//}

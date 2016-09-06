@@ -1327,11 +1327,11 @@ ul.todo-list li .todo-actions a:focus i {
     margin-bottom: 15px;
 }
 .panel-group .panel .panel-title {
-    font-size: 17px;
+    font-size: 12px;
     font-weight: 400;
 }
 .panel-group .panel .panel-title .accordion-toggle {
-    padding: 7px 0px;
+    padding: 0px 0px;
 }
 .tab-content.tab-edit {
     background: transparent;
@@ -1348,7 +1348,7 @@ ul.nav.nav-tabs li a {
     background: none;
     padding: 10px 20px;
 }
-ul.nav.nav-tabs li.active a {
+ul.nav.nav-tabs li.active > a {
     background: #dc6767;
     color: #fff;
     border: 0px;
@@ -3056,9 +3056,6 @@ a.list-group-item.active > .badge,
     background: linear-gradient(to bottom, #f2f5f7 0%,#f6f8f9 50%,#d7dee3 50%,#d7dee3 50%,#d7dee3 100%); /* W3C */
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f2f5f7', endColorstr='#d7dee3',GradientType=0 ); /* IE6-9 */
     color:#58636b;
-    -webkit-border-radius: 5px !important;
-    -moz-border-radius: 5px !important;
-    border-radius: 5px !important;
 }
 .btn-default:hover,
 .btn-default:focus,
@@ -3842,7 +3839,6 @@ fieldset[disabled] .btn-white.active {
 [class*=" icon-"] {
     display: inline-block;
     margin-top: 1px;
-    font-size: 14px;
     *margin-right: .3em;
     line-height: 14px;
     -webkit-font-smoothing: antialiased;
@@ -5645,6 +5641,7 @@ ul.chats li.out .message {
 .bootstrap-tagsinput .tag {
     margin-right: 2px;
     color: white;
+    font-weight: 500;
 }
 .bootstrap-tagsinput .tag [data-role="remove"] {
     margin-left: 8px;
@@ -5794,4 +5791,33 @@ ul.nav.nav-tabs {
 .material-switch > input[type="checkbox"]:checked + label::after {
     background: inherit;
     left: 20px;
+}
+
+/* variations */
+
+.nav-variations .variationTab {
+    padding-right: 30px !important;
+}
+.nav-variations .dd {
+    display: block;
+    position: relative;
+    float: right;
+    margin-top: -39px;
+    padding: 10px 10px;
+    color: #000;
+    cursor: pointer;
+}
+ul.nav-variations > li:not(.active) > a {
+    background: #EEE;
+}
+.nav-variations .active .dd {
+    color: #FFF;
+}
+
+ul.nav-variations .dropdown-menu li {
+    margin-bottom:0px;
+    border-bottom: 1px solid #EEE;
+}
+#new-variation-btn {
+    height: 38px;
 }

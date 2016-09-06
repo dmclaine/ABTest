@@ -12,6 +12,7 @@ class AnalyticsService
     public $client;
     private $analyticsModel;
     private $app;
+    private $oauth;
 
     function __construct(Application $app)
     {
@@ -23,12 +24,13 @@ class AnalyticsService
         $this->client->setAuthConfig( __DIR__ . '/../../config/analytics-credentials.json');
         $this->client->setRedirectUri('http://' . $_SERVER['HTTP_HOST'] . '/analytics/authCallback');
         $this->client->setAccessType('offline');
-        $this->client->addScope(\Google_Service_Analytics::ANALYTICS_READONLY);
+        $this->client->setScopes(array(\Google_Service_Analytics::ANALYTICS_READONLY, \Google_Service_Oauth2::USERINFO_PROFILE));
 
         //Create an authorized analytics service object.
         $this->analyticsReporting = new \Google_Service_AnalyticsReporting($this->client);
         $this->analytics = new \Google_Service_Analytics($this->client);
-
+        //$this->me = new \Google_Service_Plus($this->client);
+        $this->oauth = new \Google_Service_Oauth2($this->client);
     }
 
     function getAuthData($campaign_id)
@@ -114,7 +116,6 @@ class AnalyticsService
     {
         $this->app['session']->set('access_token',$authData['access_token']);
         $this->client->setAccessToken($authData['access_token']);
-
         $token_expired = (time() > $authData['expire_at']);
 
         if($token_expired) {
@@ -124,6 +125,11 @@ class AnalyticsService
             $id = $this->manageAuthData($authData);
         }
         return $authData;
+    }
+
+    public function getMe()
+    {
+        return $userInfo = $this->oauth->userinfo->get();
     }
 
     function getEventProperty($data = array())

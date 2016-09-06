@@ -1,0 +1,32 @@
+<div class="row pbl prl">
+    <div class="col-lg-12 text-right">
+        <a id="new-variation-btn" class="btn btn-primary btn-sm">Add Variation</a>
+        <a id="remove-variation-btn" class="btn btn-primary btn-sm">Remove Variation</a>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-12 col-md-2"> <!-- required for floating -->
+        <!-- Nav tabs -->
+        <ul class="nav nav-tabs tabs-left sideways nav-variations">
+            {% for key, value in data.variations %}
+                <li class="{{ (key == 'control') ? 'active':'' }}"><a href="#{{ key }}" class="variationTab" data-variation="{{ key }}" data-toggle="tab">{{ value.name }}</a></li>
+            {% endfor %}
+
+        </ul>
+    </div>
+
+    <div class="col-sm-12 col-md-10">
+        <!-- Tab panes -->
+        <div class="tab-content tab-content-side">
+            {% for key, value in data.variations %}
+            <div class="tab-pane {{ (key == 'control') ? 'active':'' }}" id="{{ key }}">
+                {% set num = loop.index - 1%}
+                {% set variation = value %}
+                {% include 'partials/editor-tabs.html' %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+{% include 'modals/new-variation.html' %}
