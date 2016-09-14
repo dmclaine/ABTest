@@ -24,8 +24,6 @@
          * Actions
          */
         campaignSaveEvents();
-
-        $('[data-role="tagsinput"]')
     }
 
     var editCampaignPageEvents = function() {
@@ -38,13 +36,14 @@
         targetingTabEvents();
         //goalTabEvents();
     }
-    var targetingTabEvents = function() {
-        $('.closeall').click(function(){
-            $('.panel-collapse.in').collapse('hide');
-        });
-        $('.openall').click(function(){
-            $('.panel-collapse:not(".in")').collapse('show');
-        });
+
+    var messageBox = function(msg) {
+
+        $("#message-box").html(msg).show();
+
+        setTimeout(function() {
+            $("#message-box").hide();
+        },2000);
     }
 
     var goalTabEvents = function() {
@@ -340,11 +339,26 @@
         var showLastTab = function() {
             $('.nav-variations > li > a:last').tab('show');
         }
+
+        var createEditor = function() {
+            $('.editor').each(function (index) {
+                var editor;
+                var type = $(this).data('type');
+                editor = ace.edit(this);
+                editor.setTheme("ace/theme/monokai");
+                editor.getSession().setMode(type);
+            });
+        }
+
+        createEditor();
+
         $(document).on('shown.bs.tab', 'a.variationTab' ,function (e) {
             var target = $(e.target).attr("href") // activated tab
             current_variation = target.replace('#', '');
             console.log(current_variation);
         });
+
+
 
         $(document).on('click', '.dd', function(e) {
             e.stopPropagation();
@@ -356,22 +370,36 @@
             $('.nav-variations li').removeClass('open');
         });
 
-        $('.editor').each(function (index) {
-            var editor;
-            editor = ace.edit(this);
-            editor.setTheme("ace/theme/monokai");
-            editor.getSession().setMode("ace/mode/javascript");
-        });
+
 
         $('#new-variation-btn').click(function(e){
             e.preventDefault();
             $('#modal-new-variation').modal('show');
         });
 
+        var preview_cid, preview_vid;
+        $(document).on('click','.preview-variation',function(e){
+            e.preventDefault();
+            preview_cid = $(this).data('cid');
+            preview_vid = $(this).data('vid');
+            $('#modal-preview-variation').modal('show');
+        });
+
+        $('#variation-preview-btn').click(function(e){
+            e.preventDefault();
+            var url = $('#url-preview-input').val();
+            window.open(url + '?preview=1&cid='+preview_cid+'&vid='+preview_vid);
+            $('#modal-preview-variation').modal('hide');
+        })
+
         $(document).on('click','.delete-variation', function(e){
             e.preventDefault();
-            $('a[href="#'+current_variation+'"]').parents('li').remove();
-            $('#'+current_variation).remove();
+            var $selected = $(this).parents('li').find('.variationTab');
+            var id = $selected.data('variation');
+            $selected.parents('li').remove();
+            $('#'+id).remove();
+            $('.'+id).remove();
+            targetingTabEvents().resetTrafficDistribution();
             showLastTab();
         });
 
@@ -390,6 +418,7 @@
             var name = $('#new-variation-name').val();
             addVariation(name);
         });
+
 
         var addVariation = function(name, js, css) {
             var js = (typeof js == "undefined") ? "":js;
@@ -419,24 +448,63 @@
                                 </ul> \
                                 <div id="varTabContent'+num+'" class="tab-content responsive"> \
                                     <div id="js-tab'+num+'" class="tab-pane fade active in"> \
-                                        <div class="editor">'+js+'</div> \
+                                        <div class="editor" data-type="ace/mode/javascript">'+js+'</div> \
                                     </div> \
                                     <div id="css-tab'+num+'" class="tab-pane fade in"> \
-                                        <div class="editor">'+css+'</div> \
+                                        <div class="editor" data-type="ace/mode/css">'+css+'</div> \
                                     </div> \
                                 </div> \
                             </div>';
             $(content).appendTo('.tab-content-side');
 
-            $('.editor').each(function (index) {
-                var editor;
-                editor = ace.edit(this);
-                editor.setTheme("ace/theme/monokai");
-                editor.getSession().setMode("ace/mode/javascript");
-            });
+            createEditor();
 
             showLastTab();
+
+            $('.traffic-block .panel-body').append('<div class="form-group '+newVarId.replace('#','')+'"> \
+                                <label class="col-sm-3 control-label">'+name+'</label> \
+                                <div class="col-md-9 controls"> \
+                                    <div class="row"> \
+                                        <div class="col-xs-2 slide-holder"> \
+                                            <input class="form-control col-xs-2 var-traffic" type="text" value="" id="'+newVarId+'-traffic"> \
+                                        </div> \
+                                    </div> \
+                                </div> \
+                            </div>');
+
+            targetingTabEvents().resetTrafficDistribution();
         }
+    }
+
+    var targetingTabEvents = function() {
+
+        $('#accordion .collapse').on('shown.bs.collapse', function(){
+            $(this).parent().find(".glyphicon-plus").removeClass("glyphicon-plus").addClass("glyphicon-minus");
+        }).on('hidden.bs.collapse', function(){
+            $(this).parent().find(".glyphicon-minus").removeClass("glyphicon-minus").addClass("glyphicon-plus");
+        });
+
+        $('[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+            var target = $(e.target).attr("href");
+            if(target == '#targeting-tab')
+            {
+
+            }
+        });
+
+        $('.slider').slider().on('slide', function(ev){
+            $(this).parents('.slide-holder').find('.traffic-display').html(ev.value);
+        });
+
+        var resetTrafficDistribution = function() {
+            var num = $('.nav-variations > li').length;
+            var traffic = (100/parseInt(num)).toFixed(2);
+            $('.var-traffic').val(traffic);
+        }
+        return {
+            resetTrafficDistribution: resetTrafficDistribution
+        }
+
     }
 
     var applyViewPortClass = function () {
@@ -470,17 +538,17 @@
 
     var campaignSaveEvents = function () {
 
-        var generalData = function () {
-
-            var data = {};
-            var obj = {}
-            $("#general-block .general-block-input").each(function () {
-                obj[$(this).attr('id')] = $(this).val();
-            })
-            data['general-settings'] = obj;
-
-            return data;
-        }
+        //var generalData = function () {
+        //
+        //    var data = {};
+        //    var obj = {}
+        //    $("#general-block .general-block-input").each(function () {
+        //        obj[$(this).attr('id')] = $(this).val();
+        //    })
+        //    data['general-settings'] = obj;
+        //
+        //    return data;
+        //}
 
         var targetingData = function () {
 
@@ -504,7 +572,7 @@
             /*---------- Device Block----------- */
             obj = {}
             $("#device-block .device-block-input").each(function () {
-                obj[$(this).attr('id')] = $(this).val();
+                obj[$(this).attr('id')] = $(this).is(':checked');
             })
             data['device'] = obj;
 
@@ -528,10 +596,11 @@
             data['geographic'] = obj;
 
             /*---------- Cookie Block----------- */
-            var obj = {}
+            var obj = {};
             $("#cookie-block .cookie-block-input").each(function () {
                 obj[$(this).attr('id')] = $(this).tagsinput('items');
             })
+
             data['cookie'] = obj;
 
             /*---------- IP Block----------- */
@@ -568,9 +637,11 @@
                 var cssEditor = ace.edit($(varId).find('.css-content .editor')[0]);
 
                 data[variationName] = {
-                    js: jsEditor.getValue(),
-                    css: cssEditor.getValue(),
-                    name: $variationObj.text()
+                    js: jsEditor.getValue().trim(),
+                    css: cssEditor.getValue().trim(),
+                    name: $variationObj.text().trim(),
+                    id: varId.replace('#',''),
+                    traffic: $(varId + '-traffic').val().trim()
                 }
             });
 
@@ -597,12 +668,13 @@
 
         var campaignSaveClicked = function () {
             var data = {};
-            data.general = generalData();
+            //data.general = generalData();
             data.targets = targetingData();
             data.variations = variationsData();
             data.analytics = analyticsData();
             //data.goals = goalsData();
             data.id = $("#campaign-id").val();
+            data.traffic = $("#allowed-traffic").val();
             return data;
         }
 
@@ -610,7 +682,7 @@
 
             e.preventDefault();
             var allData = campaignSaveClicked();
-
+            messageBox('Saving..');
             console.log(allData);
 
             $.ajax({
@@ -621,6 +693,7 @@
                 data: {data: allData},
                 success: function (res) {
                     console.log(res);
+                    messageBox('Saved!');
                 }
             })
         });

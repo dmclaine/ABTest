@@ -18,10 +18,14 @@
     <link type="text/css" rel="stylesheet" href="{{ base_path }}third-party/css/checkbox/grey.css">
     <script src="{{ base_path }}third-party/js/jquery.min.js"></script>
     <script src="{{ base_path }}third-party/js/icheck.min.js"></script>
+    <script src="{{ base_path }}third-party/js/bootstrap-slider.js"></script>
+    <script src="{{ base_path }}third-party/js/bootstrap.min.js"></script>
+    <script src="http://dev.ajadmin/vendors/typeahead/typeahead.bundle.js"></script>
+    <script src="http://dev.ajadmin/vendors/tagsinput/bootstrap-tagsinput.min.js"></script>
 </head>
 <body>
 <div>
-
+    <div id="message-box">This is a box</div>
     <!--BEGIN BACK TO TOP-->
     <a id="totop" href="#"><i class="fa fa-angle-up"></i></a>
     <!--END BACK TO TOP-->
@@ -74,6 +78,10 @@
                     {% block breadcrumb %}
                     {% endblock %}
                 </ol>
+                <span class="pull-right" style="margin-top:9px">
+                     {% set campaign = data %}
+                    {% include 'partials/powerswitch.html' %}
+                </span>
                 <div class="clearfix">
                 </div>
             </div>
@@ -102,9 +110,7 @@
 </div>
 </div>
 
-<script src="{{ base_path }}third-party/js/bootstrap.min.js"></script>
-<script src="http://dev.ajadmin/vendors/typeahead/typeahead.bundle.js"></script>
-<script src="http://dev.ajadmin/vendors/tagsinput/bootstrap-tagsinput.min.js"></script>
+
 <script src="{{ base_path }}js/script.js"></script>
 </body>
 </html>

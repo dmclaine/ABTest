@@ -41,10 +41,7 @@
                                 <td>Abhi</td>
                                 <td>15th Aug, 1947</td>
                                 <td class="running-switch-td">
-                                    <div class="material-switch" data-id="{{ campaign.id }}">
-                                        <input id="power-switch-{{ campaign.id }}" class="power-switch-cb" name="power-switch" type="checkbox" {{ (campaign.status) ? "checked":"" }}/>
-                                        <label for="power-switch-{{ campaign.id }}" class="label-success"></label>
-                                    </div>
+                                    {% include 'partials/powerswitch.html' %}
                                 </td>
                             </tr>
                         {% endfor %}

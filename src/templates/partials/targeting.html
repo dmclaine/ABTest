@@ -1,46 +1,52 @@
-<a href="#" class="btn btn-default openall">open all</a> <a href="#" class="btn btn-default closeall">close all</a>
-<hr>
-<div class="panel-group" id="accordion">
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h4 class="panel-title">
-                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#user-block">
-                    User Settings
-                </a>
-            </h4>
-        </div>
-        <div id="user-block" class="panel-collapse collapse in">
-            <div class="panel-body">
-                <div class="form-group">
-                    <div class="checkbox">
-                        <label class="col-sm-3 control-label"></label>
-                        <input type="checkbox" class="user-block-input custom-cb" id="all-users" {{data.user.all ? 'checked' : ''}} ><label for="all-users">All Users</label>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="checkbox">
-                        <label class="col-sm-3 control-label"></label>
-                        <input type="checkbox" class="user-block-input custom-cb" id="new-users" {{data.user.new ? 'checked' : ''}} ><label for="new-users">New Users</label>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="checkbox">
-                        <label class="col-sm-3 control-label"></label>
-                        <input type="checkbox" class="user-block-input custom-cb" id="returning-users" {{data.user.returning ? 'checked' : ''}} ><label for="returning-users">Returning Users</label>
+<h3>Traffic Control</h3>
+<div class="tab-pane traffic-block">
+    <div class="panel panel-white">
+        <div class="panel-heading">Traffic Split</div>
+        <div class="panel-body">
+            <div class="form-group">
+                <label class="col-sm-3 control-label">Total Traffic</label>
+                <div class="col-md-9 controls">
+                    <div class="row">
+                        <div class="col-xs-2 slide-holder">
+                            <input class="form-control" type="text" value="{{ (data.traffic == '') ? 10:data.traffic }}" id="allowed-traffic">
+                            <!--<input style="width: 200px" type="text" id="allowed-traffic" class="slider" value="{{ data.traffic }}" data-slider-min="0" data-slider-max="100" data-slider-step="0.5" data-slider-value="{{ data.traffic }}" data-slider-tooltip="hide" data-slider-orientation="horizontal" data-slider-selection="before">-->
+                            <!--<span class="traffic-display">{{ data.traffic }}</span>-->
+                        </div>
                     </div>
                 </div>
             </div>
+            {% set total_variations = data.variations|length %}
+            {% set default = 100/total_variations %}
+            {% for key, value in data.variations %}
+
+            <div class="form-group {{ value.id }}">
+                <label class="col-sm-3 control-label">{{ value.name|title }}</label>
+                <div class="col-md-9 controls">
+                    <div class="row">
+                        <div class="col-xs-2 slide-holder">
+                            <input class="form-control col-xs-2 var-traffic" type="text" value="{{ (value.traffic == '') ? default:value.traffic }}" id="{{ key }}-traffic">
+                            <!--<input style="width: 200px" type="text" id="{{ key }}-traffic" class="slider" value="{{ value.traffic }}" data-slider-min="0" data-slider-max="100" data-slider-step="1" data-slider-value="{{ value.traffic }}" data-slider-tooltip="hide" data-slider-orientation="horizontal" data-slider-selection="before">-->
+                            <!--<span class="traffic-display">{{ value.traffic }}</span>-->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
         </div>
     </div>
+</div>
+<h3>Targetting</h3>
+<div class="panel-group" id="accordion">
+
     <div class="panel panel-default">
         <div class="panel-heading">
             <h4 class="panel-title">
                 <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#url-block">
-                    URL Settings
+                    <i class="glyphicon glyphicon-minus"></i> URL Settings</a>
                 </a>
             </h4>
         </div>
-        <div id="url-block" class="panel-collapse collapse">
+        <div id="url-block" class="panel-collapse collapse in">
             <div class="panel-body">
                 <div class="form-group">
                     <label class="col-sm-3 control-label">URL</label>
@@ -75,11 +81,44 @@
             </div>
         </div>
     </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h4 class="panel-title">
+                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#user-block">
+                    <i class="glyphicon glyphicon-plus"></i> User Settings</a>
+                </a>
+            </h4>
+        </div>
+        <div id="user-block" class="panel-collapse collapse">
+            <div class="panel-body">
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label class="col-sm-3 control-label"></label>
+                        <input type="checkbox" class="user-block-input custom-cb" id="all_users" {{ (data.user.all_users == 'true') ? 'checked' : ''}} ><label for="all_users">All Users</label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label class="col-sm-3 control-label"></label>
+                        <input type="checkbox" class="user-block-input custom-cb" id="new_users" {{ (data.user.new_users == 'true') ? 'checked' : ''}} ><label for="new_users">New Users</label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label class="col-sm-3 control-label"></label>
+                        <input type="checkbox" class="user-block-input custom-cb" id="returning_users" {{ (data.user.returning_users == 'true') ? 'checked' : ''}} ><label for="returning_users">Returning Users</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="panel panel-default">
         <div class="panel-heading">
             <h4 class="panel-title">
                 <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#device-block">
-                    Device
+                    <i class="glyphicon glyphicon-plus"></i> Device Settings</a>
                 </a>
             </h4>
         </div>
@@ -88,13 +127,13 @@
                 <div class="form-group">
                     <div class="checkbox">
                         <label class="col-sm-3 control-label"></label>
-                        <input type="checkbox" class="device-block-input custom-cb" name="allow-desktop" id="allow_desktop" {{data.device.allow_desktop ? 'checked' : ''}} ><label for="allow_desktop">Allow Desktop</label>
+                        <input type="checkbox" class="device-block-input custom-cb" name="allow-desktop" id="allow_desktop" {{data.device.allow_desktop == "true" ? 'checked' : ''}} ><label for="allow_desktop">Allow Desktop</label>
                     </div>
                 </div>
                 <div class="form-group">
                     <div class="checkbox">
                         <label class="col-sm-3 control-label"></label>
-                        <input type="checkbox" class="device-block-input custom-cb" name="allow-mobile" id="allow_mobile" {{data.device.allow_mobile ? 'checked' : ''}}><label for="allow_mobile">Allow Mobile</label>
+                        <input type="checkbox" class="device-block-input custom-cb" name="allow-mobile" id="allow_mobile" {{data.device.allow_mobile == "true" ? 'checked' : ''}}><label for="allow_mobile">Allow Mobile</label>
                     </div>
                 </div>
             </div>
@@ -104,7 +143,7 @@
         <div class="panel-heading">
             <h4 class="panel-title">
                 <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#browser-block">
-                    Browser
+                    <i class="glyphicon glyphicon-plus"></i> Browser Settings</a>
                 </a>
             </h4>
         </div>
@@ -113,29 +152,23 @@
                 <div class="form-group">
                     <div class="checkbox">
                         <label class="col-sm-3 control-label"></label>
-                        <input type="checkbox" class="browser-block-input custom-cb" id="all" {{data.browser.all ? 'checked' : ''}} ><label for="all">Allow all browsers</label>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="checkbox">
-                        <label class="col-sm-3 control-label"></label>
-                        <input type="checkbox" class="browser-block-input custom-cb" id="ie" {{ (data.browser.ie == "false") ? '' : 'checked'}}><label for="ie">Dont Allow IE</label>
+                        <input type="checkbox" class="browser-block-input custom-cb" id="IE" {{ (data.browser.IE == "false") ? '' : 'checked'}}><label for="IE">Dont Allow IE</label>
                     </div>
                     <div class="checkbox">
                         <label class="col-sm-3 control-label"></label>
-                        <input type="checkbox" class="browser-block-input custom-cb" id="ff" {{ (data.browser.ff == "false") ? '' : 'checked'}}><label for="ff">Dont Allow Firefox</label>
+                        <input type="checkbox" class="browser-block-input custom-cb" id="Firefox" {{ (data.browser.Firefox == "false") ? '' : 'checked'}}><label for="Firefox">Dont Allow Firefox</label>
                     </div>
                     <div class="checkbox">
                         <label class="col-sm-3 control-label"></label>
-                        <input type="checkbox" class="browser-block-input custom-cb" id="safari" {{ (data.browser.safari == "false") ? '' : 'checked'}}><label for="safari">Dont Allow Safari</label>
+                        <input type="checkbox" class="browser-block-input custom-cb" id="Safari" {{ (data.browser.Safari == "false") ? '' : 'checked'}}><label for="Safari">Dont Allow Safari</label>
                     </div>
                     <div class="checkbox">
                         <label class="col-sm-3 control-label"></label>
-                        <input type="checkbox" class="browser-block-input custom-cb" id="chrome" {{ (data.browser.chrome == "false") ? '' : 'checked'}}><label for="chrome">Dont Allow Chrome</label>
+                        <input type="checkbox" class="browser-block-input custom-cb" id="Chrome" {{ (data.browser.Chrome == "false") ? '' : 'checked'}}><label for="Chrome">Dont Allow Chrome</label>
                     </div>
                     <div class="checkbox">
                         <label class="col-sm-3 control-label"></label>
-                        <input type="checkbox" class="browser-block-input custom-cb" id="opera" {{ (data.browser.opera == "false") ? '' : 'checked'}}><label for="opera">Dont Allow Opera</label>
+                        <input type="checkbox" class="browser-block-input custom-cb" id="Opera" {{ (data.browser.Opera == "false") ? '' : 'checked'}}><label for="Opera">Dont Allow Opera</label>
                     </div>
                 </div>
             </div>
@@ -145,7 +178,7 @@
         <div class="panel-heading">
             <h4 class="panel-title">
                 <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#geo-block">
-                    Geographic
+                    <i class="glyphicon glyphicon-plus"></i> Geographic Settings</a>
                 </a>
             </h4>
         </div>
@@ -186,7 +219,7 @@
         <div class="panel-heading">
             <h4 class="panel-title">
                 <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#cookie-block">
-                    Cookie
+                    <i class="glyphicon glyphicon-plus"></i> Cookie Settings</a>
                 </a>
             </h4>
         </div>
@@ -221,7 +254,7 @@
         <div class="panel-heading">
             <h4 class="panel-title">
                 <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#ip-block">
-                    IP
+                    <i class="glyphicon glyphicon-plus"></i> IP Settings</a>
                 </a>
             </h4>
         </div>
@@ -256,7 +289,7 @@
         <div class="panel-heading">
             <h4 class="panel-title">
                 <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#language-block">
-                    Language
+                    <i class="glyphicon glyphicon-plus"></i> Language Settings</a>
                 </a>
             </h4>
         </div>
@@ -295,7 +328,7 @@
         <div class="panel-heading">
             <h4 class="panel-title">
                 <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#custom-block">
-                    Custom
+                    <i class="glyphicon glyphicon-plus"></i> Custom Script</a>
                 </a>
             </h4>
         </div>

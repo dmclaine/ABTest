@@ -5821,3 +5821,36 @@ ul.nav-variations .dropdown-menu li {
 #new-variation-btn {
     height: 38px;
 }
+
+/* Slider */
+.slider-handle {
+    background: #dc6767;
+    border-radius: 50%;
+}
+.traffic-display {
+    padding: 6px;
+    font-weight: 500;
+    color: #c23e3e;
+    border-radius: 50%;
+    line-height: 12px;
+    position: absolute;
+    margin: -2px 10px;
+    font-size: 11px;
+}
+
+/* Message box */
+#message-box {
+    position: fixed;
+    font-size: 12px;
+    z-index: 9999;
+    width: 300px;
+    text-align: center;
+    left: 50%;
+    margin-left: -150px;
+    padding: 5px 10px;
+    background: #fffca6;
+    color: #a55555;
+    border: 1px solid #e3e16d;
+    font-weight: 500;
+    display: none;
+}

@@ -43,6 +43,7 @@ class CampaignModel
             $campaign->$col = $value;
         }
         $campaign->variations = serialize($variations_data);
+        $campaign->traffic = $data['traffic'];
         $id = R::store($campaign);
 
         $campaign_id = (isset($data['id'])) ? $data['id'] : $id;

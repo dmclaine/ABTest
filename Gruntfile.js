@@ -3,7 +3,7 @@ module.exports = function(grunt) {
         pkg: grunt.file.readJSON('package.json'),
         concat: {
             css: {
-                src: ['public/third-party/css/bootstrap.min.css','public/third-party/css/bootstrap-flat.min.css','public/third-party/css/font-awesome.min.css','public/css/style.css','public/css/style-responsive.css'],
+                src: ['public/third-party/css/bootstrap.min.css','public/third-party/css/bootstrap-flat.min.css','public/third-party/css/font-awesome.min.css','public/third-party/css/slider.css','public/css/style.css','public/css/style-responsive.css'],
                 dest: 'public/css/bundle.css'
             },
             options: {
@@ -35,7 +35,7 @@ module.exports = function(grunt) {
                 filter : 'isFile',
                 flatten: true,
                 dest   : 'public/third-party/css',
-                src    : ['bootstrap/dist/css/bootstrap.min.css','bootstrap-flat/css/bootstrap-flat.min.css','font-awesome/css/font-awesome.min.css']
+                src    : ['bootstrap/dist/css/bootstrap.min.css','bootstrap-flat/css/bootstrap-flat.min.css','font-awesome/css/font-awesome.min.css','bootstrap-slider/slider.css']
             },
             fonts : {
                 expand : true,
@@ -60,7 +60,7 @@ module.exports = function(grunt) {
                 filter : 'isFile',
                 flatten: true,
                 dest   : 'public/third-party/js',
-                src    : ['bootstrap/dist/js/bootstrap.min.js','jquery/dist/jquery.min.js', 'iCheck/icheck.min.js']
+                src    : ['bootstrap/dist/js/bootstrap.min.js','jquery/dist/jquery.min.js', 'iCheck/icheck.min.js','bootstrap-slider/bootstrap-slider.js']
             },
             ace : {
                 expand : true,

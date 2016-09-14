@@ -121,6 +121,7 @@ class AnalyticsService
         if($token_expired) {
             $authData = $this->client->refreshToken($authData['refresh_token']);
             $authData['expire_at'] = time() + $authData['expires_in'];
+            $authData['campaign_id'] = $this->app['session']->get('campaign_id');
             $this->app['session']->set('access_token',$authData['access_token']);
             $id = $this->manageAuthData($authData);
         }
