@@ -9,11 +9,13 @@ class DashboardController implements ControllerProviderInterface
 {
     private $campaignService;
     private $analyticsService;
+    private $goalService;
 
     public function __construct(Application $app)
     {
         $this->campaignService = $app['CampaignService'];
         $this->analyticsService = $app['AnalyticsService'];
+        $this->goalService = $app['GoalService'];
     }
     public function connect(Application $app)
     {
@@ -55,11 +57,13 @@ class DashboardController implements ControllerProviderInterface
             try {
                 $id = $request->get('id');
                 $data = $this->campaignService->getCampaignDataByID($id);
+                $goals = $this->goalService->getAllGoals($id);
                 $app['session']->set('campaign_id', $id);
                 return $app['twig']->render('editCampaign.html',array(
                     'page_title'=>'Editing Campaign',
                     'id' => $id,
-                    'data' => $data
+                    'data' => $data,
+                    'goals' => $goals,
                 ));
             } catch (\Exception $e) {
                 return $app->json(['ret' => false, 'data' => 'error: ' . $e->getMessage()]);

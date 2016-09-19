@@ -1,7 +1,6 @@
-<h3>Traffic Control</h3>
 <div class="tab-pane traffic-block">
     <div class="panel panel-white">
-        <div class="panel-heading">Traffic Split</div>
+        <div class="panel-heading">Traffic Controll</div>
         <div class="panel-body">
             <div class="form-group">
                 <label class="col-sm-3 control-label">Total Traffic</label>
@@ -35,318 +34,325 @@
         </div>
     </div>
 </div>
-<h3>Targetting</h3>
-<div class="panel-group" id="accordion">
+<div class="tab-pane traffic-block">
+    <div class="panel panel-white">
+        <div class="panel-heading">Targetting</div>
+        <div class="panel-body">
+            <p>Use the below settings to..(need a good description)<br><br></p>
+            <div class="panel-group" id="accordion">
 
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h4 class="panel-title">
-                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#url-block">
-                    <i class="glyphicon glyphicon-minus"></i> URL Settings</a>
-                </a>
-            </h4>
-        </div>
-        <div id="url-block" class="panel-collapse collapse in">
-            <div class="panel-body">
-                <div class="form-group">
-                    <label class="col-sm-3 control-label">URL</label>
-                    <div class="col-md-9 controls">
-                        <div class="row">
-                            <div class="col-xs-12">
-                                <input id="url" type="text" class="url-block-input tagsinput" value="{{ data.url.url|join(',') }}" placeholder="Enter multiple urls" />
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#url-block">
+                                <i class="glyphicon glyphicon-minus"></i> URL Settings</a>
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="url-block" class="panel-collapse collapse in">
+                        <div class="panel-body">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">URL</label>
+                                <div class="col-md-9 controls">
+                                    <div class="row">
+                                        <div class="col-xs-12">
+                                            <input id="url" type="text" class="url-block-input tagsinput" value="{{ data.url.url|join(',') }}" placeholder="Enter multiple urls" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">Also include if URL contains</label>
+                                <div class="col-md-9 controls">
+                                    <div class="row">
+                                        <div class="col-xs-12">
+                                            <input id="url_contains" class="url-block-input tagsinput" type="text" value="{{ data.url.url_contains|join(',') }}" placeholder="Enter multiple words" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">But exclude if URL contains</label>
+                                <div class="col-md-9 controls">
+                                    <div class="row">
+                                        <div class="col-xs-12">
+                                            <input id="url_excludes" class="url-block-input tagsinput" type="text" value="{{ data.url.url_excludes|join(',') }}" placeholder="Enter multiple words" />
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="form-group">
-                    <label class="col-sm-3 control-label">Also include if URL contains</label>
-                    <div class="col-md-9 controls">
-                        <div class="row">
-                            <div class="col-xs-12">
-                                <input id="url_contains" class="url-block-input tagsinput" type="text" value="{{ data.url.url_contains|join(',') }}" placeholder="Enter multiple words" />
+
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#user-block">
+                                <i class="glyphicon glyphicon-plus"></i> User Settings</a>
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="user-block" class="panel-collapse collapse">
+                        <div class="panel-body">
+                            <div class="form-group">
+                                <div class="checkbox">
+                                    <label class="col-sm-3 control-label"></label>
+                                    <input type="checkbox" class="user-block-input custom-cb" id="all_users" {{ (data.user.all_users == 'true') ? 'checked' : ''}} ><label for="all_users">All Users</label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="checkbox">
+                                    <label class="col-sm-3 control-label"></label>
+                                    <input type="checkbox" class="user-block-input custom-cb" id="new_users" {{ (data.user.new_users == 'true') ? 'checked' : ''}} ><label for="new_users">New Users</label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="checkbox">
+                                    <label class="col-sm-3 control-label"></label>
+                                    <input type="checkbox" class="user-block-input custom-cb" id="returning_users" {{ (data.user.returning_users == 'true') ? 'checked' : ''}} ><label for="returning_users">Returning Users</label>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="form-group">
-                    <label class="col-sm-3 control-label">But exclude if URL contains</label>
-                    <div class="col-md-9 controls">
-                        <div class="row">
-                            <div class="col-xs-12">
-                                <input id="url_excludes" class="url-block-input tagsinput" type="text" value="{{ data.url.url_excludes|join(',') }}" placeholder="Enter multiple words" />
+
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#device-block">
+                                <i class="glyphicon glyphicon-plus"></i> Device Settings</a>
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="device-block" class="panel-collapse collapse">
+                        <div class="panel-body">
+                            <div class="form-group">
+                                <div class="checkbox">
+                                    <label class="col-sm-3 control-label"></label>
+                                    <input type="checkbox" class="device-block-input custom-cb" name="allow-desktop" id="allow_desktop" {{data.device.allow_desktop == "true" ? 'checked' : ''}} ><label for="allow_desktop">Allow Desktop</label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="checkbox">
+                                    <label class="col-sm-3 control-label"></label>
+                                    <input type="checkbox" class="device-block-input custom-cb" name="allow-mobile" id="allow_mobile" {{data.device.allow_mobile == "true" ? 'checked' : ''}}><label for="allow_mobile">Allow Mobile</label>
+                                </div>
                             </div>
                         </div>
                     </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#browser-block">
+                                <i class="glyphicon glyphicon-plus"></i> Browser Settings</a>
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="browser-block" class="panel-collapse collapse">
+                        <div class="panel-body">
+                            <div class="form-group">
+                                <div class="checkbox">
+                                    <label class="col-sm-3 control-label"></label>
+                                    <input type="checkbox" class="browser-block-input custom-cb" id="IE" {{ (data.browser.IE == "false") ? '' : 'checked'}}><label for="IE">Dont Allow IE</label>
+                                </div>
+                                <div class="checkbox">
+                                    <label class="col-sm-3 control-label"></label>
+                                    <input type="checkbox" class="browser-block-input custom-cb" id="Firefox" {{ (data.browser.Firefox == "false") ? '' : 'checked'}}><label for="Firefox">Dont Allow Firefox</label>
+                                </div>
+                                <div class="checkbox">
+                                    <label class="col-sm-3 control-label"></label>
+                                    <input type="checkbox" class="browser-block-input custom-cb" id="Safari" {{ (data.browser.Safari == "false") ? '' : 'checked'}}><label for="Safari">Dont Allow Safari</label>
+                                </div>
+                                <div class="checkbox">
+                                    <label class="col-sm-3 control-label"></label>
+                                    <input type="checkbox" class="browser-block-input custom-cb" id="Chrome" {{ (data.browser.Chrome == "false") ? '' : 'checked'}}><label for="Chrome">Dont Allow Chrome</label>
+                                </div>
+                                <div class="checkbox">
+                                    <label class="col-sm-3 control-label"></label>
+                                    <input type="checkbox" class="browser-block-input custom-cb" id="Opera" {{ (data.browser.Opera == "false") ? '' : 'checked'}}><label for="Opera">Dont Allow Opera</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#geo-block">
+                                <i class="glyphicon glyphicon-plus"></i> Geographic Settings</a>
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="geo-block" class="panel-collapse collapse">
+                        <div class="panel-body">
+                            <div class="form-group">
+                                <div class="checkbox">
+                                    <label class="col-sm-3 control-label"></label>
+                                    <input type="checkbox" id="all_countries" class="geo-block-input custom-cb" {{data.geographic.all_countries ? 'checked' : ''}}><label for="all_countries">Allow all countries</label>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">Only Allow</label>
+                                <div class="col-md-4 controls">
+                                    <div class="row">
+                                        <div class="col-xs-12">
+                                            <input id="allowed_countries" type="text" class="geo-block-input tagsinput" value="{{ data.geographic.allowed_countries|join(',') }}" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">But exclude</label>
+                                <div class="col-md-4 controls">
+                                    <div class="row">
+                                        <div class="col-xs-12">
+                                            <input id="exclude_countries" type="text" class="geo-block-input tagsinput" value="{{ data.geographic.exclude_countries|join(',') }}" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#cookie-block">
+                                <i class="glyphicon glyphicon-plus"></i> Cookie Settings</a>
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="cookie-block" class="panel-collapse collapse">
+                        <div class="panel-body">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">Exclude users if cookie name contains</label>
+                                <div class="col-sm-9 controls">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <input type="text" placeholder="eg. ga_, fb" id="exclude_cookie" class="form-control cookie-block-input tagsinput" value="{{ data.cookies.exclude_cookie|join(',') }}">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">Include users only if cookie name contains</label>
+                                <div class="col-sm-9 controls">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <input type="text" placeholder="eg. abtest" id="include_cookie" class="form-control cookie-block-input tagsinput" value="{{ data.cookies.include_cookie|join(',') }}">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#ip-block">
+                                <i class="glyphicon glyphicon-plus"></i> IP Settings</a>
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="ip-block" class="panel-collapse collapse">
+                        <div class="panel-body">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">Include these IPs</label>
+                                <div class="col-md-4 controls">
+                                    <div class="row">
+                                        <div class="col-xs-12">
+                                            <input id="include_ips" type="text" class="ip-block-input tagsinput" value="{{ data.ip.include_ips|join(',') }}" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">Exclude these IPs</label>
+                                <div class="col-md-4 controls">
+                                    <div class="row">
+                                        <div class="col-xs-12">
+                                            <input id="exclude_ips" type="text" class="ip-block-input tagsinput" value="{{ data.ip.exclude_ips|join(',') }}" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#language-block">
+                                <i class="glyphicon glyphicon-plus"></i> Language Settings</a>
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="language-block" class="panel-collapse collapse">
+                        <div class="panel-body">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">Only Allow codes</label>
+                                <div class="col-md-4 controls">
+                                    <div class="row">
+                                        <div class="col-xs-12">
+                                            <input id="allowed_languages" type="text" class="language-block-input tagsinput" value="{{ data.language.allowed_languages|join(',') }}" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">But Exclude codes</label>
+                                <div class="col-md-4 controls">
+                                    <div class="row">
+                                        <div class="col-xs-12">
+                                            <input id="exclude_languages" type="text" class="language-block-input tagsinput" value="{{ data.language.exclude_languages|join(',') }}" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- trigger modal -->
+                            <a href="#" data-toggle="modal" data-target="#modal-browser-language">
+                                Refer Language Codes
+                            </a>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#custom-block">
+                                <i class="glyphicon glyphicon-plus"></i> Custom Script</a>
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="custom-block" class="panel-collapse collapse">
+                        <div class="panel-body">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">Run campaign only if the function returns true</label>
+                                <div class="col-sm-9 controls">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <textarea id="script_fn" class="form-control" rows="15" cols="10">{{ data.script.js }}</textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>
-    </div>
-
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h4 class="panel-title">
-                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#user-block">
-                    <i class="glyphicon glyphicon-plus"></i> User Settings</a>
-                </a>
-            </h4>
-        </div>
-        <div id="user-block" class="panel-collapse collapse">
-            <div class="panel-body">
-                <div class="form-group">
-                    <div class="checkbox">
-                        <label class="col-sm-3 control-label"></label>
-                        <input type="checkbox" class="user-block-input custom-cb" id="all_users" {{ (data.user.all_users == 'true') ? 'checked' : ''}} ><label for="all_users">All Users</label>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="checkbox">
-                        <label class="col-sm-3 control-label"></label>
-                        <input type="checkbox" class="user-block-input custom-cb" id="new_users" {{ (data.user.new_users == 'true') ? 'checked' : ''}} ><label for="new_users">New Users</label>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="checkbox">
-                        <label class="col-sm-3 control-label"></label>
-                        <input type="checkbox" class="user-block-input custom-cb" id="returning_users" {{ (data.user.returning_users == 'true') ? 'checked' : ''}} ><label for="returning_users">Returning Users</label>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h4 class="panel-title">
-                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#device-block">
-                    <i class="glyphicon glyphicon-plus"></i> Device Settings</a>
-                </a>
-            </h4>
-        </div>
-        <div id="device-block" class="panel-collapse collapse">
-            <div class="panel-body">
-                <div class="form-group">
-                    <div class="checkbox">
-                        <label class="col-sm-3 control-label"></label>
-                        <input type="checkbox" class="device-block-input custom-cb" name="allow-desktop" id="allow_desktop" {{data.device.allow_desktop == "true" ? 'checked' : ''}} ><label for="allow_desktop">Allow Desktop</label>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="checkbox">
-                        <label class="col-sm-3 control-label"></label>
-                        <input type="checkbox" class="device-block-input custom-cb" name="allow-mobile" id="allow_mobile" {{data.device.allow_mobile == "true" ? 'checked' : ''}}><label for="allow_mobile">Allow Mobile</label>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h4 class="panel-title">
-                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#browser-block">
-                    <i class="glyphicon glyphicon-plus"></i> Browser Settings</a>
-                </a>
-            </h4>
-        </div>
-        <div id="browser-block" class="panel-collapse collapse">
-            <div class="panel-body">
-                <div class="form-group">
-                    <div class="checkbox">
-                        <label class="col-sm-3 control-label"></label>
-                        <input type="checkbox" class="browser-block-input custom-cb" id="IE" {{ (data.browser.IE == "false") ? '' : 'checked'}}><label for="IE">Dont Allow IE</label>
-                    </div>
-                    <div class="checkbox">
-                        <label class="col-sm-3 control-label"></label>
-                        <input type="checkbox" class="browser-block-input custom-cb" id="Firefox" {{ (data.browser.Firefox == "false") ? '' : 'checked'}}><label for="Firefox">Dont Allow Firefox</label>
-                    </div>
-                    <div class="checkbox">
-                        <label class="col-sm-3 control-label"></label>
-                        <input type="checkbox" class="browser-block-input custom-cb" id="Safari" {{ (data.browser.Safari == "false") ? '' : 'checked'}}><label for="Safari">Dont Allow Safari</label>
-                    </div>
-                    <div class="checkbox">
-                        <label class="col-sm-3 control-label"></label>
-                        <input type="checkbox" class="browser-block-input custom-cb" id="Chrome" {{ (data.browser.Chrome == "false") ? '' : 'checked'}}><label for="Chrome">Dont Allow Chrome</label>
-                    </div>
-                    <div class="checkbox">
-                        <label class="col-sm-3 control-label"></label>
-                        <input type="checkbox" class="browser-block-input custom-cb" id="Opera" {{ (data.browser.Opera == "false") ? '' : 'checked'}}><label for="Opera">Dont Allow Opera</label>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h4 class="panel-title">
-                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#geo-block">
-                    <i class="glyphicon glyphicon-plus"></i> Geographic Settings</a>
-                </a>
-            </h4>
-        </div>
-        <div id="geo-block" class="panel-collapse collapse">
-            <div class="panel-body">
-                <div class="form-group">
-                    <div class="checkbox">
-                        <label class="col-sm-3 control-label"></label>
-                        <input type="checkbox" id="all_countries" class="geo-block-input custom-cb" {{data.geographic.all_countries ? 'checked' : ''}}><label for="all_countries">Allow all countries</label>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label class="col-sm-3 control-label">Only Allow</label>
-                    <div class="col-md-4 controls">
-                        <div class="row">
-                            <div class="col-xs-12">
-                                <input id="allowed_countries" type="text" class="geo-block-input tagsinput" value="{{ data.geographic.allowed_countries|join(',') }}" />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="col-sm-3 control-label">But exclude</label>
-                    <div class="col-md-4 controls">
-                        <div class="row">
-                            <div class="col-xs-12">
-                                <input id="exclude_countries" type="text" class="geo-block-input tagsinput" value="{{ data.geographic.exclude_countries|join(',') }}" />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-    </div>
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h4 class="panel-title">
-                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#cookie-block">
-                    <i class="glyphicon glyphicon-plus"></i> Cookie Settings</a>
-                </a>
-            </h4>
-        </div>
-        <div id="cookie-block" class="panel-collapse collapse">
-            <div class="panel-body">
-                <div class="form-group">
-                    <label class="col-sm-3 control-label">Exclude users if cookie name contains</label>
-                    <div class="col-sm-9 controls">
-                        <div class="row">
-                            <div class="col-md-4">
-                                <input type="text" placeholder="eg. ga_, fb" id="exclude_cookie" class="form-control cookie-block-input tagsinput" value="{{ data.cookies.exclude_cookie|join(',') }}">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="col-sm-3 control-label">Include users only if cookie name contains</label>
-                    <div class="col-sm-9 controls">
-                        <div class="row">
-                            <div class="col-md-4">
-                                <input type="text" placeholder="eg. abtest" id="include_cookie" class="form-control cookie-block-input tagsinput" value="{{ data.cookies.include_cookie|join(',') }}">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-    </div>
-
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h4 class="panel-title">
-                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#ip-block">
-                    <i class="glyphicon glyphicon-plus"></i> IP Settings</a>
-                </a>
-            </h4>
-        </div>
-        <div id="ip-block" class="panel-collapse collapse">
-            <div class="panel-body">
-                <div class="form-group">
-                    <label class="col-sm-3 control-label">Include these IPs</label>
-                    <div class="col-md-4 controls">
-                        <div class="row">
-                            <div class="col-xs-12">
-                                <input id="include_ips" type="text" class="ip-block-input tagsinput" value="{{ data.ip.include_ips|join(',') }}" />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="col-sm-3 control-label">Exclude these IPs</label>
-                    <div class="col-md-4 controls">
-                        <div class="row">
-                            <div class="col-xs-12">
-                                <input id="exclude_ips" type="text" class="ip-block-input tagsinput" value="{{ data.ip.exclude_ips|join(',') }}" />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-    </div>
-
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h4 class="panel-title">
-                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#language-block">
-                    <i class="glyphicon glyphicon-plus"></i> Language Settings</a>
-                </a>
-            </h4>
-        </div>
-        <div id="language-block" class="panel-collapse collapse">
-            <div class="panel-body">
-                <div class="form-group">
-                    <label class="col-sm-3 control-label">Only Allow codes</label>
-                    <div class="col-md-4 controls">
-                        <div class="row">
-                            <div class="col-xs-12">
-                                <input id="allowed_languages" type="text" class="language-block-input tagsinput" value="{{ data.language.allowed_languages|join(',') }}" />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="col-sm-3 control-label">But Exclude codes</label>
-                    <div class="col-md-4 controls">
-                        <div class="row">
-                            <div class="col-xs-12">
-                                <input id="exclude_languages" type="text" class="language-block-input tagsinput" value="{{ data.language.exclude_languages|join(',') }}" />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- trigger modal -->
-                <a href="#" data-toggle="modal" data-target="#modal-browser-language">
-                    Refer Language Codes
-                </a>
-            </div>
-        </div>
-
-    </div>
-
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h4 class="panel-title">
-                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#custom-block">
-                    <i class="glyphicon glyphicon-plus"></i> Custom Script</a>
-                </a>
-            </h4>
-        </div>
-        <div id="custom-block" class="panel-collapse collapse">
-            <div class="panel-body">
-                <div class="form-group">
-                    <label class="col-sm-3 control-label">Run campaign only if the function returns true</label>
-                    <div class="col-sm-9 controls">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <textarea id="script_fn" class="form-control" rows="15" cols="10">{{ data.script.js }}</textarea>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
     </div>
 </div>
 

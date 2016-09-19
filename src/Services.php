@@ -26,6 +26,13 @@ $app['CampaignController'] = function ($app) {
 $app['AnalyticsController'] = function ($app) {
     return new src\controller\AnalyticsController($app);
 };
+/**
+ * @param $app
+ * @return \src\controller\ReportingController
+ */
+$app['ReportingController'] = function ($app) {
+    return new src\controller\ReportingController($app);
+};
 
 /**
  * @param $app
@@ -60,6 +67,14 @@ $app['CampaignService'] = function ($app) {
 
 /**
  * @param $app
+ * @return \src\service\GoalService
+ */
+$app['GoalService'] = function ($app) {
+    return new \src\service\GoalService($app);
+};
+
+/**
+ * @param $app
  * @return \src\service\AnalyticsService
  */
 $app['AnalyticsService'] = function ($app) {
@@ -81,6 +96,14 @@ $app['UserModel'] = function ($app) {
  */
 $app['CampaignModel'] = function ($app) {
     return new \src\model\CampaignModel($app);
+};
+
+/**
+ * @param $app
+ * @return \src\model\GoalsModel
+ */
+$app['GoalsModel'] = function ($app) {
+    return new \src\model\GoalsModel($app);
 };
 
 /**

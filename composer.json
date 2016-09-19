@@ -6,7 +6,8 @@
         "twig/twig": "^1.24",
         "symfony/twig-bridge": "^3.1",
         "gabordemooij/redbean": "4.3",
-        "google/apiclient": "^2.0"
+        "google/apiclient": "^2.0",
+        "euskadi31/cache-service-provider": "^1.0"
     },
     "repositories": [
         {

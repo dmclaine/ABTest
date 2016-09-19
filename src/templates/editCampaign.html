@@ -23,29 +23,47 @@
 
 <script src="{{ base_path }}third-party/js/ace/ace.js"></script>
 <!-- Page Content -->
-<div id="new-campaign">
+<div id="edit-campaign">
     <form action="#" class="form-horizontal">
         <div class="row mbl pll prl">
 
             <div class="col-sm-12 col-md-2"> <!-- required for floating -->
                 <!-- Nav tabs -->
                 <ul class="nav nav-tabs tabs-left sideways">
-                    <li class="active"><a href="#overview-tab" class="menu-tabs" data-toggle="tab">Overview</a></li>
-                    <li><a href="#variation-tab" class="menu-tabs" data-toggle="tab">Variations</a></li>
-                    <li><a href="#targetting-tab" class="menu-tabs" data-toggle="tab">Targetting</a></li>
+                    <li class="active"><a href="#overview-tab" class="menu-tabs" data-toggle="tab">
+                        <i class="fa fa-area-chart fa-fw"></i> Overview</a></li>
+                    <li><a href="#variation-tab" class="menu-tabs" data-toggle="tab">
+                        <i class="fa fa-code fa-fw"></i> Variations</a></li>
+                    <li><a href="#targetting-tab" class="menu-tabs" data-toggle="tab">
+                        <i class="fa fa-users fa-fw"></i> Targetting</a></li>
                 </ul>
             </div>
 
             <div class="col-sm-12 col-md-10">
                 <!-- Tab panes -->
-                <div class="tab-content row">
+                <div class="tab-content row neutral pdn">
                     <div class="tab-pane active" id="overview-tab">
                         <div class="panel panel-white">
-                            <div class="panel-heading">Overview</div>
-                            <div class="panel-body">
-                                Loading..
+                            <div class="panel-heading">Connection</div>
+                            <div class="panel-body" id="analytics-connection">
+                                <img src="/images/ajax-loader.gif" alt="">
                             </div>
                         </div>
+                        <div class="panel panel-white">
+                            <div class="panel-heading">Report</div>
+                            <div class="panel-body" id="report-overview">
+                                {% include 'partials/reporting-traffic.html' %}
+                            </div>
+                        </div>
+                        <div id="report-goals">
+                            {% include 'partials/reporting-goals-loading.html' %}
+                        </div>
+                        <!--<div class="panel panel-white">-->
+                            <!--<div class="panel-heading">Goal Reports <a href="#" id="new-goal-btn" class="btn btn-primary btn-xs pull-right">New Goal</a></div>-->
+                            <!--<div class="panel-body" id="report-goals">-->
+                                <!--Loading..-->
+                            <!--</div>-->
+                        <!--</div>-->
                     </div>
                     <div class="tab-pane" id="variation-tab">
                         {% include 'partials/variations.html' %}
@@ -55,17 +73,21 @@
                     </div>
                 </div>
             </div>
-
-        </div>
-
-        <div class="row">
             <div class="col-md-10 col-md-offset-2">
                 <button id="campaign-save-btn" type="submit" class="btn btn-primary">Save</button>
             </div>
         </div>
+
+        <!--<div class="row mbl pll prl">-->
+            <!--<div class="col-md-10 col-md-offset-2">-->
+                <!--<button id="campaign-save-btn" type="submit" class="btn btn-primary">Save</button>-->
+            <!--</div>-->
+        <!--</div>-->
     </form>
 </div>
 <input id="campaign-id" value="{{ id }}" type="hidden">
 <!-- /.container -->
-
+<div id="goal-setup-popup-box">
+    <!-- popup window will be loaded by ajax -->
+</div>
 {% endblock %}
