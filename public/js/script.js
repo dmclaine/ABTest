@@ -1,11 +1,13 @@
 (function() {
+    var main;
     $(document).ready(function(){
-        init();
+        main = init();
     });
-
+    var typeahead;
     var current_variation = 'control';
 
     var init = function () {
+
 
         $('.tagsinput').tagsinput({
             tagClass: function(item) {
@@ -13,17 +15,49 @@
             }
         });
 
+        applySidebarEvents();
+
         applyViewPortClass();
         /**
          * Page Events
          */
         campaignsPageEvents();
-        editCampaignPageEvents();
+        var ecpe = editCampaignPageEvents();
 
         /**
          * Actions
          */
         campaignSaveEvents();
+
+
+
+        return {
+            editCampaignPageEvents: ecpe
+        }
+    }
+
+    var applySidebarEvents = function() {
+        var sidebar_status = localStorage.getItem('sidebar-slim');
+        if(sidebar_status !== null && sidebar_status =="false") {
+            $('body').removeClass('sidebar-slim');
+        }
+        $('.sidebar-toggle').click(function(){
+            $('body').toggleClass('sidebar-slim');
+            if($('body').hasClass('sidebar-slim')) {
+                localStorage.setItem('sidebar-slim',true);
+            }else{
+                localStorage.setItem('sidebar-slim',false);
+            }
+        })
+
+
+        $('#title-breadcrumb-option-demo').scrollToFixed();
+        $('.bottomfixed').scrollToFixed( {
+            bottom: 0,
+            width: 250
+        });
+        $('#sidebar').scrollToFixed({top: '50px'});
+
     }
 
     var editCampaignPageEvents = function() {
@@ -31,33 +65,30 @@
         /**
          * Tab Events
          */
-        overviewTabEvents();
-        variationTabEvents();
-        targetingTabEvents();
-        //goalTabEvents();
+        var ote = overviewTabEvents();
+        var vte = variationTabEvents();
+        var tte = targetingTabEvents();
+        return {
+            overview: ote,
+            variation: vte,
+            targeting: tte
+        }
     }
-
+    var timeout;
     var messageBox = function(msg) {
-
+        clearTimeout(timeout);
         $("#message-box").html(msg).show();
 
-        setTimeout(function() {
+        timeout = setTimeout(function() {
             $("#message-box").hide();
         },2000);
     }
 
-    var goalTabEvents = function() {
+    var goalEvents = function() {
 
-        $('[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-            var target = $(e.target).attr("href");
-            if(target == '#goals-tab')
-            {
-                var campaign_id = $('#campaign-id').val();
-                $.get('/goal/event-categories/' + campaign_id, function(data){
-                    console.log(data);
-                })
-            }
-        });
+        $.get('/goal/event-categories', function(response){
+            typeahead.typeaheadEvents(response.data);
+        })
 
         $('.goal-type').change(function(){
             var option = $(this).val();
@@ -73,13 +104,27 @@
             }
         });
 
-        $('.goal-item').change(function() {
+        $('.goal-arrive').change(function(){
+            var option = $(this).val();
+
+            switch(option) {
+                case "0":
+                    $('.arrive-action-pathpath').hide();
+                    break;
+                case "page-path":
+                    $('.arrive-action-pathpath').show();
+                    break;
+
+            }
+        });
+
+        $('.goal-action').change(function() {
             var option = $(this).val();
             $('.result-action-item').hide();
 
             switch(option) {
-                case "url":
-                    $('.result-action-url').show();
+                case "action-pp":
+                    $('.result-action-pp').show();
                     break;
                 case "event":
                     $('.result-action-event').show();
@@ -94,12 +139,16 @@
             }
         });
 
-        var typeahead = {
+        typeahead = {
 
             cInput : $('.typeahead.result-action-goal-category'),
             aInput: $('.typeahead.result-action-goal-action'),
             lInput : $('.typeahead.result-action-goal-label'),
 
+            checkActivation: function() {
+                this.activateAction();
+                this.activateLabel();
+            },
             substringMatcher: function(strs) {
                 return function findMatches(q, cb) {
                     var matches, substrRegex;
@@ -121,45 +170,39 @@
                     cb(matches);
                 };
             },
-            typeaheadEvents: function() {
+            typeaheadEvents: function(jsonData) {
 
                 var self = this;
-                //
-                //self.cInput = $('#goal-modal .result-action-goal-category');
-                //self.aInput = $('#goal-modal .result-action-goal-action');
-                //self.lInput = $('#goal-modal .result-action-goal-label');
-
-
-                var data = $("#h-events-data").val();
-                var jsonData = JSON.parse(data);
-
 
                 self.cInput.typeahead({
                     hint: true,
                     highlight: true,
                     minLength: 1
                 },{
-                    source: self.substringMatcher(jsonData.categories)
+                    source: self.substringMatcher(jsonData)
                 }).blur(function(){
-                    if(jsonData.categories[self.cInput.val()] === undefined) {
+                    if(jsonData[self.cInput.val()] === undefined) {
                         self.cInput.val('');
                         self.aInput.typeahead('destroy').val('').attr('disabled','disabled');
                         self.lInput.typeahead('destroy').val('').attr('disabled','disabled');
                     }else{
-                        self.activateAction(self.cInput.val());
+                        self.activateAction();
                     }
                 })
 
 
             },
-            activateAction: function(catname) {
+            activateAction: function() {
 
                 var self = this;
+                var $category = $('.typeahead.result-action-goal-category.tt-input');
+                if($category.length == 0 || $category.val() == undefined || $category.val() == "") {
+                    return;
+                }
                 self.aInput.val('');
                 self.lInput.val('');
 
-                var cid = $("#hidden-capmaign-id").val();
-                $.getJSON("/admin/getEventActions/"+cid+"/"+catname, function(jsonData) {
+                $.getJSON("/goal/event-actions/"+self.cInput.val(), function(jsonData) {
                     self.aInput.typeahead('destroy');
                     self.aInput.removeAttr('disabled');
                     self.aInput.typeahead({
@@ -167,26 +210,28 @@
                         highlight: true,
                         minLength: 1
                     },{
-                        source: self.substringMatcher(jsonData.actions)
+                        source: self.substringMatcher(jsonData.data)
                     }).blur(function(){
-                        if(jsonData.actions[self.aInput.val()] === undefined) {
+                        if(jsonData.data[self.aInput.val()] === undefined) {
                             self.aInput.val('');
                             self.lInput.typeahead('destroy').val('').attr('disabled','disabled');
                         }else{
-                            self.activateLabel(catname,self.aInput.val());
+                            self.activateLabel();
                         }
                     })
                 })
 
             },
-            activateLabel: function(catname,actionname) {
-
+            activateLabel: function() {
 
                 var self = this;
-                var cid = $("#hidden-capmaign-id").val();
+                var $action = $('.typeahead.result-action-goal-action.tt-input');
+                if($action.length == 0 || $action.val() == undefined || $action.val() == "") {
+                    return;
+                }
 
                 self.lInput.val('');
-                $.getJSON("/admin/getEventLabels/"+cid+"/"+catname+"/"+actionname, function(jsonData) {
+                $.getJSON("/goal/event-labels/"+self.cInput.val()+"/"+self.aInput.val(), function(jsonData) {
                     self.lInput.typeahead('destroy');
                     self.lInput.removeAttr('disabled');
 
@@ -195,9 +240,9 @@
                         highlight: true,
                         minLength: 1
                     },{
-                        source: self.substringMatcher(jsonData.labels)
+                        source: self.substringMatcher(jsonData.data)
                     }).blur(function(){
-                        if(jsonData.labels[self.lInput.val()] === undefined) {
+                        if(jsonData.data[self.lInput.val()] === undefined) {
                             self.lInput.val('');
                         }
                     })
@@ -210,12 +255,115 @@
 
     var overviewTabEvents = function() {
 
+        $(document).on('click','.daterangeicon',function(){
+            $('#reportrange').trigger('click');
+        });
+        $rr  = $('#reportrange');
+
+        console.log($rr.data('start'))
+        console.log($rr.data('end'))
+        $rr.daterangepicker({
+            "autoApply": true,
+            "startDate": moment($rr.data('start')).format('MM/DD/YYYY'),
+            "endDate":moment($rr.data('end')).format('MM/DD/YYYY'),
+            "opens": "left"
+        }, function(start, end, label) {
+
+            console.log("New date range selected: " + start.format('YYYY-MM-DD') + " to " + end.format('YYYY-MM-DD') + " (predefined range: " + label + ")");
+            $.ajax({
+                url: '/reporting/set-start-date',
+                data: {
+                    campaign_start_date: start.format('YYYY-MM-DD'),
+                    campaign_end_date: end.format('YYYY-MM-DD')
+                },
+                method: 'POST',
+                success: function() {
+                    getTrafficChart();
+                    getGoalsChart();
+                }
+            })
+
+        });
+
+        $(document).on('click','#toggle-account-details-btn',function(){
+
+            $('#account-details').toggleClass('hide');
+            if($(this).find('i').hasClass('fa-expand')) {
+                $(this).find('i').removeClass('fa-expand').addClass('fa-compress');
+            }else{
+                $(this).find('i').removeClass('fa-compress').addClass('fa-expand');
+            }
+
+        });
+
+        $(document).on('click','#new-goal-btn',function(e){
+            e.preventDefault();
+            messageBox('Loading..');
+            var id = 0;
+            $.get('/goal/display-goal-popup/'+id, function(data){
+                $('#goal-setup-popup-box').html(data);
+                goalEvents();
+                typeahead.checkActivation();
+                $('#modal-goal-setup').modal('show');
+            })
+        });
+
+        $(document).on('click','.edit-goal', function(e){
+            e.preventDefault();
+            var id = $(this).data('id');
+            $('#goal-setup-popup-box').html('');
+            $.get('/goal/display-goal-popup/'+id, function(data){
+                $('#goal-setup-popup-box').html(data);
+                goalEvents();
+                typeahead.checkActivation();
+                $('#modal-goal-setup').modal('show');
+            })
+        });
+
+        $(document).on('click','.delete-goal', function(e){
+            e.preventDefault();
+            var id = $(this).data('id');
+            var $this = $(this);
+            $.post('/goal/delete-goal/'+id, function(data){
+                $this.parents('.panel').remove();
+                messageBox('Goal Deleted');
+            })
+        });
+
+        $(document).on('click','#new-goal-save-btn',function(){
+            saveGoal();
+        })
+
+        function getTrafficChart()
+        {
+            messageBox('Loading Traffic Report..');
+            $.get('/reporting/traffic-report', function(data) {
+                messageBox('Loading Goals Report..');
+                $('#report-overview').html(data);
+            })
+        }
+
+        function getGoalsChart()
+        {
+            messageBox('Loading');
+            $.get('/reporting/goals-report', function(data) {
+                $('#report-goals').html(data);
+            })
+        }
+
         function requestContent()
         {
-            var campaign_id = $('#campaign-id').val();
+            var campaign_id = $('#campaign-id').val() || 0;
+            messageBox('Loading..');
             $.get('/analytics/display/' + campaign_id, function(data){
-                $('#overview-tab .panel-body').html(data);
+                $('#overview-tab #analytics-connection.panel-body').html(data);
                 $('#account-select').trigger('change');
+
+                if($('#disconnect-analytics').length > 0) {
+                    //get variation data
+                    getTrafficChart();
+                    getGoalsChart();
+                }
             })
         }
 
@@ -275,7 +423,9 @@
             })
         });
 
-
+        return {
+            goalChart: getGoalsChart
+        }
 
     }
 
@@ -674,6 +824,7 @@
             data.analytics = analyticsData();
             //data.goals = goalsData();
             data.id = $("#campaign-id").val();
+            data.name = $("#campaign_name").val();
             data.traffic = $("#allowed-traffic").val();
             return data;
         }
@@ -692,71 +843,66 @@
                 // contentType: 'application/json; charset=utf-8',
                 data: {data: allData},
                 success: function (res) {
-                    console.log(res);
+                    if(allData.id == "") {
+                        document.location = '/dashboard/campaign/edit/' + res.data.campaign_id;
+                    }
                     messageBox('Saved!');
                 }
             })
         });
 
     };
+
+    var saveGoal = function() {
+        var $container = $("#goal-results tbody");
+        var $goalModalItem = $("#modal-goal-setup");
+        var $goalModal = $("#modal-goal-setup");
+
+        var goalObj = {
+            id: $goalModalItem.find('#goal_id').val(),
+            name: $goalModalItem.find('.goal-name').val(),
+            arrive_action: $goalModalItem.find('.goal-arrive').val(),
+            page_path: $goalModalItem.find('.arrive-action-pathpath input').val(),
+            action: $goalModalItem.find('.result-actions select').val(),
+            action_pp_pattern: $goalModalItem.find('.result-action-url-pattern').val(),
+            action_pp:  $goalModalItem.find('.result-action-pp input').val(),
+            e_label:  $goalModalItem.find('.result-action-goal-label.tt-input').val(),
+            e_action:  $goalModalItem.find('.result-action-goal-action.tt-input').val(),
+            e_category:  $goalModalItem.find('.result-action-goal-category.tt-input').val(),
+            segment_sequence:  $goalModalItem.find('input.result-action-segment-sequence').val(),
+            segment_sequence_filter:  $goalModalItem.find('.result-action-segment-sequence-filter').val(),
+            segment_condition:  $goalModalItem.find('input.result-action-segment-condition').val(),
+            segment_condition_filter:  $goalModalItem.find('.result-action-segment-condition-filter').val()
+        }
+        messageBox('Saving..');
+        saveGoals(goalObj, function() {
+            messageBox('Saved!');
+            main.editCampaignPageEvents.overview.goalChart();
+        });
+    }
+    var saveGoals = function(goalObj,callback) {
+
+        var data = [];
+        $("#goal-results .goal-row").each(function(){
+
+            var goalObj = JSON.parse($(this).attr('data-goal'));
+            data.push(goalObj);
+        });
+
+        $.ajax({
+            url: '/goal/save-goal',
+            dataType: 'json',
+            data: {goal: goalObj},
+            type:"POST",
+            success: function(data) {
+                callback();
+            }
+        });
+    }
 })();
+//
+//
 
-
-//var saveGoal = function(id) {
-//    $container = $("#goal-results tbody");
-//    $goalModalItem = $("#goal-modal .goal-item");
-//    $goalModal = $("#goal-modal");
-//
-//    var goalObj = {
-//        name: $goalModalItem.find('.goal-name').val(),
-//        type: $goalModalItem.find('.goal-type').val(),
-//        action: $goalModalItem.find('.result-actions select').val(),
-//        url:  $goalModalItem.find('.result-action-url input').val(),
-//        eLabel:  $goalModalItem.find('.result-action-goal-label.tt-input').val(),
-//        eAction:  $goalModalItem.find('.result-action-goal-action.tt-input').val(),
-//        eCategory:  $goalModalItem.find('.result-action-goal-category.tt-input').val(),
-//        segmentSequence:  $goalModalItem.find('input.result-action-segment-sequence').val(),
-//        segmentSequenceFilter:  $goalModalItem.find('.result-action-segment-sequence-filter').val(),
-//        segmentCondition:  $goalModalItem.find('input.result-action-segment-condition').val(),
-//        segmentConditionFilter:  $goalModalItem.find('.result-action-segment-condition-filter').val()
-//    }
-//    var goalString = JSON.stringify(goalObj);
-//    if($goalModal.attr('action') == "edit") {
-//        var index = $goalModal.attr('row-no');
-//        $row = $container.children().eq(index);
-//        $row.attr('data-goal',goalString);
-//    }else{
-//        $container.append("<tr class='goal-row' data-goal='"+goalString+"'>\
-//		<td>"+goalObj.name+" <br/>\
-//			<a href='' onClick='goal.removeGoal(this,"+id+"); return false;'>Remove</a> | \
-//       		<a href='' onClick='goal.editGoal(\'#goal-modal\',goalObj.name,this);return false;'>Edit</a> \
-//		</td>\
-//		<td></td>\
-//		<td></td>\
-//	</tr>");
-//    }
-//    $goalModal.modal('hide');
-//    this.saveGoals(id);
-//}
-//var saveGoals = function(id) {
-//
-//    var data = [];
-//    $("#goal-results .goal-row").each(function(){
-//
-//        var goalObj = JSON.parse($(this).attr('data-goal'));
-//        data.push(goalObj);
-//    });
-//
-//    $.ajax({
-//        url: '/post/saveGoals',
-//        dataType: 'json',
-//        data: "id="+id+"&goals="+JSON.stringify(data),
-//        type:"POST",
-//        success: function(data) {
-//            admin.showMessage("Goal saved");
-//        }
-//    });
-//}
 //var removeGoal =  function(obj,cid) {
 //
 //    $(obj).parents('tr').remove();

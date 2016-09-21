@@ -12,6 +12,7 @@
     <!--Loading bootstrap css-->
     <link type="text/css" rel="stylesheet"
           href="http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,300,700">
+    <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet">
     <link type="text/css" rel="stylesheet" href="http://fonts.googleapis.com/css?family=Oswald:400,700,300">
 
     <link href="{{ base_path }}css/bundle.css" rel="stylesheet" type="text/css"/>
@@ -22,8 +23,72 @@
     <script src="{{ base_path }}third-party/js/bootstrap.min.js"></script>
     <script src="http://dev.ajadmin/vendors/typeahead/typeahead.bundle.js"></script>
     <script src="http://dev.ajadmin/vendors/tagsinput/bootstrap-tagsinput.min.js"></script>
+    <script src="{{ base_path }}third-party/Chart.js/dist/Chart.min.js"></script>
+    <script src="{{ base_path }}third-party/js/sticky-header.min.js"></script>
+
+    <script type="text/javascript" src="//cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <!-- Include Date Range Picker -->
+    <script type="text/javascript" src="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.js"></script>
+    <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css" />
+    <style>
+        #page-wrapper {
+            transition: none;
+            z-index:1;
+        }
+        #sidebar  {
+            transition: none;
+            z-index: 0!important;
+        }
+        .sidebar-slim #page-wrapper {
+            margin:0 0 0 46px;
+            /*transition: 0.3s all linear;*/
+        }
+        .sidebar-slim #sidebar {
+            z-index: 0;
+        }
+        #topbar .navbar-header {
+            /*transition: 0.3s all linear;*/
+        }
+        .sidebar-slim #topbar .navbar-header {
+            width:46px;
+        }
+        .logo-text-icon {
+            display: none;
+            /*transition: 0.3s all linear;*/
+        }
+        .sidebar-slim #topbar .navbar-header #logo span.logo-text {
+            display: none;
+        }
+        .sidebar-slim #topbar .navbar-header #logo span.logo-text-icon {
+            display: block;
+        }
+        button.sidebar-toggle {
+            padding: 15px 10px;
+        }
+        .sidebar-slim button.sidebar-toggle {
+            /*transition: 0.3s all linear;*/
+            display: none;
+        }
+        #report-goals .panel {
+            border:none;
+        }
+
+        #report-goals .panel.custom-panel {
+            border-bottom: 4px solid #f3f3f3;
+        }
+        .daterangepicker .input-mini {
+            width:100% !important;
+        }
+        .daterangeicon {
+            position: absolute;
+            bottom: 10px;
+            right: 24px;
+            top: auto;
+            cursor: pointer;
+        }
+    </style>
 </head>
-<body>
+<body class="sidebar-slim">
 <div>
     <div id="message-box">This is a box</div>
     <!--BEGIN BACK TO TOP-->
@@ -37,9 +102,14 @@
                 <button type="button" data-toggle="collapse" data-target=".sidebar-collapse" class="navbar-toggle"><span
                         class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span
                         class="icon-bar"></span><span class="icon-bar"></span></button>
-                <a id="logo" href="index.html" class="navbar-brand"><span class="fa fa-rocket"></span><span
-                        class="logo-text">ABTest</span><span style="display: none" class="logo-text-icon">µ</span></a>
+                <a id="logo" href="javascript:void(0);" class="navbar-brand"><span class="fa fa-rocket"></span><span
+                        class="logo-text">ABTest</span><span class="logo-text-icon">
+                    <i class="fa fa-align-justify sidebar-toggle" aria-hidden="true"></i>
+                </span></a>
             </div>
+            <button type="button" class="sidebar-toggle">
+                <i class="fa fa-arrow-left fa-1 x" aria-hidden="true"></i>
+            </button>
         </nav>
     </div>
     <!--END TOPBAR-->
@@ -52,21 +122,43 @@
                 <ul id="side-menu" class="nav">
 
                     <div class="clearfix"></div>
-                    <li><a href="/dashboard/new"><i class="fa fa-tachometer fa-fw">
-                        <div class="icon-bg bg-orange"></div>
-                    </i><span class="menu-title">New Campaign</span></a></li>
-                    <li><a href="/dashboard/campaigns"><i class="fa fa-desktop fa-fw">
-                        <div class="icon-bg bg-pink"></div>
-                    </i><span class="menu-title">Campaigns</span></a>
-
-                    </li>
-                    <li><a href="UIElements.html"><i class="fa fa-send-o fa-fw">
-                        <div class="icon-bg bg-green"></div>
-                    </i><span class="menu-title">Snippet</span></a>
-
+                    <li class="active">
+                        <a href="/dashboard/campaigns">
+                            <i class="fa fa-balance-scale fa-fw"></i>
+                            <span class="menu-title">All Experiments</span>
+                            <span class="fa arrow"></span>
+                        </a>
+                        <ul class="nav nav-second-level collapse in" aria-expanded="true" style="height: calc(100vh - 400px); overflow-y: scroll; ">
+                            {% for campaign in runningCampaigns %}
+                                <li>
+                                    <a href="/dashboard/campaign/edit/{{ campaign.id }}">
+                                        &nbsp;&nbsp;&nbsp;
+                                        {{ campaign.campaign_name }}
+                                    </a>
+                                </li>
+                                {% for i in 2..2 %}
+                                <li>
+                                    <a href="/dashboard/campaign/edit/{{ campaign.id }}">
+                                        &nbsp;&nbsp;&nbsp;
+                                        {{ campaign.campaign_name }}
+                                    </a>
+                                </li>
+                            {% endfor %}
+                            {% endfor %}
+                        </ul>
                     </li>
                 </ul>
             </div>
+
+
+            <a href="" class="bottomfixed" style="bottom: 50px;
+                position: absolute;
+                padding: 15px 17px;
+                color: #FFF;
+                width:250px;">
+                <i class="fa fa-send-o fa-fw"></i>
+                <span class="menu-title" style="margin-left: 10px;">Snippet</span>
+            </a>
 
         </nav>
 
@@ -78,10 +170,8 @@
                     {% block breadcrumb %}
                     {% endblock %}
                 </ol>
-                <span class="pull-right" style="margin-top:9px">
-                     {% set campaign = data %}
-                    {% include 'partials/powerswitch.html' %}
-                </span>
+                {% block powerswitch %}
+                {% endblock %}
                 <div class="clearfix">
                 </div>
             </div>
@@ -100,7 +190,7 @@
     </div>
     <!--END CONTENT-->
     <!--BEGIN FOOTER-->
-    <div id="footer">
+    <div id="footer" class="hide">
         <div class="copyright">
             <a href="">Rocket</a></div>
     </div>

@@ -1,0 +1,151 @@
+<div class="col-lg-12 row">
+    <div class="col-lg-3">
+        <div class="ibox float-e-margins text-center">
+            <div class="ibox-title">
+                <!--<span class="label label-success pull-right">So far</span>-->
+                <span>Unique Visitors</span>
+            </div>
+            <div class="ibox-content">
+                <h1 class="no-margins" id="total-visitors">0</h1>
+                <!--<div class="stat-percent font-bold text-success">98% <i class="fa fa-bolt"></i></div>-->
+                <!--<small>Total traffic participated</small>-->
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 no-margins text-center">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <!--<span class="label label-success pull-right">Total</span>-->
+                <span>Days running</span>
+            </div>
+            <div class="ibox-content">
+                <h1 class="no-margins">12</h1>
+                <!--<div class="stat-percent font-bold text-success">12th Aug <i class="fa fa-bolt"></i></div>-->
+                <!--<small>Started</small>-->
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6 no-margins">
+        <div class="ibox float-e-margins" id="variation-split">
+            <!--<div class="ibox-title text-center">-->
+                <!--&lt;!&ndash;<span class="label label-warning pull-right">Average</span>&ndash;&gt;-->
+                <!--<span>Variation Split</span>-->
+            <!--</div>-->
+        </div>
+    </div>
+</div>
+<div class="">
+    <div class="col-lg-12 no-margins">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <span class="label label-success pull-right">Daily</span>
+                <h5>Variation split</h5>
+            </div>
+            <div class="ibox-content">
+                <canvas id="daily-visitors" height="200px"></canvas>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+<script>
+    //daily visitors
+    var trafficSplitData = {{ traffic_data|json_encode|raw }};
+
+    var chartLogic = function(data) {
+
+        var dates = [];
+        var datasets = [];
+
+        return {
+            data: data,
+            totalVariationVisitors: {},
+            formattedData: null,
+            totalVisitors: 0,
+            manipulate: function() {
+                this.data.forEach(function (ele) {
+
+                    var date = ele['ga:date'].toString();
+                    dates[date.substring(6, 8) + "/" + date.substring(4, 6)] = true;
+                    if (!datasets[ele['ga:eventLabel']]) {
+                        datasets[ele['ga:eventLabel']] = []
+                    }
+                    datasets[ele['ga:eventLabel']].push(ele['ga:sessions']);
+
+                });
+
+                var data = {labels: Object.keys(dates), datasets: []};
+                var bgColor = ["#333",'#ef9e0a'];//["#26B99A", "#03586A"];
+                var count = 0;
+                for (var i in datasets) {
+                    this.totalVariationVisitors[i] = eval(datasets[i].join('+'));
+                    this.totalVisitors += this.totalVariationVisitors[i];
+                    data.datasets.push({
+                        fill:false,
+                        lineTension: 0.1,
+                        borderColor: bgColor[count],//"rgba(75,192,192,1)",
+                        borderCapStyle: 'butt',
+                        label: i.substring(i.lastIndexOf(":") + 1, i.length),
+                        backgroundColor: bgColor[count],
+                        data: datasets[i]
+                    });
+                    count++;
+                }
+                this.formattedData = data;
+            },
+            executeChart: function(id,type) {
+                var ctx = document.getElementById(id);
+                var self = this;
+                var mybarChart = new Chart(ctx, {
+                    type: type,
+                    data: self.formattedData,
+                    options: {
+                        fill: false,
+                        maintainAspectRatio: false,
+                        responsive: true,
+                        scales: {
+                            yAxes: [{
+                                ticks: {
+                                    beginAtZero: true
+                                }
+                            }]
+                        }
+                    }
+                });
+            }
+
+
+        }
+
+
+    }
+
+    if(trafficSplitData != null) {
+        var lineChart = new chartLogic(trafficSplitData);
+        lineChart.manipulate();
+        lineChart.executeChart('daily-visitors', 'line');
+        $('#total-visitors').html(lineChart.totalVisitors);
+
+
+        for (var vname in lineChart.totalVariationVisitors) {
+            var var_traffic = lineChart.totalVariationVisitors[vname];
+            $('#variation-split').append('<div class="ibox-content"> \
+                                        <div class="row"> \
+                                            <div class="col-xs-6"> \
+                                                <small class="stats-label">Name</small> \
+                                                <h4 class="v-label">' + vname + '</h4> \
+                                            </div> \
+                                            <div class="col-xs-6"> \
+                                                <small class="stats-label">Visitors / %</small> \
+                                                <h4>' + var_traffic + ' / ' + (var_traffic * 100 / lineChart.totalVisitors).toFixed(2) + '%</h4> \
+                                            </div> \
+                                        </div> \
+                                    </div>')
+        }
+    }
+</script>
+
+<style>
+
+</style>

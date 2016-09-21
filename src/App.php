@@ -38,6 +38,17 @@ $app->register(new RedBeanServiceProvider());
 $app->register(new Silex\Provider\TwigServiceProvider(), array(
     'twig.path' => __DIR__.'/templates',
 ));
+$app->register(new \Euskadi31\Silex\Provider\CacheServiceProvider, [
+    'cache.options' => [
+        'default' => [
+            'driver' => 'apc'
+        ],
+        'file' => [
+            'driver' => 'filesystem',
+            'directory' => __DIR__.'/cache'
+        ]
+    ]
+]);
 
 $app['twig']->addGlobal('base_path', '/');
 $app['twig']->addExtension(new Twig_Extension_Debug());

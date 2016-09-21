@@ -28,6 +28,7 @@ $app['controllers']->before(function (Request $request) {
 $app->mount('/dashboard', $app['DashboardController']);
 
 $app->mount('/analytics', $app['AnalyticsController']);
+$app->mount('/reporting', $app['ReportingController']);
 
 $app->mount('/goal', $app['GoalController']);
 

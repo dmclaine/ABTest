@@ -35,11 +35,16 @@ class AnalyticsService
 
     function getAuthData($campaign_id)
     {
-        $authData =  $this->analyticsModel->getAuthData($campaign_id);
-        if($authData === null) {
-            return array();
+        static $data = null;
+        if ($data === null) {
+            $authData =  $this->analyticsModel->getAuthData($campaign_id);
+            if($authData === null) {
+                return array();
+            }
+            $data =  array_merge($authData, $this->validateAuthData($authData));
         }
-        return array_merge($authData, $this->validateAuthData($authData));
+        return $data;
+
     }
 
     function removeAnalytics($campaign_id)
@@ -133,64 +138,108 @@ class AnalyticsService
         return $userInfo = $this->oauth->userinfo->get();
     }
 
-    function getEventProperty($data = array())
+    function getEventProperty()
     {
-        $params = array(
-            'dimensions' => $data['dimensions'] //'ga:eventAction',
-            //'ga:eventCategory=='.$category.';ga:eventAction=='.$action,
-        );
-        if(isset($data['filter']))
-        {
-            $params['filter'] = $data['filter'];
-        }
+
+    }
+
+    function analyticsRequest($data = array())
+    {
+        // Create the ReportRequest object.
+        $request = new \Google_Service_AnalyticsReporting_ReportRequest();
+
         $authData = $this->getAuthData($data['campaign_id']);
+
+        $request->setViewId($authData['profile']);
 
         $this->client->setAccessToken($authData['access_token']);
 
-        //try
-
-        // Replace with your view ID, for example XXXX.
-        $VIEW_ID = "<REPLACE_WITH_VIEW_ID>";
-
         // Create the DateRange object.
         $dateRange = new \Google_Service_AnalyticsReporting_DateRange();
-        $dateRange->setStartDate("7daysAgo");
-        $dateRange->setEndDate("today");
+        $dateRange->setStartDate($this->app['session']->get('campaign_start_date'));
+        $dateRange->setEndDate($this->app['session']->get('campaign_end_date'));
+        $request->setDateRanges($dateRange);
 
         // Create the Metrics object.
-        $sessions = new \Google_Service_AnalyticsReporting_Metric();
-        $sessions->setExpression("ga:sessions");
-        $sessions->setAlias("sessions");
+        if(isset($data['metrics']) && is_array($data['metrics'])) {
+            $metricsArr = array();
+            foreach($data['metrics'] as $idx => $metric) {
+                $metricsArr[$idx] = new \Google_Service_AnalyticsReporting_Metric();
+                $metricsArr[$idx]->setExpression($metric);
+                //$sessions->setAlias("sessions");
+            }
+            $request->setMetrics($metricsArr);
+        }
 
+        if(isset($data['sort']) && is_array($data['sort'])) {
+            $order = new \Google_Service_AnalyticsReporting_OrderBy();
+            $order->setFieldName($data['sort']['name']);
+            $order->setSortOrder($data['sort']['order']);
+            $request->setOrderBys($order);
+        }
         // Create the Dimensions object.
-        $dimensions = new \Google_Service_AnalyticsReporting_Dimension();
-        $dimensions->setName("ga:eventCategory");
+        if(isset($data['dimensions']) && is_array($data['dimensions'])) {
+            $dimensionsArr = array();
+            foreach($data['dimensions'] as $idx => $dimension) {
+                $dimensionsArr[$idx] = new \Google_Service_AnalyticsReporting_Dimension();
+                $dimensionsArr[$idx]->setName($dimension);
+                //$sessions->setAlias("sessions");
+            }
 
-        // Create the ReportRequest object.
-        $request = new \Google_Service_AnalyticsReporting_ReportRequest();
-        $request->setViewId('119394431');
-        $request->setDateRanges($dateRange);
-        $request->setMetrics(array($sessions));
-        $request->setDimensions(array($dimensions));
+            $request->setDimensions($dimensionsArr);
+        }
+
+        // Create the Sequence object.
+        if(isset($data['sequence'])) {
+
+            $segment = new \Google_Service_AnalyticsReporting_Segment();
+            $segment->setSegmentId($data['sequence']);
+            $request->setSegments($segment);
+        }
+
+        // Create the Filter object.
+        if(isset($data['filters']) && $data['filters'] != '') {
+            $request->setFiltersExpression($data['filters']);
+        }
+
 
         $body = new \Google_Service_AnalyticsReporting_GetReportsRequest();
         $body->setReportRequests( array( $request) );
-        $body = $this->analytics->reports->batchGet( $body );
+        $data = $this->analyticsReporting->reports->batchGet( $body );
+        return $this->formatReport($data);
+    }
 
-        //end try
-        $events = $this->analytics->data_ga->get('ga:'.$authData['account'], '30daysAgo', 'today','ga:sessions');
+    function formatReport($reports) {
 
-        $out = array('labels' => array());
+        $data = array();
+        for ( $reportIndex = 0; $reportIndex < count( $reports ); $reportIndex++ ) {
+            $report = $reports[ $reportIndex ];
+            $header = $report->getColumnHeader();
+            $dimensionHeaders = $header->getDimensions();
+            $metricHeaders = $header->getMetricHeader()->getMetricHeaderEntries();
+            $rows = $report->getData()->getRows();
 
-        $rows = $events->getRows();
-print_r($rows);
-        if(isset($rows))
-        {
-            foreach($events['rows'] as $event)
-            {
-                $out['labels'][$event[0]] = $event[0];
+            for ( $rowIndex = 0; $rowIndex < count($rows); $rowIndex++) {
+                $data[$rowIndex] = array();
+                $row = $rows[ $rowIndex ];
+                $dimensions = $row->getDimensions();
+                $metrics = $row->getMetrics();
+                for ($i = 0; $i < count($dimensionHeaders) && $i < count($dimensions); $i++) {
+                    //print($dimensionHeaders[$i] . "-: " . $dimensions[$i] . "\n");
+                    $data[$rowIndex][$dimensionHeaders[$i]] = $dimensions[$i];
+                }
+
+                for ($j = 0; $j < count( $metricHeaders ) && $j < count( $metrics ); $j++) {
+                    $entry = $metricHeaders[$j];
+                    $values = $metrics[$j];
+                    for ( $valueIndex = 0; $valueIndex < count( $values->getValues() ); $valueIndex++ ) {
+                        $value = $values->getValues()[ $valueIndex ];
+                        //print($entry->getName() . ": " . $value . "\n");
+                        $data[$rowIndex][$entry->getName()] = $value;
+                    }
+                }
             }
         }
-        return ($data['format'] == 'array') ? $out : json_encode($out);
+        return $data;
     }
 }

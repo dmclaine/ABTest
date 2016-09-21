@@ -27,6 +27,11 @@ class CampaignService
         return $this->campaignModel->save($data);
     }
 
+    public function isAnalyticsConnected($campaign_id)
+    {
+        return $this->campaignModel->isAnalyticsConnected($campaign_id);
+    }
+
     public function getCampaignDataByID($id)
     {
         return $this->formatCampaign($this->campaignModel->getCampaignDataByID($id));
@@ -35,12 +40,26 @@ class CampaignService
     public function getAllCampaigns($type="")
     {
         return $campaigns = $this->campaignModel->getAllCampaigns($type);
-        //return $this->formatCampaign($campaigns);
+    }
+
+    public function getRunningCampaigns()
+    {
+        return $campaigns = $this->campaignModel->getRunningCampaigns();
     }
 
     public function powerCampaign($status)
     {
         return $this->campaignModel->powerCampaign($status);
+    }
+
+    public function setStartDate($data)
+    {
+        $this->campaignModel->setStartDate($data);
+    }
+
+    public function getStartDate($campaign_id)
+    {
+        return $this->campaignModel->getStartData($campaign_id);
     }
 
     private function formatCampaign($campaigns)
