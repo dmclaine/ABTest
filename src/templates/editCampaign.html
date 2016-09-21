@@ -3,19 +3,25 @@
 
 {% block breadcrumb %}
 
-<li>
-    <i class="fa fa-home"></i>&nbsp;<a href="dashboard.html">All Campaigns</a>&nbsp;&nbsp;<i
-        class="fa fa-angle-right"></i>&nbsp;&nbsp;
-</li>
-<li class="hidden">
-    <a href="#">Pages</a>&nbsp;&nbsp;<i class="fa fa-angle-right"></i>&nbsp;&nbsp;
-</li>
+    <li>
+        <i class="fa fa-home"></i>&nbsp;<a href="/dashboard/campaigns">All Campaigns</a>&nbsp;&nbsp;<i
+            class="fa fa-angle-right"></i>&nbsp;&nbsp;
+    </li>
+    <li class="hidden">
+        <a href="#">Pages</a>&nbsp;&nbsp;<i class="fa fa-angle-right"></i>&nbsp;&nbsp;
+    </li>
 
-<li class="active">{{ data.campaign_name }}</li>
+    <li class="active"><input type="text" class="form-control" id="campaign_name" value="{{ data.campaign_name }}"></li>
+    <button id="campaign-save-btn" type="submit" class="btn btn-dark"><i class="fa fa-floppy-o"></i> Save</button>
+
 
 {% endblock %}
-
-
+{% block powerswitch %}
+<span class="pull-right" style="margin-top:16px">
+     {% set campaign = data %}
+     {% include 'partials/powerswitch.html' %}
+</span>
+{% endblock %}
 {% block content %}
 {% for message in app.session.getFlashBag.get('msg') %}
 {{ message }}
@@ -41,7 +47,7 @@
 
             <div class="col-sm-12 col-md-10">
                 <!-- Tab panes -->
-                <div class="tab-content row neutral pdn">
+                <div class="tab-content row neutral pdn {{ connection }}">
                     <div class="tab-pane active" id="overview-tab">
                         <div class="panel panel-white">
                             <div class="panel-heading">Connection</div>
@@ -49,21 +55,29 @@
                                 <img src="/images/ajax-loader.gif" alt="">
                             </div>
                         </div>
-                        <div class="panel panel-white">
-                            <div class="panel-heading">Report</div>
-                            <div class="panel-body" id="report-overview">
-                                {% include 'partials/reporting-traffic.html' %}
+                        <div class="analytics-connected {{ (connection == 'false') ? ' hide':'' }}">
+                            <div class="form-group {{ (mode=='new')?'hide'}}">
+                                <label class="col-lg-offset-6 col-sm-3 control-label">Report Range</label>
+                                <div class="col-md-3 controls">
+                                    <div class="row">
+                                        <div class="col-xs-12">
+                                            <input type="text" class="form-control" id="reportrange" name="daterange" data-start="{{ campaign_start_date }}" data-end="{{ campaign_end_date }}" value="{{ campaign_start_date }} - {{ campaign_end_date }}" />
+                                            <i class="glyphicon glyphicon-calendar fa fa-calendar daterangeicon"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="panel panel-white {{ (mode=='new')?'hide' }}">
+                                <div class="panel-heading">Traffic Split</div>
+                                <div class="panel-body" id="report-overview">
+                                    <img src="/images/ajax-loader.gif" alt="">
+                                </div>
+                            </div>
+                            <div id="report-goals">
+                                {% include 'partials/reporting-goals-loading.html' %}
                             </div>
                         </div>
-                        <div id="report-goals">
-                            {% include 'partials/reporting-goals-loading.html' %}
-                        </div>
-                        <!--<div class="panel panel-white">-->
-                            <!--<div class="panel-heading">Goal Reports <a href="#" id="new-goal-btn" class="btn btn-primary btn-xs pull-right">New Goal</a></div>-->
-                            <!--<div class="panel-body" id="report-goals">-->
-                                <!--Loading..-->
-                            <!--</div>-->
-                        <!--</div>-->
                     </div>
                     <div class="tab-pane" id="variation-tab">
                         {% include 'partials/variations.html' %}
@@ -73,16 +87,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-10 col-md-offset-2">
-                <button id="campaign-save-btn" type="submit" class="btn btn-primary">Save</button>
-            </div>
         </div>
-
-        <!--<div class="row mbl pll prl">-->
-            <!--<div class="col-md-10 col-md-offset-2">-->
-                <!--<button id="campaign-save-btn" type="submit" class="btn btn-primary">Save</button>-->
-            <!--</div>-->
-        <!--</div>-->
     </form>
 </div>
 <input id="campaign-id" value="{{ id }}" type="hidden">

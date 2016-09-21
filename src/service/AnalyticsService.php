@@ -156,8 +156,8 @@ class AnalyticsService
 
         // Create the DateRange object.
         $dateRange = new \Google_Service_AnalyticsReporting_DateRange();
-        $dateRange->setStartDate("14daysAgo");
-        $dateRange->setEndDate("today");
+        $dateRange->setStartDate($this->app['session']->get('campaign_start_date'));
+        $dateRange->setEndDate($this->app['session']->get('campaign_end_date'));
         $request->setDateRanges($dateRange);
 
         // Create the Metrics object.

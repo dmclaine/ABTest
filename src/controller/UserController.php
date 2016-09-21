@@ -33,7 +33,7 @@ class UserController implements ControllerProviderInterface
             if($out['success'] == 1)
             {
                 $app['session']->set('user',$out);
-                return $app->redirect('/dashboard');
+                return $app->redirect('/dashboard/campaigns');
             }
             return $app->json($out);
         };

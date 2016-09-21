@@ -60,10 +60,49 @@ class GoalService
         );
     }
 
-    function calculateSignificance($data)
+    function calculateSignificance($data,$campaign_id)
     {
-        $calculator = new Calculator();
-        //return $calculator->calculate($control_number_visitors, $control_number_conversions, $treatment_number_visitors, $treatment_number_conversions);
+        $report = array();
+        $significance = array();
+        foreach($data['report'] as $key => $value)
+        {
+            if(!isset($report[$value['ga:eventLabel']]))
+            {
+                $report[$value['ga:eventLabel']] = array(
+                    'total_traffic' => 0,
+                    'conversions' => 0
+                );
+            }
+            $report[$value['ga:eventLabel']]['conversions'] += (int) $value['ga:sessions'];
+        }
+
+
+
+        /* Look for control and then unset it */
+        $control = $report['ABTest-'.$campaign_id.':Control'];
+
+        $control_number_conversions = $control['conversions'];
+
+        foreach($data['participants'] as $key => $value)
+        {
+            $data['participants'][$value['ga:eventLabel']] = $value['ga:sessions'];
+            $report[$value['ga:eventLabel']]['total_traffic'] = $value['ga:sessions'];
+            unset($data['participants'][$key]);
+        }
+        $control_number_visitors = (int) $data['participants']['ABTest-'.$campaign_id.':Control'];
+        unset($data['participants']['ABTest-'.$campaign_id.':Control']);
+        //unset($report['ABTest-'.$campaign_id.':Control']);
+        foreach($report as $key => $value)
+        {
+            $treatment_number_visitors = (int) $value['total_traffic'];
+            $treatment_number_conversions = (int) $value['conversions'];
+            $calculator = new Calculator();
+            $significance[$key] =  $calculator->calculate($control_number_visitors, $control_number_conversions, $treatment_number_visitors, $treatment_number_conversions);
+
+        }
+
+        return $significance;
+
     }
 }
 

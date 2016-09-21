@@ -8,11 +8,14 @@
 
     var init = function () {
 
+
         $('.tagsinput').tagsinput({
             tagClass: function(item) {
                 return 'label label-light';
             }
         });
+
+        applySidebarEvents();
 
         applyViewPortClass();
         /**
@@ -26,9 +29,35 @@
          */
         campaignSaveEvents();
 
+
+
         return {
             editCampaignPageEvents: ecpe
         }
+    }
+
+    var applySidebarEvents = function() {
+        var sidebar_status = localStorage.getItem('sidebar-slim');
+        if(sidebar_status !== null && sidebar_status =="false") {
+            $('body').removeClass('sidebar-slim');
+        }
+        $('.sidebar-toggle').click(function(){
+            $('body').toggleClass('sidebar-slim');
+            if($('body').hasClass('sidebar-slim')) {
+                localStorage.setItem('sidebar-slim',true);
+            }else{
+                localStorage.setItem('sidebar-slim',false);
+            }
+        })
+
+
+        $('#title-breadcrumb-option-demo').scrollToFixed();
+        $('.bottomfixed').scrollToFixed( {
+            bottom: 0,
+            width: 250
+        });
+        $('#sidebar').scrollToFixed({top: '50px'});
+
     }
 
     var editCampaignPageEvents = function() {
@@ -226,6 +255,36 @@
 
     var overviewTabEvents = function() {
 
+        $(document).on('click','.daterangeicon',function(){
+            $('#reportrange').trigger('click');
+        });
+        $rr  = $('#reportrange');
+
+        console.log($rr.data('start'))
+        console.log($rr.data('end'))
+        $rr.daterangepicker({
+            "autoApply": true,
+            "startDate": moment($rr.data('start')).format('MM/DD/YYYY'),
+            "endDate":moment($rr.data('end')).format('MM/DD/YYYY'),
+            "opens": "left"
+        }, function(start, end, label) {
+
+            console.log("New date range selected: " + start.format('YYYY-MM-DD') + " to " + end.format('YYYY-MM-DD') + " (predefined range: " + label + ")");
+            $.ajax({
+                url: '/reporting/set-start-date',
+                data: {
+                    campaign_start_date: start.format('YYYY-MM-DD'),
+                    campaign_end_date: end.format('YYYY-MM-DD')
+                },
+                method: 'POST',
+                success: function() {
+                    getTrafficChart();
+                    getGoalsChart();
+                }
+            })
+
+        });
+
         $(document).on('click','#toggle-account-details-btn',function(){
 
             $('#account-details').toggleClass('hide');
@@ -275,7 +334,7 @@
             saveGoal();
         })
 
-        function getVariationChart()
+        function getTrafficChart()
         {
             messageBox('Loading Traffic Report..');
             $.get('/reporting/traffic-report', function(data) {
@@ -294,7 +353,7 @@
 
         function requestContent()
         {
-            var campaign_id = $('#campaign-id').val();
+            var campaign_id = $('#campaign-id').val() || 0;
             messageBox('Loading..');
             $.get('/analytics/display/' + campaign_id, function(data){
                 $('#overview-tab #analytics-connection.panel-body').html(data);
@@ -302,7 +361,7 @@
 
                 if($('#disconnect-analytics').length > 0) {
                     //get variation data
-                    getVariationChart();
+                    getTrafficChart();
                     getGoalsChart();
                 }
             })
@@ -765,6 +824,7 @@
             data.analytics = analyticsData();
             //data.goals = goalsData();
             data.id = $("#campaign-id").val();
+            data.name = $("#campaign_name").val();
             data.traffic = $("#allowed-traffic").val();
             return data;
         }
@@ -783,7 +843,9 @@
                 // contentType: 'application/json; charset=utf-8',
                 data: {data: allData},
                 success: function (res) {
-                    console.log(res);
+                    if(allData.id == "") {
+                        document.location = '/dashboard/campaign/edit/' + res.data.campaign_id;
+                    }
                     messageBox('Saved!');
                 }
             })

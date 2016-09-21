@@ -10,6 +10,7 @@ class ReportingController implements ControllerProviderInterface
 {
     private $analyticsService;
     private $app;
+    private $visitors;
 
     public function __construct(Application $app)
     {
@@ -29,6 +30,7 @@ class ReportingController implements ControllerProviderInterface
         });
         $controllers->get('/traffic-report', $this->displayTrafficReport());
         $controllers->get('/goals-report', $this->displayGoalReports());
+        $controllers->post('/set-start-date', $this->setStartDate());
 
         return $controllers;
     }
@@ -37,25 +39,18 @@ class ReportingController implements ControllerProviderInterface
     {
         return function (Application $app, Request $request) {
             $campaign_id = $app['session']->get('campaign_id');
-//            if ($app['cache']->contains('goal-'.$campaign_id)) {
-//                $body = $app['cache']->fetch('goal-'.$campaign_id);
-//            } else {
 
-                $goals = $this->goalService->getAllGoals($campaign_id);
-                $output = array();
-                $significance = array();
-                foreach($goals as $goal){
-                    $output[$goal['id']] = $this->getGoalReport($goal);
-                    //$significance[$goal['id']] = $this->goalService->calculateSignificance($output[$goal['id']]);
-                }
-               // print_r($significance);
-                $body = $app['twig']->render('partials/reporting-goals.html',array(
-                    'goals' => $goals,
-                    'goalreport' => $output
-                ));
-                //$app['cache']->save('goal-'.$campaign_id, $body,20);
-            //}
+            $goals = $this->goalService->getAllGoals($campaign_id);
+            $output = array();
+            foreach($goals as $goal){
+                $output[$goal['id']] = $this->getGoalReport($goal);
+                $output[$goal['id']]['significance'] = $this->goalService->calculateSignificance($output[$goal['id']],$campaign_id);
+            }
 
+            $body = $app['twig']->render('partials/reporting-goals.html',array(
+                'goals' => $goals,
+                'goalreport' => $output
+            ));
             return new Response($body, 200, array('Cache-Control' => 's-maxage=3600, public'));
         };
     }
@@ -63,7 +58,7 @@ class ReportingController implements ControllerProviderInterface
     private function getGoalReport($goal)
     {
         $filters = $this->getFilters($goal);
-
+        $total_visitors = $this->totalVisitorsInGoal($filters,$goal);
         if($goal['action'] == 'event') {
 
             $sequence = "";
@@ -110,7 +105,29 @@ class ReportingController implements ControllerProviderInterface
 
         }
 
+        $data = array(
+            'report' => $this->analyticsService->analyticsRequest($params),
+            'participants' => $total_visitors
+        );
+        return $data;
+    }
+
+    private function totalVisitorsInGoal($filters, $goal)
+    {
+        if(isset($this->visitors[$goal['page_path']])) {
+            return $this->visitors[$goal['page_path']];
+        }
+
+        $sequence = 'sessions::sequence::ga:landingPagePath=='.$goal['page_path'];
+        $params = array(
+            'metrics'=> array('ga:sessions'),
+            'dimensions'=> array('ga:eventLabel','ga:segment'),
+            'filters' => $filters,
+            'sequence' => $sequence,
+            'campaign_id' => $goal['campaign_id']
+        );
         $data = $this->analyticsService->analyticsRequest($params);
+        $this->visitors[$goal['page_path']] = $data;
         return $data;
     }
 
@@ -172,6 +189,17 @@ class ReportingController implements ControllerProviderInterface
                 $app['cache']->save('traffic-'.$campaign_id, $body,20);
             }
             return $body;//new Response($body, 200, array('Cache-Control' => 's-maxage=3600, public'));
+        };
+    }
+
+    public function setStartDate()
+    {
+        return function (Application $app, Request $request) {
+            $r = $request->get('campaign_start_date');
+                $app['session']->set('campaign_start_date',$request->get('campaign_start_date'));
+                $app['session']->set('campaign_end_date',$request->get('campaign_end_date'));
+                return $app->json(['ret' => false, 'data' => ': ']);
+
         };
     }
 }

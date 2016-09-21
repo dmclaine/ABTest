@@ -12,7 +12,7 @@ class CampaignModel
     }
     public function getCampaignDataByID($id)
     {
-        $data = R::getRow("SELECT * FROM campaigns c INNER JOIN rules r ON c.id = r.campaign_id WHERE c.id=$id");
+        $data = R::getRow("SELECT *,c.id as campaign_id FROM campaigns c INNER JOIN rules r ON c.id = r.campaign_id WHERE c.id=$id");
         foreach($data as $key => $value)
         {
             if($this->is_serialized($value)) {
@@ -23,9 +23,15 @@ class CampaignModel
         return $data;
     }
 
+    public function isAnalyticsConnected($campaign_id)
+    {
+        $data = R::getRow("SELECT * FROM analytics WHERE campaign_id = ?", array($campaign_id));
+        return ($data) ? 'true': 'false';
+    }
+
     public function getAllCampaigns($type="")
     {
-        $sql = 'SELECT * FROM campaigns';
+        $sql = 'SELECT *, id as campaign_id FROM campaigns';
         if($type != "")
         {
             $sql .= " WHERE flag = '$type'";
@@ -44,6 +50,7 @@ class CampaignModel
         }
         $campaign->variations = serialize($variations_data);
         $campaign->traffic = $data['traffic'];
+        $campaign->campaign_name = $data['name'];
         $id = R::store($campaign);
 
         $campaign_id = (isset($data['id'])) ? $data['id'] : $id;
@@ -76,13 +83,28 @@ class CampaignModel
             R::store($analytics);
         }
         return array(
-            'success' => "from model"
+            'campaign_id' => $id
         );
+    }
+
+    public function getRunningCampaigns()
+    {
+        return R::getAll("SELECT id, campaign_name FROM campaigns WHERE status=1");
     }
 
     public function powerCampaign($data)
     {
         return R::exec('UPDATE campaigns SET status=? WHERE id=?', array($data['status'],$data['campaign_id']));
+    }
+
+    public function setStartDate($data)
+    {
+        return R::exec('UPDATE campaigns SET start_date=? WHERE id=?', array($data['start_date'], $data['campaign_id']));
+    }
+
+    public function getStartData($campaign_id)
+    {
+        return R::getCell('SELECT start_date FROM campaigns WHERE id=?', array($campaign_id));
     }
 
     function is_serialized( $data, $strict = true ) {

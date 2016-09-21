@@ -776,13 +776,14 @@ hr {
     }
 }
 .page-title-breadcrumb {
-    padding: 10px 20px;
+    padding: 0px 20px;
     background: #ffffff;
     -webkit-box-shadow: 0 2px 2px rgba(0, 0, 0, 0.05), 0 1px 0 rgba(0, 0, 0, 0.05);
     box-shadow: 0 2px 2px rgba(0, 0, 0, 0.05), 0 1px 0 rgba(0, 0, 0, 0.05);
     clear: both;
     border-bottom: 5px solid #e5e5e5 !important;
     box-shadow: none !important;
+    height:56px;
 }
 .page-title-breadcrumb .page-header {
     margin: 0;
@@ -835,6 +836,9 @@ hr {
     background: #3C3C3C;
     min-height: 100%;
 }
+.xs #sidebar .bottomfixed {
+    display: none;
+}
 .navbar-static-side {
     transition: 0.3s all linear;
 }
@@ -853,7 +857,7 @@ hr {
 }
 
 .navbar-static-side ul li.active a {
-    background: #3e77ab; /* Old browsers */
+    background: #303030; /* Old browsers */
     transition: 0.2s all ease-in-out;
     outline: none;
     color:#FFF;
@@ -896,7 +900,7 @@ hr {
 }
 .navbar-static-side ul li .nav-second-level li a {
     padding: 15px 15px 15px 40px;
-    background: #37455f;
+    background: transparent;
     color: #efefef;
 }
 .navbar-static-side ul li .nav-second-level li a span.submenu-title {
@@ -1555,9 +1559,11 @@ ul.nav.nav-tabs li a {
     padding: 10px 20px;
 }
 ul.nav.nav-tabs li.active > a {
-    background: #dc6767;
-    color: #fff;
+    /*background: #dc6767;*/
+    /*color: #fff;*/
+    color: #575957;
     border: 0px;
+    font-weight: bold;
 }
 .box-placeholder {
     margin-bottom: 15px;
@@ -3162,8 +3168,6 @@ a.list-group-item.active > .badge,
     border: 1px solid #ededed !important;
     color: #7c7a7a;
     background: #f9f9f9;
-    text-shadow: 0px 1px 1px #b7b6b6;
-    text-transform: uppercase;
 }
 .panel.panel-white > .panel-footer {
     border-top: 1px solid #faf9fb;
@@ -3787,7 +3791,7 @@ fieldset[disabled] .btn-grey.active {
 }
 .btn-dark {
     color: #ffffff;
-    background-color: #594857;
+    background-color: #3e3d3e;
     border-color: #534351;
 }
 .btn-dark:hover,
@@ -6087,7 +6091,7 @@ ul.nav-variations .dropdown-menu li {
     margin-bottom: 25px;
     margin-top: 0;
     padding: 0;
-    border: 1px solid #eee;
+    border: 0px solid #eee;
 }
 .ibox-title {
     -moz-border-bottom-colors: none;
@@ -6098,7 +6102,7 @@ ul.nav-variations .dropdown-menu li {
     border-color: #e7eaec;
     border-image: none;
     border-style: solid solid none;
-    border-width: 3px 0 0;
+    border-width: 0px 0 0;
     color: inherit;
     margin-bottom: 0;
     padding: 14px 15px 7px;
@@ -6131,7 +6135,10 @@ ul.nav-variations .dropdown-menu li {
     border-color: #e7eaec;
     border-image: none;
     border-style: solid solid none;
-    border-width: 1px 0;
+    border-width: 0px 0;
+}
+.ibox .ibox-content:nth-child(2) {
+    border-top:1px dotted #EEE;
 }
 .font-bold {
     font-weight: 600;
