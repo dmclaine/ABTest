@@ -37,15 +37,26 @@ class CampaignService
         return $this->formatCampaign($this->campaignModel->getCampaignDataByID($id));
     }
 
-    public function getAllCampaigns($type="")
+    public function getAllCampaigns($data=array())
     {
-        return $campaigns = $this->campaignModel->getAllCampaigns($type);
+        return $campaigns = $this->campaignModel->getAllCampaigns($data);
     }
 
     public function getRunningCampaigns()
     {
         return $campaigns = $this->campaignModel->getRunningCampaigns();
     }
+
+    public function isCampaignRunning($campaign_id)
+    {
+        return $this->campaignModel->isCampaignRunning($campaign_id);
+    }
+
+    public function doArchive($campaign_ids)
+    {
+        return $this->campaignModel->doArchive($campaign_ids);
+    }
+
 
     public function powerCampaign($status)
     {
@@ -70,8 +81,8 @@ class CampaignService
         $campaigns['browser'] = json_decode($campaigns['browser'],true);
         $campaigns['geographic'] = json_decode($campaigns['geographic'],true);
         $campaigns['cookie'] = json_decode($campaigns['cookie'],true);
-        $campaigns['ip'] = json_decode($campaigns['cookie'],true);
-        $campaigns['language'] = json_decode($campaigns['cookie'],true);
+        $campaigns['ip'] = json_decode($campaigns['ip'],true);
+        $campaigns['language'] = json_decode($campaigns['language'],true);
         $campaigns['script'] = json_decode($campaigns['script'],true);
         return $campaigns;
     }

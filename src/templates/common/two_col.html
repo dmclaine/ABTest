@@ -30,65 +30,8 @@
     <!-- Include Date Range Picker -->
     <script type="text/javascript" src="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.js"></script>
     <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css" />
-    <style>
-        #page-wrapper {
-            transition: none;
-            z-index:1;
-        }
-        #sidebar  {
-            transition: none;
-            z-index: 0!important;
-        }
-        .sidebar-slim #page-wrapper {
-            margin:0 0 0 46px;
-            /*transition: 0.3s all linear;*/
-        }
-        .sidebar-slim #sidebar {
-            z-index: 0;
-        }
-        #topbar .navbar-header {
-            /*transition: 0.3s all linear;*/
-        }
-        .sidebar-slim #topbar .navbar-header {
-            width:46px;
-        }
-        .logo-text-icon {
-            display: none;
-            /*transition: 0.3s all linear;*/
-        }
-        .sidebar-slim #topbar .navbar-header #logo span.logo-text {
-            display: none;
-        }
-        .sidebar-slim #topbar .navbar-header #logo span.logo-text-icon {
-            display: block;
-        }
-        button.sidebar-toggle {
-            padding: 15px 10px;
-        }
-        .sidebar-slim button.sidebar-toggle {
-            /*transition: 0.3s all linear;*/
-            display: none;
-        }
-        #report-goals .panel {
-            border:none;
-        }
-
-        #report-goals .panel.custom-panel {
-            border-bottom: 4px solid #f3f3f3;
-        }
-        .daterangepicker .input-mini {
-            width:100% !important;
-        }
-        .daterangeicon {
-            position: absolute;
-            bottom: 10px;
-            right: 24px;
-            top: auto;
-            cursor: pointer;
-        }
-    </style>
 </head>
-<body class="sidebar-slim">
+<body class="sidebar-slim {{body_class}}">
 <div>
     <div id="message-box">This is a box</div>
     <!--BEGIN BACK TO TOP-->
@@ -99,9 +42,9 @@
         <nav id="topbar" role="navigation" style="margin-bottom: 0;" data-step="3"
              class="navbar navbar-default navbar-static-top">
             <div class="navbar-header">
-                <button type="button" data-toggle="collapse" data-target=".sidebar-collapse" class="navbar-toggle"><span
-                        class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span
-                        class="icon-bar"></span><span class="icon-bar"></span></button>
+                <!--<button type="button" data-toggle="collapse" data-target=".sidebar-collapse" class="navbar-toggle"><span-->
+                        <!--class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span-->
+                        <!--class="icon-bar"></span><span class="icon-bar"></span></button>-->
                 <a id="logo" href="javascript:void(0);" class="navbar-brand"><span class="fa fa-rocket"></span><span
                         class="logo-text">ABTest</span><span class="logo-text-icon">
                     <i class="fa fa-align-justify sidebar-toggle" aria-hidden="true"></i>
@@ -151,13 +94,12 @@
             </div>
 
 
-            <a href="" class="bottomfixed" style="bottom: 50px;
+            <a href="/dashboard/snippet" class="bottomfixed" style="bottom: 50px;
                 position: absolute;
                 padding: 15px 17px;
                 color: #FFF;
                 width:250px;">
-                <i class="fa fa-send-o fa-fw"></i>
-                <span class="menu-title" style="margin-left: 10px;">Snippet</span>
+                <i class="fa fa-send-o fa-fw"></i> &nbsp;&nbsp;&nbsp;Snippet
             </a>
 
         </nav>

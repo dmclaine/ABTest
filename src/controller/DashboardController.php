@@ -25,16 +25,37 @@ class DashboardController implements ControllerProviderInterface
                 return $app->redirect('/');
             }
         });
+        $controllers->get('/snippet', $this->displaySnippet());
         $controllers->get('/campaign/new', $this->newCampaign());
         $controllers->get('/campaigns', $this->campaigns());
         $controllers->get('/campaigns/archived', $this->archivedCampaigns());
+        $controllers->post('/campaigns/do-archive', $this->doArchive());
         $controllers->get('/campaign/edit/{id}', $this->editCampaign());
        // $controllers->get('/campaign/analytics/{id}', $this->analytics());
-        $controllers->get('/', $this->display());
+        //$controllers->get('/', $this->display());
 
         $runningCampaigns = $this->campaignService->getRunningCampaigns();
         $app['twig']->addGlobal('runningCampaigns',$runningCampaigns);
         return $controllers;
+    }
+
+    public function displaySnippet()
+    {
+        return function (Application $app, Request $request) {
+
+            $user = $app['session']->get('user');
+            if(!isset($user['account'])) {
+                return $app->json(['ret' => false, 'data' => 'Invalid']);
+            }
+            try {
+                return $app['twig']->render('snippet.html', array(
+                    'body_class' => 'snippet',
+                    'account_id' => $user['account']
+                ));
+            } catch (\Exception $e) {
+                return $app->json(['ret' => false, 'data' => 'error: ' . $e->getMessage()]);
+            }
+        };
     }
 
     public function newCampaign()
@@ -44,6 +65,8 @@ class DashboardController implements ControllerProviderInterface
                 return $app['twig']->render('editCampaign.html',array(
                     'page_title'=>'New Campaign',
                     'mode' => 'new',
+                    'connection' => 'false',
+                    'body_class' => 'new-campaign',
                     'data' => $this->defaultData()
                 ));
             } catch (\Exception $e) {
@@ -96,6 +119,7 @@ class DashboardController implements ControllerProviderInterface
                     'data' => $data,
                     'goals' => $goals,
                     'mode' => 'edit',
+                    'body_class' => 'edit-campaign',
                     'connection' => (string) $isConnected,
                     'campaign_start_date' => $app['session']->get('campaign_start_date'),
                     'campaign_end_date' => $app['session']->get('campaign_end_date')
@@ -111,10 +135,13 @@ class DashboardController implements ControllerProviderInterface
     {
         return function (Application $app, Request $request) {
             try {
-                $campaigns = $this->campaignService->getAllCampaigns();
+                $campaigns = $this->campaignService->getAllCampaigns(array(
+                    'archived' => 0
+                ));
 
                 return $app['twig']->render('campaigns.html',array(
                     'page_title'=>'Campaigns',
+                    'body_class' => 'campaigns',
                     'data' => $campaigns
                 ));
             } catch (\Exception $e) {
@@ -122,16 +149,33 @@ class DashboardController implements ControllerProviderInterface
             }
         };
 
+    }
+
+    public function doArchive()
+    {
+        return function (Application $app, Request $request) {
+            try {
+                $campaign_ids = $request->get('data');
+                $this->campaignService->doArchive($campaign_ids);
+                return $app->json(['ret' => false, 'flag' => true]);
+
+            } catch (\Exception $e) {
+                return $app->json(['ret' => false, 'data' => 'error: ' . $e->getMessage()]);
+            }
+        };
     }
 
     public function archivedCampaigns()
     {
         return function (Application $app, Request $request) {
             try {
-                $campaigns = $this->campaignService->getAllCampaigns('archived');
+                $campaigns = $this->campaignService->getAllCampaigns(array(
+                    'archived' => 1
+                ));
 
                 return $app['twig']->render('campaigns.html',array(
                     'page_title'=>'Archived Campaigns',
+                    'body_class' => 'archived-campaigns',
                     'data' => $campaigns
                 ));
             } catch (\Exception $e) {
@@ -139,16 +183,5 @@ class DashboardController implements ControllerProviderInterface
             }
         };
 
-    }
-    public function display()
-    {
-        return function (Application $app) {
-            try {
-               // $this->someService->someMethod();
-                return $app->json(['ret' => true, 'data' => 'success']);
-            } catch (\Exception $e) {
-                return $app->json(['ret' => false, 'data' => 'error: ' . $e->getMessage()]);
-            }
-        };
     }
 }

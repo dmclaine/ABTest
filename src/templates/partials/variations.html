@@ -3,14 +3,14 @@
         <!-- Nav tabs -->
         <ul class="nav nav-tabs nav-variations">
             {% for key, value in data.variations %}
-                <li class="{{ (key == 'control') ? 'active':'' }} dropdown nav-item"><a href="#{{ key }}" class="variationTab dropdown-toggle nav-link" data-variation="{{ key }}" data-toggle="tab">{{ value.name }} </a>
+                <li class="{{ (key == 'control') ? 'active':'' }} dropdown nav-item"><a href="#{{ key }}" {{value.paused}} data-paused="{{ (value.paused == 'true') ? 'true':'false' }}" class="variationTab dropdown-toggle nav-link" data-variation="{{ key }}" data-toggle="tab">{{ (value.paused == 'true' and key != 'control') ? '<i class="fa fa-pause"></i>' : '<i class="fa"></i>' }} {{ value.name }} </a>
                     <div class="dd"><span class="caret"></span></div>
                     <ul class="dropdown-menu">
                         {% if key != 'control' %}
                         <li><a href="#" class="duplicate-variation">Duplicate Variation</a></li>
                         <li><a href="#" class="rename-variation">Rename Variation</a></li>
                         <li><a href="#" id="remove-variation-btn" class="delete-variation">Delete Variation</a></li>
-                        <li><a href="#">Pause Variation</a></li>
+                        <li><a href="#" class="pause-variation {{ value.paused }}">{{ (value.paused == 'true') ? 'UnPause':'Pause' }} Variation</a></li>
                         {% endif %}
                         <li><a href="#" data-cid="{{ id }}" data-vid="{{ key }}" class="preview-variation">Preview Variation</a></li>
                     </ul>

@@ -21,18 +21,34 @@
         /**
          * Page Events
          */
-        campaignsPageEvents();
-        var ecpe = editCampaignPageEvents();
+        if($('body.new-campaign').length > 0 || $('body.edit-campaign').length > 0) {
+            var ecpe = editCampaignPageEvents();
 
-        /**
-         * Actions
-         */
-        campaignSaveEvents();
+            /**
+             * Actions
+             */
+            campaignSaveEvents();
+            return {
+                editCampaignPageEvents: ecpe
+            }
+        }
+
+        if($('body.campaigns').length > 0 || $('body.archived-campaigns').length >  0) {
+            campaignsPageEvents();
+        }
+
+        if($('body.snippet').length > 0) {
+            snippetPageEvents();
+        }
 
 
+    }
 
-        return {
-            editCampaignPageEvents: ecpe
+    var snippetPageEvents = function() {
+        if($('#snippet-editor').length > 0) {
+            editor = ace.edit('snippet-editor');
+            editor.setTheme("ace/theme/monokai");
+            editor.getSession().setMode('ace/mode/javascript');
         }
     }
 
@@ -57,6 +73,21 @@
             width: 250
         });
         $('#sidebar').scrollToFixed({top: '50px'});
+
+        function autoHide()
+        {
+            if(sidebar_status !== null) {
+                if ($(window).width() <= 768) {
+                    $('body').addClass('sidebar-slim')
+                } else {
+                    $('body').removeClass('sidebar-slim')
+                }
+            }
+        }
+
+        autoHide();
+
+        $(window).resize(autoHide);
 
     }
 
@@ -260,8 +291,7 @@
         });
         $rr  = $('#reportrange');
 
-        console.log($rr.data('start'))
-        console.log($rr.data('end'))
+
         $rr.daterangepicker({
             "autoApply": true,
             "startDate": moment($rr.data('start')).format('MM/DD/YYYY'),
@@ -329,6 +359,8 @@
                 messageBox('Goal Deleted');
             })
         });
+
+
 
         $(document).on('click','#new-goal-save-btn',function(){
             saveGoal();
@@ -430,6 +462,7 @@
     }
 
     var campaignsPageEvents = function() {
+
         var selectedCampaigns = {};
 
         $('input.custom-cb').iCheck({
@@ -440,6 +473,32 @@
         $('.campaign-row td').not('.cb').not('.running-switch-td').click(function(){
             document.location.href = $(this).parent().data('href');
         });
+
+        $('.campaign-archive').click(function(e){
+            e.preventDefault();
+            var $campaigns = $('.campaign-select-cb:checked');
+            var campaign_ids = [];
+            $campaigns.each(function(){
+                campaign_ids.push($(this).data('id'));
+            })
+
+            $.ajax({
+                url: '/dashboard/campaigns/do-archive',
+                data: {data: campaign_ids},
+                method: 'POST',
+                success: function(data) {
+                    if(data && data.flag) {
+                        location.reload();
+                    }
+                }
+            })
+
+        })
+
+        $('.campaign-duplicate').click(function(){
+            e.preventDefault();
+
+        })
 
         $('.campaign-select-cb').on('ifChecked', function(event){
 
@@ -541,6 +600,25 @@
             window.open(url + '?preview=1&cid='+preview_cid+'&vid='+preview_vid);
             $('#modal-preview-variation').modal('hide');
         })
+
+        $(document).on('click','.pause-variation', function(e){
+            e.preventDefault();
+            var $selected = $(this).parents('li').find('.variationTab');
+
+            var status = ($selected.attr('data-paused') == "true") ? "false":"true";
+
+            if(status == 'true') {
+                $selected.find('i').attr('class','fa fa-pause');
+                $(this).text('Unpause Variation')
+            }else{
+                $selected.find('i').attr('class','');
+                $(this).text('Pause Variation')
+            }
+            $selected.attr('data-paused', status);
+
+            //save the campaign
+            $("#campaign-save-btn").trigger('click');
+        });
 
         $(document).on('click','.delete-variation', function(e){
             e.preventDefault();
@@ -791,7 +869,8 @@
                     css: cssEditor.getValue().trim(),
                     name: $variationObj.text().trim(),
                     id: varId.replace('#',''),
-                    traffic: $(varId + '-traffic').val().trim()
+                    traffic: $(varId + '-traffic').val().trim(),
+                    paused: $variationObj.attr('data-paused')
                 }
             });
 

@@ -29,14 +29,28 @@ class CampaignModel
         return ($data) ? 'true': 'false';
     }
 
-    public function getAllCampaigns($type="")
+    public function getAllCampaigns($data=array())
     {
-        $sql = 'SELECT *, id as campaign_id FROM campaigns';
-        if($type != "")
-        {
-            $sql .= " WHERE flag = '$type'";
+        $sql = 'SELECT *, id as campaign_id FROM campaigns WHERE 1=1 ';
+
+        if(isset($data['archived'])) {
+            $sql .= ' AND archived = ' . $data['archived'];
+        }
+
+        if(isset($data['status'])) {
+            $sql .= ' AND status = ' . $data['status'];
         }
         return R::getAll($sql);
+    }
+
+    public function doArchive($campaign_ids)
+    {
+        return R::exec('UPDATE campaigns SET archived=1 WHERE id IN (?)',array(implode(',',$campaign_ids)));
+    }
+
+    public function isCampaignRunning($campaign_id)
+    {
+       return R::getCell('SELECT status FROM campaigns WHERE id=?',array($campaign_id));
     }
 
     public function save($data)

@@ -165,9 +165,19 @@ class ReportingController implements ControllerProviderInterface
     {
         return function (Application $app, Request $request) {
             $campaign_id = $app['session']->get('campaign_id');
-            if ($app['cache']->contains('traffic-'.$campaign_id)) {
-                $body = $app['cache']->fetch('traffic-'.$campaign_id);
-            } else {
+            $days_running = 0;
+            $start_date = $this->campaignService->getStartDate($campaign_id);
+            $is_running = $this->campaignService->isCampaignRunning($campaign_id);
+            if($is_running) {
+                $now = time(); // or your date as well
+                $start_date = strtotime($start_date);
+                $datediff = $now - $start_date;
+
+                $days_running = floor($datediff / (60 * 60 * 24));
+            }
+//            if ($app['cache']->contains('traffic-'.$campaign_id)) {
+//                $body = $app['cache']->fetch('traffic-'.$campaign_id);
+//            } else {
                 $vids = $this->getVariationIds($campaign_id);
                 $prefix = 'ga:eventLabel==ABTest-' . $campaign_id . ':';
                 $filters = $prefix . implode(',' . $prefix, $vids);
@@ -184,10 +194,11 @@ class ReportingController implements ControllerProviderInterface
                     'property' => 'category'
                 ));
                 $body = $app['twig']->render('partials/reporting-traffic.html',array(
-                    'traffic_data' => $data
+                    'traffic_data' => $data,
+                    'days_running' => $days_running
                 ));
-                $app['cache']->save('traffic-'.$campaign_id, $body,20);
-            }
+                //$app['cache']->save('traffic-'.$campaign_id, $body,20);
+            //}
             return $body;//new Response($body, 200, array('Cache-Control' => 's-maxage=3600, public'));
         };
     }

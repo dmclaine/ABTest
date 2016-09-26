@@ -119,11 +119,10 @@ class AnalyticsService
 
     public function validateAuthData($authData)
     {
-        $this->app['session']->set('access_token',$authData['access_token']);
-        $this->client->setAccessToken($authData['access_token']);
-        $token_expired = (time() > $authData['expire_at']);
+        $this->app['session']->set('access_token',$authData);
+        $this->client->setAccessToken($authData);
 
-        if($token_expired) {
+        if($this->client->isAccessTokenExpired()) {
             $authData = $this->client->refreshToken($authData['refresh_token']);
             $authData['expire_at'] = time() + $authData['expires_in'];
             $authData['campaign_id'] = $this->app['session']->get('campaign_id');
