@@ -488,6 +488,29 @@
                 method: 'POST',
                 success: function(data) {
                     if(data && data.flag) {
+                        $campaigns.each(function(){
+                            $(this).parents('tr').remove();
+                        })
+                    }
+                }
+            })
+
+        })
+
+        $('.campaign-duplicate').click(function(e){
+            e.preventDefault();
+            var $campaigns = $('.campaign-select-cb:checked');
+            var campaign_ids = [];
+            $campaigns.each(function(){
+                campaign_ids.push($(this).data('id'));
+            })
+
+            $.ajax({
+                url: '/dashboard/campaigns/do-duplicate',
+                data: {data: campaign_ids},
+                method: 'POST',
+                success: function(data) {
+                    if(data && data.flag) {
                         location.reload();
                     }
                 }
@@ -495,10 +518,6 @@
 
         })
 
-        $('.campaign-duplicate').click(function(){
-            e.preventDefault();
-
-        })
 
         $('.campaign-select-cb').on('ifChecked', function(event){
 

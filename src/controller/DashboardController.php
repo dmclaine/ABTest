@@ -30,6 +30,7 @@ class DashboardController implements ControllerProviderInterface
         $controllers->get('/campaigns', $this->campaigns());
         $controllers->get('/campaigns/archived', $this->archivedCampaigns());
         $controllers->post('/campaigns/do-archive', $this->doArchive());
+        $controllers->post('/campaigns/do-duplicate', $this->doDuplicate());
         $controllers->get('/campaign/edit/{id}', $this->editCampaign());
        // $controllers->get('/campaign/analytics/{id}', $this->analytics());
         //$controllers->get('/', $this->display());
@@ -157,6 +158,20 @@ class DashboardController implements ControllerProviderInterface
             try {
                 $campaign_ids = $request->get('data');
                 $this->campaignService->doArchive($campaign_ids);
+                return $app->json(['ret' => false, 'flag' => true]);
+
+            } catch (\Exception $e) {
+                return $app->json(['ret' => false, 'data' => 'error: ' . $e->getMessage()]);
+            }
+        };
+    }
+
+    public function doDuplicate()
+    {
+        return function (Application $app, Request $request) {
+            try {
+                $campaign_ids = $request->get('data');
+                $this->campaignService->doDuplicate($campaign_ids);
                 return $app->json(['ret' => false, 'flag' => true]);
 
             } catch (\Exception $e) {

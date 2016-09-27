@@ -48,6 +48,61 @@ class CampaignModel
         return R::exec('UPDATE campaigns SET archived=1 WHERE id IN (?)',array(implode(',',$campaign_ids)));
     }
 
+    public function doDuplicate($campaign_ids)
+    {
+        if(is_array($campaign_ids))
+        {
+            foreach($campaign_ids as $id)
+            {
+                //campaign cloning
+                $old_campaign = R::getRow('SELECT * FROM campaigns WHERE id=?', array($id));
+                unset($old_campaign['id']);
+                $campaign = R::dispense('campaigns');
+                foreach($old_campaign as $col => $value)
+                {
+                    $campaign->$col = $value;
+                }
+                $campaign->campaign_name = $campaign->campaign_name .'-clone-'. rand(999,99999);
+                $new_id = R::store($campaign);
+
+                // goals cloning
+                $old_goals = R::getAll('SELECT * FROM goals WHERE campaign_id=?', array($id));
+                foreach($old_goals as $goal)
+                {
+                    $goals = R::dispense('goals');
+                    unset($goal['id']);
+                    foreach($goal as $col => $value) {
+                        $goals->$col = $value;
+                    }
+                    $goals->campaign_id = $new_id;
+                    R::store($goals);
+                }
+
+                //analytics cloning
+                $old_analytics = R::getRow('SELECT * FROM analytics WHERE campaign_id=?', array($id));
+                unset($old_analytics['id']);
+                $analytics = R::dispense('analytics');
+                foreach($old_analytics as $col => $value)
+                {
+                    $analytics->$col = $value;
+                }
+                $analytics->campaign_id = $new_id;
+                R::store($analytics);
+
+                //rules cloning
+                $old_rules = R::getRow('SELECT * FROM rules WHERE campaign_id=?', array($id));
+                unset($old_rules['id']);
+                $rules = R::dispense('rules');
+                foreach($old_rules as $col => $value)
+                {
+                    $rules->$col = $value;
+                }
+                $rules->campaign_id = $new_id;
+                R::store($rules);
+            }
+        }
+    }
+
     public function isCampaignRunning($campaign_id)
     {
        return R::getCell('SELECT status FROM campaigns WHERE id=?',array($campaign_id));

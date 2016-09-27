@@ -57,6 +57,11 @@ class CampaignService
         return $this->campaignModel->doArchive($campaign_ids);
     }
 
+    public function doDuplicate($campaign_ids)
+    {
+        return $this->campaignModel->doDuplicate($campaign_ids);
+    }
+
 
     public function powerCampaign($status)
     {
