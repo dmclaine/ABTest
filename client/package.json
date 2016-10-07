@@ -18,6 +18,12 @@
   },
   "dependencies": {
     "express": "^4.13.3",
-    "mysql": "^2.9.0"
+    "mysql": "^2.9.0",
+    "php-unserialize":"*",
+    "ua-parser": "*",
+    "locale":"*",
+    "ipware":"*",
+    "mobile-detect":"*",
+    "geoip-lite":"*"
   }
 }

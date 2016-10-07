@@ -13,7 +13,7 @@ if(process.env.NODE_ENV && process.env.NODE_ENV === "dev") {
 	  host     : '127.0.0.1',
 	  user     : 'root',
 	  password : 'rock4me',
-	  database : 'ABTestNew'
+	  database : 'NewABTest'
 	});
 }
 

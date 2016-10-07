@@ -28,7 +28,7 @@ var BrowserInfo = function(req) {
     info.ip = getIP(req).clientIp;
 
     /* Get Location */
-    var geo = geoip.lookup((info.ip == '::1') ? '112.27.170.32': info.ip);
+    var geo = geoip.lookup((info.ip == '::1') ? '127.0.0.1': info.ip);
     if(geo && geo.country) {
         info.geo = geo.country;
     }
