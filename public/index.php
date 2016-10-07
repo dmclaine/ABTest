@@ -7,7 +7,7 @@ date_default_timezone_set('UTC');
 //register 3rd party services
 $app = require __DIR__ . '/../src/App.php';
 //load prod environment configuration
-if(isset($_ENV['NODE_ENV']) && $_ENV['NODE_ENV'] == 'dev')
+if(getenv('NODE_ENV') != null && getenv('NODE_ENV') == 'dev')
 {
     require __DIR__ . '/../config/dev.php';
     $app['debug'] = true;
