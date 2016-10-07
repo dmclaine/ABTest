@@ -7,12 +7,20 @@ date_default_timezone_set('UTC');
 //register 3rd party services
 $app = require __DIR__ . '/../src/App.php';
 //load prod environment configuration
-require __DIR__ . '/../config/dev.php';
+if(isset($_ENV['NODE_ENV']) && $_ENV['NODE_ENV'] == 'dev')
+{
+    require __DIR__ . '/../config/dev.php';
+    $app['debug'] = true;
+}
+else
+{
+    require __DIR__ . '/../config/prod.php';
+}
 //dependency injection
 require __DIR__ . '/../src/Services.php';
 //controller routers
 require __DIR__ . '/../src/Routers.php';
-$app['debug'] = true;
+
 $app->run();
 
 ?>

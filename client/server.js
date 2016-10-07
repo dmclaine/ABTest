@@ -21,9 +21,8 @@ app.use(allowCrossDomain);
 |Check environment
 |--------------------------------------------------------------------------
 */
-var port = 3001,host="";
+var port = 3000,host="";
 if(process.env.NODE_ENV == "dev") {
-	port = 3001;
 	host = "http://localhost:3000/";
 }else{
 	host = "https://abclient.datastars.de";
