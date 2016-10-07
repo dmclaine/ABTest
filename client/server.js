@@ -68,11 +68,6 @@ app.get('/test', function(req,res){
 if(debug) {
 	app.use("/js/client.p.js", express.static(__dirname + '/public/js/client.p.unmin.js'));
 	console.log("Debug mode on");
-	//app.get('/js/client.p.js', function(req,res) {
-	//	console.log('reached client.p.js route');
-	//	res.setHeader('Content-Type', 'application/javascript');
-	//	res.send('public/js/client.p.unmin.js');
-	//});
 }else{
 	app.use(express.static(__dirname + '/public'));
 }

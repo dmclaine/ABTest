@@ -18,7 +18,7 @@ module.exports = function(grunt) {
             dev: {
                 files: {
                     "public/js/client.d.js": "public/js/Client.js",
-                    "public/js/client.p.unmin.js": "public/js/Client.js"
+                    "public/js/client.d.unmin.js": "public/js/Client.js"
                 },
                 options: {
                     replacements: [{
@@ -29,7 +29,8 @@ module.exports = function(grunt) {
             },
             prod: {
                 files: {
-                    "public/js/client.p.js": "public/js/Client.js"
+                    "public/js/client.p.js": "public/js/Client.js",
+                    "public/js/client.p.unmin.js": "public/js/Client.js"
                 },
                 options: {
                     replacements: [{
