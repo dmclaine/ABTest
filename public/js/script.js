@@ -936,7 +936,7 @@
 
             $.ajax({
                 url: '/campaign/save',
-                type: 'PUT',
+                type: 'POST',
                 dataType: 'json',
                 // contentType: 'application/json; charset=utf-8',
                 data: {data: allData},

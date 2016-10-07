@@ -107,7 +107,8 @@ class CampaignService
             ),
             'device' => array(
                 'allow_desktop' => true,
-                'allow_mobile' => true
+                'allow_mobile' => true,
+                'allow_tablet' => true
             ),
             'browser' => array(
                 'IE' => false,

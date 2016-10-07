@@ -32,7 +32,7 @@ $app->mount('/reporting', $app['ReportingController']);
 
 $app->mount('/goal', $app['GoalController']);
 
-$app->put('/campaign/save', function() use ($app) {
+$app->post('/campaign/save', function() use ($app) {
     return ($app['CampaignController']->saveCampaign());
 });
 
