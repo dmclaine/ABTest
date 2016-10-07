@@ -436,7 +436,7 @@ var ABTest = (function (window, document, undefined) {
             matchScript: function() {
 
                 if(this.criteria.script.js == "") {
-                    this.getOutput(false, 'script', null, 1);
+                    this.getOutput(true, 'script', null, 1);
                 }
 
                 if(eval(this.criteria.script.js)) {
@@ -458,7 +458,7 @@ var ABTest = (function (window, document, undefined) {
     return {
         changes: [],
         preview: false,
-        host_name: '$HOST_URL',
+        host_name: '$HOST_URL   ',
         documentUrl: null,
         executed: false,
         snippetParams: null,
