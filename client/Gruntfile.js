@@ -17,7 +17,8 @@ module.exports = function(grunt) {
         "string-replace": {                 
             dev: {
                 files: {
-                    "public/js/client.d.js": "public/js/Client.js"
+                    "public/js/client.d.js": "public/js/Client.js",
+                    "public/js/client.p.unmin.js": "public/js/Client.js"
                 },
                 options: {
                     replacements: [{

@@ -1,5 +1,6 @@
 var express	= require('express');
 var app = express();
+var debug = true;
 
 var allowCrossDomain = function(req, res, next) {
     res.header('Access-Control-Allow-Origin', '*');
@@ -28,7 +29,7 @@ if(process.env.NODE_ENV == "dev") {
 	host = "https://abclient.datastars.de";
 }
 
-app.use(express.static(__dirname + '/public'));
+
 
 app.get('/campaign', function(req,res){
 	res.setHeader('Access-Control-Allow-Origin', '*');
@@ -56,7 +57,6 @@ app.get('/tracker', function(req,res){
 
 app.get('/test', function(req,res){
 	res.setHeader('Access-Control-Allow-Origin', '*');
-
 	require('./app/controller/Test').init(req.query, function(data){
 		res.setHeader('Content-Type', 'application/json');
 		res.send(data);
@@ -64,6 +64,18 @@ app.get('/test', function(req,res){
 
 });
 
+/*Debug*/
+if(debug) {
+	app.use("/js/client.p.js", express.static(__dirname + '/public/js/client.p.unmin.js'));
+	console.log("Debug mode on");
+	//app.get('/js/client.p.js', function(req,res) {
+	//	console.log('reached client.p.js route');
+	//	res.setHeader('Content-Type', 'application/javascript');
+	//	res.send('public/js/client.p.unmin.js');
+	//});
+}else{
+	app.use(express.static(__dirname + '/public'));
+}
 /*
 |--------------------------------------------------------------------------
 | Kick start the server. Brrmmm Brrmmm

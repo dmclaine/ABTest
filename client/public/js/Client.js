@@ -42,12 +42,12 @@ var ABTest = (function (window, document, undefined) {
     var userInCampaign = function(campaign,browserInfo) {
 
 
-        var cookie_inc = browserInfo.cookies['_ABTest_exp_'+campaign.id+'_inc'];
-        var cookie_exc = browserInfo.cookies['_ABTest_exp_'+campaign.id+'_exc'];
+        var cookie_inc = browserInfo.cookies['_ABTest_exp_'+campaign.campaign_id+'_inc'];
+        var cookie_exc = browserInfo.cookies['_ABTest_exp_'+campaign.campaign_id+'_exc'];
 
         var out =  {
             participate: true,
-            campaign_id: campaign.id,
+            campaign_id: campaign.campaign_id,
             included: 1,
             var_id: cookie_inc,
             variation: ''
@@ -458,7 +458,7 @@ var ABTest = (function (window, document, undefined) {
     return {
         changes: [],
         preview: false,
-        host_name: '$HOST_URL   ',
+        host_name: '$HOST_URL',
         documentUrl: null,
         executed: false,
         snippetParams: null,
@@ -489,11 +489,21 @@ var ABTest = (function (window, document, undefined) {
             snippetParams = params;
 
             this.setDocumentUrl();
-
-            if(this.getParameters('preview') == "1" && this.getParameters('cid') != "" && this.getParameters('vid') != "") {
-                this.getPreview(this.getParameters('cid'), this.getParameters('vid'));
-            }else{
-                this.getLive(accountId);
+            try {
+                if (this.getParameters('preview') == "1" && this.getParameters('cid') != "" && this.getParameters('vid') != "") {
+                    this.getPreview(this.getParameters('cid'), this.getParameters('vid'));
+                } else {
+                    this.getLive(accountId);
+                }
+            }catch(e){
+                console.warning('There was an error.' + e.toString());
+            }
+        },
+        parseJSON: function(data) {
+            try {
+                return JSON.parse(data);
+            }catch(e){
+                console.warn('Error Parsing JSON');
             }
         },
         serverRequest: function(accountId) {
@@ -501,7 +511,7 @@ var ABTest = (function (window, document, undefined) {
             $ajax({
                 url: self.host_name + "running?account_id="+ accountId,
                 success: function (data) {
-                    var data = JSON.parse(data);
+                    var data = self.parseJSON(data);
                     if(data) {
                         if(data.browserInfo && data.campaigns && data.campaigns.length > 0) {
                             data.browserInfo.cookies = self.getAllCookies();
@@ -519,7 +529,7 @@ var ABTest = (function (window, document, undefined) {
                                     if(campaign.participationObj.participate) {
                                         self.execute(campaign);
                                     }else{
-                                        self.setCookie('_ABTest_exp_'+campaign.id+'_exc',1);
+                                        self.setCookie('_ABTest_exp_'+campaign.campaign_id+'_exc',1);
                                     }
                                 }
                                 else
@@ -575,7 +585,7 @@ var ABTest = (function (window, document, undefined) {
                     }
                 }
             }else {
-                localStorage.removeItem('_ABTest_V-' + campaign.id);
+                localStorage.removeItem('_ABTest_V-' + campaign.campaign_id);
             }
         },
         willCampaignRun: function(campaign) {
@@ -595,7 +605,7 @@ var ABTest = (function (window, document, undefined) {
             $ajax({
                 url: self.host_name + "running?preview=1&cid="+ cid,
                 success: function (data) {
-                    var data = JSON.parse(data);
+                    var data = self.parseJSON(data);
                     if(data) {
                         if(data.browserInfo && data.campaigns) {
                             data.browserInfo.cookies = self.getAllCookies();
@@ -612,7 +622,7 @@ var ABTest = (function (window, document, undefined) {
                                     campaign.variations = phpUnserialize(campaign.variations);
                                     campaign.participationObj = {
                                         participate: true,
-                                        campaign_id: campaign.id,
+                                        campaign_id: campaign.campaign_id,
                                         included: 1,
                                         var_id: vid,
                                         variation: ''
