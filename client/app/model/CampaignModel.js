@@ -2,6 +2,37 @@ var pool = require('../config/mysql.config');
 var PHPUnserialize = require('php-unserialize');
 module.exports = {
 
+	getCampaigns: function(data, callback) {
+
+		var self = this;
+		pool.getConnection(function(err, connection){
+			if (err) throw err;
+			var status = (data.preview == 1) ? "":" AND status = 1 ";
+			connection.query('SELECT c.*, t.* FROM campaigns c INNER JOIN rules t ON c.id = t.campaign_id ' +
+				' WHERE c.account_id='+ data.account_id + status , function(err, rows) {
+				if (err) throw err;
+				connection.release();
+				callback(rows);
+			});
+
+		});
+	},
+	getCampaignById: function(data, callback) {
+
+		var self = this;
+		pool.getConnection(function(err, connection){
+			if (err) throw err;
+			var status = (data.preview == 1) ? "":" AND status = 1 ";
+			connection.query('SELECT c.*, t.* FROM campaigns c INNER JOIN rules t ON c.id = t.campaign_id ' +
+				' WHERE c.id='+ data.cid + status , function(err, rows) {
+				if (err) throw err;
+				connection.release();
+				callback(rows);
+			});
+
+		});
+	},
+
 	getActiveCampaigns: function(account_id,domain,preview,callback) {
 
 		var self = this;
@@ -29,41 +60,41 @@ module.exports = {
 					result.push({
 						id   	   :  campaign.id,
 						variations :  variation,
-		                traffic    :  parseInt(campaign.traffic_per)/100,
-		                campaign   :  campaign.name,
-		                active     :  campaign.status,
-		                test_url   :  JSON.parse(campaign.test_url)
+						traffic    :  parseInt(campaign.traffic_per)/100,
+						campaign   :  campaign.name,
+						active     :  campaign.status,
+						test_url   :  JSON.parse(campaign.test_url)
 					});
 				}
 
 				callback(result);
 			});
-			
+
 		});
 	},
 	storeTracker: function(client_id,participate,msg) {
 
 		pool.getConnection(function(err, connection){
-			
-			
-			 	connection.query('SELECT id FROM tracker WHERE client_id=?',client_id, function(err, rows) {
-			 		if (err) throw err;
-			 		if(rows.length === 0) 
-			 		{
-						connection.query('INSERT INTO tracker (client_id, participate,msg) VALUES (?,?,?)',[client_id,participate,msg],function(err, rows) {
-							if (err) throw err;
 
-							connection.release();
-						});
-					}
-					else
-					{
+
+			connection.query('SELECT id FROM tracker WHERE client_id=?',client_id, function(err, rows) {
+				if (err) throw err;
+				if(rows.length === 0)
+				{
+					connection.query('INSERT INTO tracker (client_id, participate,msg) VALUES (?,?,?)',[client_id,participate,msg],function(err, rows) {
+						if (err) throw err;
+
 						connection.release();
-			 		}
+					});
+				}
+				else
+				{
+					connection.release();
+				}
 
-			 	});
-			
-			
+			});
+
+
 		});
 	}
 }

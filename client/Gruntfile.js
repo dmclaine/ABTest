@@ -5,34 +5,34 @@ module.exports = function(grunt) {
         pkg: '<json:package.json>',
         copy: {
             controller: {
-                cwd: 'dev/controller/',  // set working folder / root to copy
+                cwd: 'public/js/',  // set working folder / root to copy
                 src: ['**/*'],           // copy all files and subfolders
                 dest: 'app/controller/',    // destination folder
                 expand: true           // required when using cwd
             }
         },
         clean: {
-            dist: ["app/controller/*","public/js/*"]
+            dist: ["public/js/client.d.js","public/js/client.p.js"]
         },
         "string-replace": {                 
             dev: {
                 files: {
-                    "public/js/client.d.js": "dev/controller/Client.js"
+                    "public/js/client.d.js": "public/js/Client.js"
                 },
                 options: {
                     replacements: [{
-                        pattern: '$HOST_NAME',
+                        pattern: '$HOST_URL',
                         replacement: "http://localhost:3000/"
                     }]
                 }
             },
             prod: {
                 files: {
-                    "public/js/client.p.js": "dev/controller/Client.js"
+                    "public/js/client.p.js": "public/js/Client.js"
                 },
                 options: {
                     replacements: [{
-                        pattern: '$HOST_NAME',
+                        pattern: '$HOST_URL',
                         replacement: "https://abclient.datastars.de/"
                     }]
                 }
@@ -42,12 +42,6 @@ module.exports = function(grunt) {
             client: {
                 src: 'public/js/client.p.js',
                 dest: 'public/js/client.p.js'
-            }
-        },
-        cssmin: {
-            css:{
-                src: 'dist/styles/style.concat.css',
-                dest: 'dist/styles/style.min.css'
             }
         },
         jshint: {
@@ -77,6 +71,6 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-string-replace');
     // Default task.
-    grunt.registerTask('default', ['clean','copy','string-replace','uglify']);
+    grunt.registerTask('default', ['clean','string-replace','uglify']);
 
 };

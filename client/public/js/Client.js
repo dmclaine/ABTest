@@ -458,7 +458,7 @@ var ABTest = (function (window, document, undefined) {
     return {
         changes: [],
         preview: false,
-        host_name: 'http://localhost:3001/',
+        host_name: '$HOST_URL',
         documentUrl: null,
         executed: false,
         snippetParams: null,

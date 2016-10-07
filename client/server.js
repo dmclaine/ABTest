@@ -41,7 +41,8 @@ app.get('/campaign', function(req,res){
 });
 
 app.get('/running', function(req,res){
-	require('./dev/controller/Engine').init(req, function(data){
+	res.setHeader('Access-Control-Allow-Origin', '*');
+	require('./app/controller/Engine').init(req, function(data){
 		res.send(data);
 	});
 
