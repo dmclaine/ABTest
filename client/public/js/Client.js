@@ -197,11 +197,14 @@ var ABTest = (function (window, document, undefined) {
                     var urls = this.criteria.url.url;
 
                     urls.forEach(function (url) {
-                        var url = self.removeLastSlash(url);
-                        var url1 = url.replace(/\//g, "\\/");
-                        var reg_url = "/" + url1 + "/";
-
-                        if (url == host_url || host_url.match(reg_url)) {
+                        var firstChar = url.charAt(0);
+                        var lastChar = url.charAt(url.length);
+                        if(firstChar == '/' && lastChar == '/') {
+                            if(host_url.match(reg_url)) {
+                                output = self.getOutput(true, 'url_matched', url, 1);
+                                return;
+                            }
+                        }else if(url == host_url) {
                             output = self.getOutput(true, 'url_matched', url, 1);
                             return;
                         }
@@ -436,7 +439,7 @@ var ABTest = (function (window, document, undefined) {
             matchScript: function() {
 
                 if(this.criteria.script.js == "") {
-                    this.getOutput(true, 'script', null, 1);
+                    return this.getOutput(true, 'script', null, 1);
                 }
 
                 if(eval(this.criteria.script.js)) {

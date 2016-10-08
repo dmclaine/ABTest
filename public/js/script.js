@@ -879,7 +879,6 @@
                 var $variationObj = $(this).find('.variationTab');
                 var variationName = $variationObj.data('variation');
                 var varId = $variationObj.attr('href');
-
                 var jsEditor = ace.edit($(varId).find('.js-content .editor')[0]);
                 var cssEditor = ace.edit($(varId).find('.css-content .editor')[0]);
 
