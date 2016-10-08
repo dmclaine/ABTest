@@ -4,13 +4,14 @@ var ABTest = (function (window, document, undefined) {
     !function(a,b){"use strict";"function"==typeof define&&define.amd?define([],b):"object"==typeof exports?module.exports=b():a.phpUnserialize=b()}(this,function(){"use strict";return function(a){var e,b=0,c=[],d=0,f=function(){var c=a.indexOf(":",b),d=a.substring(b,c);return b=c+2,parseInt(d,10)},g=function(){var c=a.indexOf(";",b),d=a.substring(b,c);return b=c+1,parseInt(d,10)},h=function(){var a=g();return c[d++]=a,a},i=function(){var e=a.indexOf(";",b),f=a.substring(b,e);return b=e+1,f=parseFloat(f),c[d++]=f,f},j=function(){var e=a.indexOf(";",b),f=a.substring(b,e);return b=e+1,f="1"===f,c[d++]=f,f},k=function(){for(var g,h,c=f(),d=0,e=0;e<c;)g=a.charCodeAt(b+d++),g<=127?e++:e+=g>2047?3:2;return h=a.substring(b,b+d),b+=d+2,h},l=function(){var a=k();return c[d++]=a,a},m=function(){var c=a.charAt(b);return b+=2,c},n=function(){var a=m();switch(a){case"i":return g();case"s":return k();default:throw{name:"Parse Error",message:"Unknown key type '"+a+"' at position "+(b-2)}}},o=function(){var k,l,m,o,p,a=f(),g=[],h={},i=g,j=d++;for(c[j]=i,m=0;m<a;m++)if(k=n(),l=e(),i===g&&parseInt(k,10)===m)g.push(l);else{if(i!==h){for(o=0,p=g.length;o<p;o++)h[o]=g[o];i=h,c[j]=i}h[k]=l}return b++,i},p=function(a,b){var c,d,e;return"\0"!==a.charAt(0)?a:(e=a.indexOf("\0",1),e>0?(c=a.substring(1,e),d=a.substr(e+1),"*"===c?d:b===c?d:c+"::"+d):void 0)},q=function(){var a,j,l,m,g={},h=d++,i=k();for(c[h]=g,a=f(),m=0;m<a;m++)j=p(n(),i),l=e(),g[j]=l;return b++,g},r=function(){var a=k(),b=k();return{__PHP_Incomplete_Class_Name:a,serialized:b}},s=function(){var a=g(),b=c[a-1];return c[d++]=b,b},t=function(){var a=g();return c[a-1]},u=function(){var a=null;return c[d++]=a,a};return(e=function(){var a=m();switch(a){case"i":return h();case"d":return i();case"b":return j();case"s":return l();case"a":return o();case"O":return q();case"C":return r();case"r":return s();case"R":return t();case"N":return u();default:throw{name:"Parse Error",message:"Unknown type '"+a+"' at position "+(b-2)}}})()}});
 
     var snippetParams = null;
+    var TIME_START = Date.now();
 
     var LOG = function(msg, type) {
         if(typeof type == 'undefined'){
             type='log';
         }
         if(document.location.search.indexOf('debug=abtest') > 0) {
-            console[type] = msg;
+            console[type](msg);
         }
     }
 
@@ -494,7 +495,7 @@ var ABTest = (function (window, document, undefined) {
         },
         // for each experiment, load a variant if already saved for this session, or pick a random one
         init: function (accountId,params) {
-            
+            LOG("Reached In: ", Date.now()-TIME_START);
             snippetParams = params;
 
             this.setDocumentUrl();
@@ -680,11 +681,11 @@ var ABTest = (function (window, document, undefined) {
                         }
                     });
 
-                    document.getElementsByTagName('html')[0].style.display = "block";
-                    var elem = document.getElementById("_abtest_path_hides");
-                    if(elem !== null) {
-                        elem.parentElement.removeChild(elem);
-                    }
+                    //document.getElementsByTagName('html')[0].style.display = "block";
+                    //var elem = document.getElementById("_abtest_path_hides");
+                    //if(elem !== null) {
+                    //    elem.parentElement.removeChild(elem);
+                    //}
                 }
 
             } catch (e) {
@@ -751,15 +752,6 @@ var ABTest = (function (window, document, undefined) {
             });
             return cookieObj;
         },
-        //getCookies: function () {
-        //    var cookieArr = document.cookie.split(';').filter(function (c) {
-        //        return c.trim().indexOf('_ABTest') === 0;
-        //    }).map(function (c) {
-        //        return c.trim();
-        //    });
-        //
-        //    return JSON.stringify(cookieArr);
-        //},
         getParameters: function(name) {
             var query_string = {};
             var query = window.location.search.substring(1);
