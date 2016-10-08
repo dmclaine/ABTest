@@ -9,7 +9,7 @@ module.exports = {
 			if (err) throw err;
 			var status = (data.preview == 1) ? "":" AND status = 1 ";
 			connection.query('SELECT c.*, t.* FROM campaigns c INNER JOIN rules t ON c.id = t.campaign_id ' +
-				' WHERE c.account_id='+ data.account_id + status , function(err, rows) {
+				' WHERE c.account_id='+ data.account_id + status, function(err, rows) {
 				if (err) throw err;
 				connection.release();
 				callback(rows);

@@ -67,6 +67,7 @@ app.get('/test', function(req,res){
 /*Debug*/
 if(debug) {
 	app.use("/js/client.p.js", express.static(__dirname + '/public/js/client.p.unmin.js'));
+	app.use("/js/client.d.js", express.static(__dirname + '/public/js/client.d.js'));
 	console.log("Debug mode on");
 }else{
 	app.use(express.static(__dirname + '/public'));

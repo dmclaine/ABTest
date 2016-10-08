@@ -495,14 +495,16 @@ var ABTest = (function (window, document, undefined) {
         },
         // for each experiment, load a variant if already saved for this session, or pick a random one
         init: function (accountId,params) {
-            LOG("Reached In: ", Date.now()-TIME_START);
+            LOG("Now is: "+ Date.now()-TIME_START);
             snippetParams = params;
 
             this.setDocumentUrl();
             try {
                 if (this.getParameters('preview') == "1" && this.getParameters('cid') != "" && this.getParameters('vid') != "") {
+                    LOG(Date.now()-TIME_START + " : Getting Preview");
                     this.getPreview(this.getParameters('cid'), this.getParameters('vid'));
                 } else {
+                    LOG(Date.now()-TIME_START + " : Getting Live");
                     this.getLive(accountId);
                 }
             }catch(e){
@@ -523,6 +525,7 @@ var ABTest = (function (window, document, undefined) {
                 success: function (data) {
                     var data = self.parseJSON(data);
                     if(data) {
+                        LOG(Date.now()-TIME_START + " : OK from server");
                         if(data.browserInfo && data.campaigns && data.campaigns.length > 0) {
                             data.browserInfo.cookies = self.getAllCookies();
                             data.browserInfo.urlData.referrer = document.referrer;
@@ -530,15 +533,19 @@ var ABTest = (function (window, document, undefined) {
                             TargetMatcher.prototype.userBrowserInfo = data.browserInfo;
 
                             data.campaigns.forEach(function(campaign){
-
+                                LOG(Date.now()-TIME_START + " : Checking if experiment will run now or next time");
                                 var matchResult = self.willCampaignRun(campaign);
                                 LOG(matchResult);
                                 if(matchResult.execute) {
+                                    LOG(Date.now()-TIME_START + " : experiment passed targetting criteria");
                                     campaign.variations = self.removePausedVariations(phpUnserialize(campaign.variations));
+                                    LOG(Date.now()-TIME_START + " : Checking participation status");
                                     campaign.participationObj = userInCampaign(campaign,data.browserInfo);
                                     if(campaign.participationObj.participate) {
+                                        LOG(Date.now()-TIME_START + " : User Participates");
                                         self.execute(campaign);
                                     }else{
+                                        LOG(Date.now()-TIME_START + " : User is excluded");
                                         self.setCookie('_ABTest_exp_'+campaign.campaign_id+'_exc',1);
                                     }
                                 }
@@ -572,11 +579,15 @@ var ABTest = (function (window, document, undefined) {
             var totalCampaigns = Object.keys(campaigns).length;
             if(totalCampaigns == 0) {
                 self.serverRequest(accountId);
+            }else{
+                LOG(Date.now()-TIME_START + " : Experiments found in LocalStorage");
             }
             for(var campaign in campaigns) {
                 self.execute(campaigns[campaign], function(status){
+                    LOG(Date.now()-TIME_START + " : Executed experiment from LocalStorage");
                     totalCampaigns--;
                     if(totalCampaigns == 0) {
+                        LOG(Date.now()-TIME_START + " : Getting latest updates from server and updating the client");
                         self.serverRequest(accountId);
                     }
                 });
@@ -651,13 +662,12 @@ var ABTest = (function (window, document, undefined) {
             var self = this;
             try {
                 if(this.executed) {
-                    LOG('stored latest variation');
+                    LOG(Date.now()-TIME_START + " : Syncing data between server and client");
                     self.storeVariations(campaign);
                     if(typeof callback == 'function') {
                         callback(true);
                     }
                 }else{
-                    LOG('running');
                     run(self,campaign,callback);
                 }
 
@@ -668,7 +678,9 @@ var ABTest = (function (window, document, undefined) {
                         callback(status);
                         return;
                     }
+                    LOG(Date.now()-TIME_START + " : Injecting Javascript");
                     self.runJS(variation.js, function(status){
+                        LOG(Date.now()-TIME_START + " : Injecting CSS");
                         self.runCSS(variation.css);
                         self.executed = true;
                         if(!self.preview) {
