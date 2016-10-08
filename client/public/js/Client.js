@@ -5,6 +5,15 @@ var ABTest = (function (window, document, undefined) {
 
     var snippetParams = null;
 
+    var LOG = function(msg, type) {
+        if(typeof type == 'undefined'){
+            type='log';
+        }
+        if(document.location.search.indexOf('debug=abtest') > 0) {
+            console[type] = msg;
+        }
+    }
+
     var GTMPush = function (experimentId, variation) {
         
         setTimeout(function(){
@@ -35,7 +44,7 @@ var ABTest = (function (window, document, undefined) {
             };
             x.send(options.data)
         } catch (e) {
-            window.console && console.log(e);
+            LOG(e);
         }
     };
 
@@ -274,9 +283,7 @@ var ABTest = (function (window, document, undefined) {
                     var excludes = this.criteria.cookie.exclude_cookie;
                     active = true;
                     excludes.forEach(function (name) {
-                       // console.log(name);
                         if (userCookies[name]) {
-                            //console.log(1);
                             output = self.getOutput(true, 'cookie_exclude', name, 0);
                             return;
                         }
@@ -325,7 +332,6 @@ var ABTest = (function (window, document, undefined) {
 
                 //only returning users
                 else if (this.criteria.user['returning_users'] == 'true') {
-                   // console.log('3');
                     active = true;
                     for (var name in userCookies) {
                         if (name.indexOf('_ABTest') >= 0) {
@@ -466,7 +472,7 @@ var ABTest = (function (window, document, undefined) {
         executed: false,
         snippetParams: null,
         loadjQuery: function() {
-            console.warn("Feature to be added - To load jquery");
+            LOG("Feature to be added - To load jquery","warn");
         },
         storeVariations: function(campaign) {
             localStorage.setItem('_ABTest_V-' + campaign.participationObj.campaign_id,JSON.stringify(campaign));
@@ -499,14 +505,14 @@ var ABTest = (function (window, document, undefined) {
                     this.getLive(accountId);
                 }
             }catch(e){
-                console.warning('There was an error.' + e.toString());
+                LOG('There was an error.' + e.toString(),'warn');
             }
         },
         parseJSON: function(data) {
             try {
                 return JSON.parse(data);
             }catch(e){
-                console.warn('Error Parsing JSON');
+                LOG('Error Parsing JSON','warn');
             }
         },
         serverRequest: function(accountId) {
@@ -525,7 +531,7 @@ var ABTest = (function (window, document, undefined) {
                             data.campaigns.forEach(function(campaign){
 
                                 var matchResult = self.willCampaignRun(campaign);
-                                console.log(matchResult);
+                                LOG(matchResult);
                                 if(matchResult.execute) {
                                     campaign.variations = self.removePausedVariations(phpUnserialize(campaign.variations));
                                     campaign.participationObj = userInCampaign(campaign,data.browserInfo);
@@ -619,7 +625,7 @@ var ABTest = (function (window, document, undefined) {
                             data.campaigns.forEach(function(campaign){
 
                                 var matchResult = self.willCampaignRun(campaign);
-                                console.log(matchResult);
+                                LOG(matchResult);
 
                                 if(matchResult.execute) {
                                     campaign.variations = phpUnserialize(campaign.variations);
@@ -644,13 +650,13 @@ var ABTest = (function (window, document, undefined) {
             var self = this;
             try {
                 if(this.executed) {
-                    console.log('stored latest variation');
+                    LOG('stored latest variation');
                     self.storeVariations(campaign);
                     if(typeof callback == 'function') {
                         callback(true);
                     }
                 }else{
-                    console.log('running');
+                    LOG('running');
                     run(self,campaign,callback);
                 }
 
@@ -675,19 +681,15 @@ var ABTest = (function (window, document, undefined) {
                     });
 
                     document.getElementsByTagName('html')[0].style.display = "block";
+                    var elem = document.getElementById("_abtest_path_hides");
+                    if(elem !== null) {
+                        elem.parentElement.removeChild(elem);
+                    }
                 }
 
             } catch (e) {
                 // not json
             }
-            
-            setTimeout(function(){document.getElementsByTagName('html')[0].style.display = "block";},900);
-            setTimeout(function(){
-                var elem = document.getElementById("_abtest_path_hides");
-                if(elem !== null) {
-                    elem.parentElement.removeChild(elem);
-                }
-            },800);
                 
         },
         runJS: function (js,callback) {
@@ -720,7 +722,7 @@ var ABTest = (function (window, document, undefined) {
 
             setTimeout(function () {
                 if (typeof jQuery === "undefined") {
-                    console.warn("Jquery didnt load on time!");
+                    LOG("Jquery didnt load on time!","warn");
                     callback(false);
                 }
                 clearInterval(t);
