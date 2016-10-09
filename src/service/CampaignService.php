@@ -34,7 +34,15 @@ class CampaignService
 
     public function getCampaignDataByID($id)
     {
-        return $this->formatCampaign($this->campaignModel->getCampaignDataByID($id));
+        static $campaign = array();
+
+        if(isset($campaign[$id])) {
+            return $campaign[$id];
+        }
+        $data = $this->formatCampaign($this->campaignModel->getCampaignDataByID($id));
+        $campaign[$id] = $data;
+
+        return $campaign[$id];
     }
 
     public function getAllCampaigns($data=array())

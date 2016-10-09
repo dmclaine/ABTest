@@ -355,7 +355,7 @@
             var id = $(this).data('id');
             var $this = $(this);
             $.post('/goal/delete-goal/'+id, function(data){
-                $this.parents('.panel').remove();
+                $this.parents('#panel-'+id).remove();
                 messageBox('Goal Deleted');
             })
         });

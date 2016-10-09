@@ -79,7 +79,7 @@ class GoalService
 
 
         /* Look for control and then unset it */
-        $control = $report['ABTest-'.$campaign_id.':Control'];
+        $control = $report['ABTest-'.$campaign_id.':control'];
 
         $control_number_conversions = $control['conversions'];
 
@@ -89,8 +89,8 @@ class GoalService
             $report[$value['ga:eventLabel']]['total_traffic'] = $value['ga:sessions'];
             unset($data['participants'][$key]);
         }
-        $control_number_visitors = (int) $data['participants']['ABTest-'.$campaign_id.':Control'];
-        unset($data['participants']['ABTest-'.$campaign_id.':Control']);
+        $control_number_visitors = (int) $data['participants']['ABTest-'.$campaign_id.':control'];
+        unset($data['participants']['ABTest-'.$campaign_id.':control']);
         //unset($report['ABTest-'.$campaign_id.':Control']);
         foreach($report as $key => $value)
         {

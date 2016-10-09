@@ -39,7 +39,7 @@ class ReportingController implements ControllerProviderInterface
     {
         return function (Application $app, Request $request) {
             $campaign_id = $app['session']->get('campaign_id');
-
+            $vnames = $this->getVariationNames($campaign_id);
             $goals = $this->goalService->getAllGoals($campaign_id);
             $output = array();
             foreach($goals as $goal){
@@ -49,7 +49,8 @@ class ReportingController implements ControllerProviderInterface
 
             $body = $app['twig']->render('partials/reporting-goals.html',array(
                 'goals' => $goals,
-                'goalreport' => $output
+                'goalreport' => $output,
+                'vnames' => $vnames
             ));
             return new Response($body, 200, array('Cache-Control' => 's-maxage=3600, public'));
         };
@@ -145,6 +146,17 @@ class ReportingController implements ControllerProviderInterface
 
     }
 
+    function getVariationNames($cid)
+    {
+        $data = array();
+        $campaign = $this->campaignService->getCampaignDataByID($cid);
+
+        foreach($campaign['variations'] as $vid => $variation) {
+            $data[$variation['id']] = $variation['name'];
+        }
+        return $data;
+    }
+
     function getVariationIds($cid)
     {
         static $vids = null;
@@ -169,6 +181,8 @@ class ReportingController implements ControllerProviderInterface
             $days_running = 0;
             $start_date = $this->campaignService->getStartDate($campaign_id);
             $is_running = $this->campaignService->isCampaignRunning($campaign_id);
+            $vnames = $this->getVariationNames($campaign_id);
+
             if($is_running) {
                 $now = time(); // or your date as well
                 $start_date = strtotime($start_date);
@@ -182,7 +196,7 @@ class ReportingController implements ControllerProviderInterface
                 $vids = $this->getVariationIds($campaign_id);
                 $prefix = 'ga:eventLabel==ABTest-' . $campaign_id . ':';
                 $filters = $prefix . implode(',' . $prefix, $vids);
-                $filters = 'ga:eventLabel==ABTest-63:Control,ga:eventLabel==ABTest-63:Variation 1';
+               // $filters = 'ga:eventLabel==ABTest-63:Control,ga:eventLabel==ABTest-63:Variation 1';
                 $data = $this->analyticsService->analyticsRequest(array(
                     'metrics' => array('ga:sessions'),
                     'dimensions' => array('ga:eventLabel', 'ga:date'),
@@ -196,7 +210,8 @@ class ReportingController implements ControllerProviderInterface
                 ));
                 $body = $app['twig']->render('partials/reporting-traffic.html',array(
                     'traffic_data' => $data,
-                    'days_running' => $days_running
+                    'days_running' => $days_running,
+                    'vnames'        => $vnames
                 ));
                 //$app['cache']->save('traffic-'.$campaign_id, $body,20);
             //}

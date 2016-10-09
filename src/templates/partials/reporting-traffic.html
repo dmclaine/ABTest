@@ -52,7 +52,8 @@
 <script>
     //daily visitors
     var trafficSplitData = {{ traffic_data|json_encode|raw }};
-
+    var vnames = {{ vnames|json_encode|raw }};
+    console.log(vnames);
     var chartLogic = function(data) {
 
         var dates = [];
@@ -128,13 +129,14 @@
         $('#total-visitors').html(lineChart.totalVisitors);
 
 
-        for (var vname in lineChart.totalVariationVisitors) {
-            var var_traffic = lineChart.totalVariationVisitors[vname];
+        for (var vid in lineChart.totalVariationVisitors) {
+            var var_traffic = lineChart.totalVariationVisitors[vid];
+            vid = vid.split(':')[1];
             $('#variation-split').append('<div class="ibox-content"> \
                                         <div class="row"> \
                                             <div class="col-xs-6"> \
                                                 <small class="stats-label">Name</small> \
-                                                <h4 class="v-label">' + vname + '</h4> \
+                                                <h4 class="v-label">' + vnames[vid] + '</h4> \
                                             </div> \
                                             <div class="col-xs-6"> \
                                                 <small class="stats-label">Visitors / %</small> \

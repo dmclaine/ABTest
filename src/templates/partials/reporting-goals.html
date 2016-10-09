@@ -3,7 +3,7 @@
         <a id="new-goal-btn" href="#" class="btn btn-sm btn-dark edit-goal" data-id="{{ goal.id }}"><i class="fa fa-line-chart"></i> New Goal</a>
    </div>
     {% for goal in goals %}
-    <div class="panel panel-white custom-panel">
+    <div id="panel-{{ goal.id }}" class="panel panel-white custom-panel">
         <!--<div class="panel-heading">Goal Report -  {{ goal.name }}-->
         <!--<span class="pull-right">-->
             <!--<a href="#" class="btn btn-xs btn-primary edit-goal" data-id="{{ goal.id }}">Edit</a>-->
@@ -17,7 +17,7 @@
         </button>
         <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
             <li><a href="#" class="edit-goal" data-id="{{ goal.id }}">Edit</a></li>
-            <li><a href="#" class="delete-goal">Delete</a></li>
+            <li><a href="#" class="delete-goal" data-id="{{ goal.id }}">Delete</a></li>
         </ul>
     </div>
     <div class="panel-body">
@@ -41,6 +41,7 @@
 <script>
     //daily visitors
     var goalData = {{ goalreport|json_encode|raw }};
+    var vnames = {{ vnames|json_encode|raw }};
 
     var chartLogic = function(data) {
 
@@ -124,13 +125,13 @@
                 var var_traffic = lineChart.totalVariationVisitors[label];
 
                 console.log(label +" : "+ var_traffic);
-                var vname = label.split(':')[1];
+                var vid = label.split(':')[1];
                 var statistics = '<div class="col-xs-12"> \
                                         <div class="row" style="margin-top: 10px;">';
 
                 var variation = goalData[goal_id].significance[label].variation;
                 var confidence = '';
-                if(vname != 'Control') {
+                if(vid != 'control') {
                     statistics +=  '<div class="col-xs-4"><span>Visitors: <strong>'+ var_traffic + '</strong></div> \
                                     <div class="col-xs-4"><span>CVR: <strong>'+ parseFloat(variation.conversion_rate).toFixed(2) + '</strong></div> \
                                     <div class="col-xs-4"><span>Z-Score: <strong>'+ parseFloat(variation.z_score).toFixed(2) + '</strong></div>';
@@ -148,7 +149,7 @@
                                         <div class="row"> \
                                             <div class="col-xs-4"> \
                                                 <small class="stats-label">Name</small> \
-                                                <h4 class="v-label">' + vname + '</h4> \
+                                                <h4 class="v-label">' + vnames[vid] + '</h4> \
                                             </div> \
                                             <div class="col-xs-4"> \
                                                 <small class="stats-label">Uplift</small> \

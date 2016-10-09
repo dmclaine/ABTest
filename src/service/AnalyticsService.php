@@ -233,7 +233,6 @@ class AnalyticsService
                     $values = $metrics[$j];
                     for ( $valueIndex = 0; $valueIndex < count( $values->getValues() ); $valueIndex++ ) {
                         $value = $values->getValues()[ $valueIndex ];
-                        //print($entry->getName() . ": " . $value . "\n");
                         $data[$rowIndex][$entry->getName()] = $value;
                     }
                 }
