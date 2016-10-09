@@ -12,21 +12,26 @@ class UserModel
     }
     public function validateUser($email, $password)
     {
-        if($email == 'abc' && $password == '12345')
-        {
+        $user = R::getRow('SELECT * FROM users u
+                            WHERE u.email=? AND u.password=?', array($email, md5($password)));
+
+        if(!$user) {
             return array(
-                'success' => 1,
-                'email' => 'abc',
-                'role' => 'READ_WRITE',
-                'account' => 1,
-                'name'  => 'Abhi',
-                'user_id' => 1
+                'success' => 0
             );
         }
+        $accounts = R::getAll('SELECT account_id, role FROM user_relation
+                                WHERE user_id=?', array($user['id']));
 
-        return array(
-            'success' => 0
-        );
+        if($user) {
+            return array(
+                'success' => 1,
+                'email' => $user['email'],
+                'account' => $accounts,
+                'name'  => $user['name'],
+                'user_id' => $user['id']
+            );
+        }
     }
 
     public function insertLog($data)

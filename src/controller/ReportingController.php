@@ -59,19 +59,20 @@ class ReportingController implements ControllerProviderInterface
     {
         $filters = $this->getFilters($goal);
         $total_visitors = $this->totalVisitorsInGoal($filters,$goal);
+
         if($goal['action'] == 'event') {
 
             $sequence = "";
-            if($goal['e_cateogry'] != "") {
-                $sequence .= 'ga:eventCategory=='.$goal['e_cateogry'];
+            if($goal['e_category'] != "") {
+                $sequence .= 'ga:eventCategory=='.$goal['e_category'].',';
             }
             if($goal['e_action'] != "") {
-                $sequence .= 'ga:eventAction=='.$goal['e_action'];
+                $sequence .= 'ga:eventAction=='.$goal['e_action'] . ',';
             }
             if($goal['e_label'] != "") {
                 $sequence .= 'ga:eventLabel=='.$goal['e_label'];
             }
-
+            $sequence = rtrim($sequence,',');
             $params = array(
                 'metrics'=> array('ga:sessions'),
                 'dimensions'=> array('ga:eventLabel','ga:date','ga:segment'),
@@ -136,7 +137,7 @@ class ReportingController implements ControllerProviderInterface
         $vids = $this->getVariationIds($goal['campaign_id']);
         $prefix = 'ga:eventLabel==ABTest-'.$goal['campaign_id'].':';
         $filters = $prefix.implode(','.$prefix,$vids);
-        $filters = 'ga:eventLabel==ABTest-63:Control,ga:eventLabel==ABTest-63:Variation 1';
+//        $filters = 'ga:eventLabel==ABTest-63:Control,ga:eventLabel==ABTest-63:Variation 1';
         if($addPagePath && $goal['page_path'] != '') {
             $filters .= ';ga:landingPagePath=='.$goal['page_path'];
         }
@@ -155,7 +156,7 @@ class ReportingController implements ControllerProviderInterface
         $campaign = $this->campaignService->getCampaignDataByID($cid);
 
         foreach($campaign['variations'] as $vid => $variation) {
-            $data[] = $variation['name'];
+            $data[] = $variation['id'];
         }
         $vids = $data;
         return $vids;

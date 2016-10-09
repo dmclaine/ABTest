@@ -40,6 +40,14 @@ class CampaignModel
         if(isset($data['status'])) {
             $sql .= ' AND status = ' . $data['status'];
         }
+
+        if(isset($data['account'])) {
+            $accounts = implode(',', array_map(function ($entry) {
+                return $entry['account_id'];
+            }, $data['account']));
+
+            $sql .= ' AND account_id IN ('.$accounts.')';
+        }
         return R::getAll($sql);
     }
 

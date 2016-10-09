@@ -495,7 +495,6 @@ var ABTest = (function (window, document, undefined) {
         },
         // for each experiment, load a variant if already saved for this session, or pick a random one
         init: function (accountId,params) {
-            LOG("Now is: "+ Date.now()-TIME_START);
             snippetParams = params;
 
             this.setDocumentUrl();

@@ -27,7 +27,7 @@ class DashboardController implements ControllerProviderInterface
         });
         $controllers->get('/snippet', $this->displaySnippet());
         $controllers->get('/campaign/new', $this->newCampaign());
-        $controllers->get('/campaigns', $this->campaigns());
+        $controllers->get('/campaigns', $this->listCampaigns());
         $controllers->get('/campaigns/archived', $this->archivedCampaigns());
         $controllers->post('/campaigns/do-archive', $this->doArchive());
         $controllers->post('/campaigns/do-duplicate', $this->doDuplicate());
@@ -132,12 +132,14 @@ class DashboardController implements ControllerProviderInterface
 
     }
 
-    public function campaigns()
+    public function listCampaigns()
     {
         return function (Application $app, Request $request) {
             try {
+                $account = $app['session']->get('user')['account'];
                 $campaigns = $this->campaignService->getAllCampaigns(array(
-                    'archived' => 0
+                    'archived' => 0,
+                    'account' => $account
                 ));
 
                 return $app['twig']->render('campaigns.html',array(
