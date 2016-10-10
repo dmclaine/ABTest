@@ -470,7 +470,7 @@ var ABTest = (function (window, document, undefined) {
         preview: false,
         host_name: '$HOST_URL',
         documentUrl: null,
-        executed: false,
+        executing: false,
         snippetParams: null,
         loadjQuery: function() {
             LOG("Feature to be added - To load jquery","warn");
@@ -583,7 +583,6 @@ var ABTest = (function (window, document, undefined) {
             }
             for(var campaign in campaigns) {
                 self.execute(campaigns[campaign], function(status){
-                    LOG(Date.now()-TIME_START + " : Executed experiment from LocalStorage");
                     totalCampaigns--;
                     if(totalCampaigns == 0) {
                         LOG(Date.now()-TIME_START + " : Getting latest updates from server and updating the client");
@@ -660,14 +659,14 @@ var ABTest = (function (window, document, undefined) {
 
             var self = this;
             try {
-                if(this.executed) {
-                    LOG(Date.now()-TIME_START + " : Syncing data between server and client");
+                if(self.executing) {
                     self.storeVariations(campaign);
                     if(typeof callback == 'function') {
                         callback(true);
                     }
                 }else{
                     run(self,campaign,callback);
+                    self.executing = true;
                 }
 
                 function run(self,campaign,callback) {
@@ -677,17 +676,17 @@ var ABTest = (function (window, document, undefined) {
                         callback(status);
                         return;
                     }
-                    LOG(Date.now()-TIME_START + " : Injecting Javascript");
                     self.runJS(variation.js, function(status){
-                        LOG(Date.now()-TIME_START + " : Injecting CSS");
+                        LOG(Date.now()-TIME_START + " : Injected Javascript");
                         self.runCSS(variation.css);
-                        self.executed = true;
+                        LOG(Date.now()-TIME_START + " : Injected CSS");
                         if(!self.preview) {
                             self.storeVariations(campaign);
                             GTMPush(campaign.participationObj.campaign_id, variation.id);
                             self.setCookie('_ABTest_exp_' + campaign.participationObj.campaign_id + '_inc', campaign.participationObj.var_id);
                         }
                         if(typeof callback == 'function') {
+                            LOG(Date.now()-TIME_START + " : Executed experiment from LocalStorage");
                             callback(status);
                         }
                     });
