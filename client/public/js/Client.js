@@ -558,6 +558,8 @@ var ABTest = (function (window, document, undefined) {
                             //clean everything
                             self.campaignCleanUp();
                         }
+                    }else{
+                        LOG(Date.now()-TIME_START + " : No Experiments found from server");
                     }
                 }
             });
@@ -578,6 +580,7 @@ var ABTest = (function (window, document, undefined) {
             var totalCampaigns = Object.keys(campaigns).length;
             if(totalCampaigns == 0) {
                 self.serverRequest(accountId);
+                LOG(Date.now()-TIME_START + " : No experiments found in LocalStorage");
             }else{
                 LOG(Date.now()-TIME_START + " : Experiments found in LocalStorage");
             }
@@ -589,13 +592,11 @@ var ABTest = (function (window, document, undefined) {
                         self.serverRequest(accountId);
                     }
                 });
-                //document.getElementsByTagName('html')[0].style.display = "block"
             }
-
-
         },
         campaignCleanUp: function(campaign) {
-            if(typeof campaign == 'undefined') {
+            if(typeof campaign == 'undefined')
+            {
                 for (var i=0;i < localStorage.length; i++) {
                     var key = localStorage.key(i);
 
@@ -603,7 +604,9 @@ var ABTest = (function (window, document, undefined) {
                         localStorage.removeItem(key);
                     }
                 }
-            }else {
+            }
+            else
+            {
                 localStorage.removeItem('_ABTest_V-' + campaign.campaign_id);
             }
         },

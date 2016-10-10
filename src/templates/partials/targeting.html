@@ -177,47 +177,47 @@
                         </div>
                     </div>
                 </div>
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h4 class="panel-title">
-                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#geo-block">
-                                <i class="glyphicon glyphicon-plus"></i> Geographic Settings</a>
-                            </a>
-                        </h4>
-                    </div>
-                    <div id="geo-block" class="panel-collapse collapse">
-                        <div class="panel-body">
-                            <div class="form-group">
-                                <div class="checkbox">
-                                    <label class="col-sm-3 control-label"></label>
-                                    <input type="checkbox" id="all_countries" class="geo-block-input custom-cb" {{data.geographic.all_countries ? 'checked' : ''}}><label for="all_countries">Allow all countries</label>
-                                </div>
-                            </div>
+                <!--<div class="panel panel-default">-->
+                    <!--<div class="panel-heading">-->
+                        <!--<h4 class="panel-title">-->
+                            <!--<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#geo-block">-->
+                                <!--<i class="glyphicon glyphicon-plus"></i> Geographic Settings</a>-->
+                            <!--</a>-->
+                        <!--</h4>-->
+                    <!--</div>-->
+                    <!--<div id="geo-block" class="panel-collapse collapse">-->
+                        <!--<div class="panel-body">-->
+                            <!--<div class="form-group">-->
+                                <!--<div class="checkbox">-->
+                                    <!--<label class="col-sm-3 control-label"></label>-->
+                                    <!--<input type="checkbox" id="all_countries" class="geo-block-input custom-cb" {{data.geographic.all_countries ? 'checked' : ''}}><label for="all_countries">Allow all countries</label>-->
+                                <!--</div>-->
+                            <!--</div>-->
 
-                            <div class="form-group">
-                                <label class="col-sm-3 control-label">Only Allow</label>
-                                <div class="col-md-4 controls">
-                                    <div class="row">
-                                        <div class="col-xs-12">
-                                            <input id="allowed_countries" type="text" class="geo-block-input tagsinput" value="{{ data.geographic.allowed_countries|join(',') }}" />
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-sm-3 control-label">But exclude</label>
-                                <div class="col-md-4 controls">
-                                    <div class="row">
-                                        <div class="col-xs-12">
-                                            <input id="exclude_countries" type="text" class="geo-block-input tagsinput" value="{{ data.geographic.exclude_countries|join(',') }}" />
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                            <!--<div class="form-group">-->
+                                <!--<label class="col-sm-3 control-label">Only Allow</label>-->
+                                <!--<div class="col-md-4 controls">-->
+                                    <!--<div class="row">-->
+                                        <!--<div class="col-xs-12">-->
+                                            <!--<input id="allowed_countries" type="text" class="geo-block-input tagsinput" value="{{ data.geographic.allowed_countries|join(',') }}" />-->
+                                        <!--</div>-->
+                                    <!--</div>-->
+                                <!--</div>-->
+                            <!--</div>-->
+                            <!--<div class="form-group">-->
+                                <!--<label class="col-sm-3 control-label">But exclude</label>-->
+                                <!--<div class="col-md-4 controls">-->
+                                    <!--<div class="row">-->
+                                        <!--<div class="col-xs-12">-->
+                                            <!--<input id="exclude_countries" type="text" class="geo-block-input tagsinput" value="{{ data.geographic.exclude_countries|join(',') }}" />-->
+                                        <!--</div>-->
+                                    <!--</div>-->
+                                <!--</div>-->
+                            <!--</div>-->
+                        <!--</div>-->
+                    <!--</div>-->
 
-                </div>
+                <!--</div>-->
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <h4 class="panel-title">

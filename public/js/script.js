@@ -21,18 +21,6 @@
         /**
          * Page Events
          */
-        if($('body.new-campaign').length > 0 || $('body.edit-campaign').length > 0) {
-            var ecpe = editCampaignPageEvents();
-
-            /**
-             * Actions
-             */
-            campaignSaveEvents();
-            return {
-                editCampaignPageEvents: ecpe
-            }
-        }
-
         if($('body.campaigns').length > 0 || $('body.archived-campaigns').length >  0) {
             campaignsPageEvents();
         }
@@ -41,6 +29,17 @@
             snippetPageEvents();
         }
 
+        if($('body.new-campaign').length > 0 || $('body.edit-campaign').length > 0) {
+            var ecpe = editCampaignPageEvents();
+            campaignsPageEvents();
+            /**
+             * Actions
+             */
+            campaignSaveEvents();
+            return {
+                editCampaignPageEvents: ecpe
+            }
+        }
 
     }
 
@@ -541,7 +540,7 @@
             (length > 0) ? $('.campaign-btns-state').removeAttr('disabled'):$('.campaign-btns-state').attr('disabled','disabled');
         }
 
-        $('.power-switch-cb').click(function(){
+        $(document).on('click','.power-switch-cb',function(){
             var status = $(this).prop("checked");
             var campaign_id = $(this).parents('.material-switch').data('id');
             console.log(status);
