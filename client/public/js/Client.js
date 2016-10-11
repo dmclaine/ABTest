@@ -569,7 +569,7 @@ var ABTest = (function (window, document, undefined) {
                         if(data.browserInfo && data.campaigns && data.campaigns.length > 0) {
                             data.browserInfo.cookies = self.getAllCookies();
                             data.browserInfo.urlData.referrer = document.referrer;
-                            data.browserInfo.urlData.url = document.location.href;
+                            data.browserInfo.urlData.url = self.documentUrl;
                             TargetMatcher.prototype.userBrowserInfo = data.browserInfo;
 
                             data.campaigns.forEach(function(campaign){
