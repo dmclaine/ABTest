@@ -136,6 +136,12 @@
                             <div class="form-group">
                                 <div class="checkbox">
                                     <label class="col-sm-3 control-label"></label>
+                                    <input type="checkbox" class="device-block-input custom-cb" name="allow-tablet" id="allow_tablet" {{data.device.allow_tablet == "true" ? 'checked' : ''}} ><label for="allow_tablet">Allow Tablet</label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="checkbox">
+                                    <label class="col-sm-3 control-label"></label>
                                     <input type="checkbox" class="device-block-input custom-cb" name="allow-mobile" id="allow_mobile" {{data.device.allow_mobile == "true" ? 'checked' : ''}}><label for="allow_mobile">Allow Mobile</label>
                                 </div>
                             </div>
