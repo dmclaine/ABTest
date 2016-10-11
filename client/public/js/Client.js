@@ -240,7 +240,7 @@ var ABTest = (function (window, document, undefined) {
 
                     urls.forEach(function (url) {
                         var firstChar = url.charAt(0);
-                        var lastChar = url.charAt(url.length+1);
+                        var lastChar = url.charAt(url.length-1);
                         if(firstChar == '/' && lastChar == '/') {
                             if(host_url.match(url)) {
                                 output = self.formatOutput(true, 'url_matched', url, 1);
