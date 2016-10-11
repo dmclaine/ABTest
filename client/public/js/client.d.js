@@ -1,11 +1,27 @@
 var ABTest = (function (window, document, undefined) {
 
-    //unserialize
+    /**
+     * A tiny function to unserialize serialized data
+     */
     !function(a,b){"use strict";"function"==typeof define&&define.amd?define([],b):"object"==typeof exports?module.exports=b():a.phpUnserialize=b()}(this,function(){"use strict";return function(a){var e,b=0,c=[],d=0,f=function(){var c=a.indexOf(":",b),d=a.substring(b,c);return b=c+2,parseInt(d,10)},g=function(){var c=a.indexOf(";",b),d=a.substring(b,c);return b=c+1,parseInt(d,10)},h=function(){var a=g();return c[d++]=a,a},i=function(){var e=a.indexOf(";",b),f=a.substring(b,e);return b=e+1,f=parseFloat(f),c[d++]=f,f},j=function(){var e=a.indexOf(";",b),f=a.substring(b,e);return b=e+1,f="1"===f,c[d++]=f,f},k=function(){for(var g,h,c=f(),d=0,e=0;e<c;)g=a.charCodeAt(b+d++),g<=127?e++:e+=g>2047?3:2;return h=a.substring(b,b+d),b+=d+2,h},l=function(){var a=k();return c[d++]=a,a},m=function(){var c=a.charAt(b);return b+=2,c},n=function(){var a=m();switch(a){case"i":return g();case"s":return k();default:throw{name:"Parse Error",message:"Unknown key type '"+a+"' at position "+(b-2)}}},o=function(){var k,l,m,o,p,a=f(),g=[],h={},i=g,j=d++;for(c[j]=i,m=0;m<a;m++)if(k=n(),l=e(),i===g&&parseInt(k,10)===m)g.push(l);else{if(i!==h){for(o=0,p=g.length;o<p;o++)h[o]=g[o];i=h,c[j]=i}h[k]=l}return b++,i},p=function(a,b){var c,d,e;return"\0"!==a.charAt(0)?a:(e=a.indexOf("\0",1),e>0?(c=a.substring(1,e),d=a.substr(e+1),"*"===c?d:b===c?d:c+"::"+d):void 0)},q=function(){var a,j,l,m,g={},h=d++,i=k();for(c[h]=g,a=f(),m=0;m<a;m++)j=p(n(),i),l=e(),g[j]=l;return b++,g},r=function(){var a=k(),b=k();return{__PHP_Incomplete_Class_Name:a,serialized:b}},s=function(){var a=g(),b=c[a-1];return c[d++]=b,b},t=function(){var a=g();return c[a-1]},u=function(){var a=null;return c[d++]=a,a};return(e=function(){var a=m();switch(a){case"i":return h();case"d":return i();case"b":return j();case"s":return l();case"a":return o();case"O":return q();case"C":return r();case"r":return s();case"R":return t();case"N":return u();default:throw{name:"Parse Error",message:"Unknown type '"+a+"' at position "+(b-2)}}})()}});
 
+    /**
+     * Will hold the params from the client snippet
+     * @type {Array}
+     */
     var snippetParams = null;
+
+    /**
+     * Used for logger.
+     */
     var TIME_START = Date.now();
 
+    /**
+     * Logger
+     * @param {String} msg
+     * @param {String} [type] - warn/log/etc
+     * @constructor
+     */
     var LOG = function(msg, type) {
         if(typeof type == 'undefined'){
             type='log';
@@ -15,6 +31,12 @@ var ABTest = (function (window, document, undefined) {
         }
     }
 
+    /**
+     * Used to push to GTM for Analytics
+     * @param experimentId
+     * @param variation
+     * @constructor
+     */
     var GTMPush = function (experimentId, variation) {
         
         setTimeout(function(){
@@ -29,6 +51,10 @@ var ABTest = (function (window, document, undefined) {
         },1000);
     };
 
+    /**
+     * Send ajax requests
+     * @param options
+     */
     var $ajax = function(options) {
         try {
             var type = options.type || 'GET';
@@ -49,8 +75,14 @@ var ABTest = (function (window, document, undefined) {
         }
     };
 
+    /**
+     * Function to validate if a user is in an Experiment by checking cookie.
+     * Also calculate the probability of a user participation
+     * @param campaign
+     * @param browserInfo
+     * @returns {{participate: boolean, campaign_id: int, included: number, var_id: string, variation: string}}
+     */
     var userInCampaign = function(campaign,browserInfo) {
-
 
         var cookie_inc = browserInfo.cookies['_ABTest_exp_'+campaign.campaign_id+'_inc'];
         var cookie_exc = browserInfo.cookies['_ABTest_exp_'+campaign.campaign_id+'_exc'];
@@ -64,7 +96,6 @@ var ABTest = (function (window, document, undefined) {
         };
 
         /*--------------------------------------------------------
-         | Step 5a:
          | If user is already a part of this experiment (cookie check),
          | then return true.
          --------------------------------------------------------*/
@@ -73,7 +104,6 @@ var ABTest = (function (window, document, undefined) {
         }
 
         /*--------------------------------------------------------
-         | Step 5c:
          | If user is excluded from this exp, he definately cant be
          | a part of this experiment, ever!
          --------------------------------------------------------*/
@@ -84,7 +114,6 @@ var ABTest = (function (window, document, undefined) {
         }
 
         /*--------------------------------------------------------
-         | Step 5b:
          | If user is new, check the probability of participation
          | in this experiment
          --------------------------------------------------------*/
@@ -113,15 +142,19 @@ var ABTest = (function (window, document, undefined) {
         }
     }
 
+    /**
+     * Compares the experiment's configured settings with users browser for targetting
+     * @param userBrowserInfo
+     * @returns {{criteria: {}, userBrowserInfo: {}, formatOutput: logic.formatOutput, match: logic.match, setCampaignCriteria: logic.setCampaignCriteria, matchUrl: logic.matchUrl, matchDevice: logic.matchDevice, matchBrowser: logic.matchBrowser, matchGeographic: logic.matchGeographic, matchCookie: logic.matchCookie, matchUser: logic.matchUser, matchIP: logic.matchIP, matchLanguage: logic.matchLanguage, matchScript: logic.matchScript, removeLastSlash: logic.removeLastSlash}}
+     * @constructor
+     */
+    var TargetMatcher = function (userBrowserInfo) {
 
-    var TargetMatcher = function () {
-        var userBrowserInfo = this.userBrowserInfo;
-
-        return {
+        var logic =  {
 
             criteria: {},
             userBrowserInfo: {},
-            getOutput: function (matched, criteria, value, run) {
+            formatOutput: function (matched, criteria, value, run) {
                 return {
                     matched: matched,
                     criteria: criteria,
@@ -130,7 +163,6 @@ var ABTest = (function (window, document, undefined) {
                 }
             },
             match: function (campaign) {
-                this.userBrowserInfo = userBrowserInfo;
                 this.setCampaignCriteria(campaign);
                 var matches = {};
                 matches.urlCriteria = this.matchUrl();
@@ -180,7 +212,7 @@ var ABTest = (function (window, document, undefined) {
                     var excludes = this.criteria.url.url_excludes;
                     excludes.forEach(function (exclude) {
                         if (self.userBrowserInfo.urlData.url.indexOf(exclude) >= 0) {
-                            output = self.getOutput(true, 'url_excludes', exclude, 0);
+                            output = self.formatOutput(true, 'url_excludes', exclude, 0);
                             return;
                         }
                     });
@@ -193,7 +225,7 @@ var ABTest = (function (window, document, undefined) {
                     var includes = this.criteria.url.url_contains;
                     includes.forEach(function (include) {
                         if (self.userBrowserInfo.urlData.url.indexOf(include) >= 0) {
-                            output = self.getOutput(true, 'url_includes', include, 1);
+                            output = self.formatOutput(true, 'url_includes', include, 1);
                             return;
                         }
                     })
@@ -211,17 +243,17 @@ var ABTest = (function (window, document, undefined) {
                         var lastChar = url.charAt(url.length);
                         if(firstChar == '/' && lastChar == '/') {
                             if(host_url.match(url)) {
-                                output = self.getOutput(true, 'url_matched', url, 1);
+                                output = self.formatOutput(true, 'url_matched', url, 1);
                                 return;
                             }
                         }else if(self.removeLastSlash(url) == host_url) {
-                            output = self.getOutput(true, 'url_matched', url, 1);
+                            output = self.formatOutput(true, 'url_matched', url, 1);
                             return;
                         }
                     })
                     if (output.hasOwnProperty('run')) return output;
                 }
-                return self.getOutput(false, 'url_check', null, 0);
+                return self.formatOutput(false, 'url_check', null, 0);
             },
             matchDevice: function () {
 
@@ -236,18 +268,18 @@ var ABTest = (function (window, document, undefined) {
                 var tablet = this.criteria.device.allow_tablet == "true";
                 var userDevice = this.userBrowserInfo.device;
 
-                if (desktop && userDevice == 'desktop') {
-                    output = this.getOutput(true, 'device_check', userDevice, 1);
+                if (desktop && userDevice === 'desktop') {
+                    output = this.formatOutput(true, 'device_check', userDevice, 1);
                     return output;
                 }
 
-                if (phone && userDevice == 'phone') {
-                    output = this.getOutput(true, 'device_check', userDevice, 1);
+                if (phone && userDevice === 'phone') {
+                    output = this.formatOutput(true, 'device_check', userDevice, 1);
                     return output;
                 }
 
-                if (tablet && userDevice == 'tablet') {
-                    output = this.getOutput(true, 'device_check', userDevice, 1);
+                if (tablet && userDevice === 'tablet') {
+                    output = this.formatOutput(true, 'device_check', userDevice, 1);
                     return output;
                 }
 
@@ -266,7 +298,7 @@ var ABTest = (function (window, document, undefined) {
                             //we didnt allow this browser
                             if (userBrowser.indexOf(name) >= 0) {
 
-                                output = this.getOutput(true, 'browser_check', name, 0);
+                                output = this.formatOutput(true, 'browser_check', name, 0);
                                 break;
                             }
                         }
@@ -274,7 +306,7 @@ var ABTest = (function (window, document, undefined) {
 
                     if (output.hasOwnProperty('run')) return output;
                 }
-                return this.getOutput(false, 'browser_check', null, 1);
+                return this.formatOutput(false, 'browser_check', null, 1);
             },
             matchGeographic: function () {
 
@@ -291,7 +323,7 @@ var ABTest = (function (window, document, undefined) {
                     active = true;
                     excludes.forEach(function (name) {
                         if (userCookies[name]) {
-                            output = self.getOutput(true, 'cookie_exclude', name, 0);
+                            output = self.formatOutput(true, 'cookie_exclude', name, 0);
                             return;
                         }
                     })
@@ -304,14 +336,14 @@ var ABTest = (function (window, document, undefined) {
                     active = true;
                     includes.forEach(function (name) {
                         if (userCookies[name]) {
-                            output = self.getOutput(true, 'cookie_include', name, 1);
+                            output = self.formatOutput(true, 'cookie_include', name, 1);
                             return;
                         }
                     });
                     if (output.hasOwnProperty('run')) return output;
                 }
 
-                return (active) ? self.getOutput(false, 'cookies', null, 0) : self.getOutput(false, 'cookies', null, 1);
+                return (active) ? self.formatOutput(false, 'cookies', null, 0) : self.formatOutput(false, 'cookies', null, 1);
             },
             matchUser: function () {
                 var self = this;
@@ -321,7 +353,7 @@ var ABTest = (function (window, document, undefined) {
                 var output = {};
                 //include all users ?
                 if (this.criteria.user['all_users'] == 'true') {
-                    return self.getOutput(true, 'user_match', 'all_users', 1);
+                    return self.formatOutput(true, 'user_match', 'all_users', 1);
                 }
 
                 //only new users
@@ -330,7 +362,7 @@ var ABTest = (function (window, document, undefined) {
                     for (var name in userCookies) {
 
                         if (name.indexOf('_ABTest') >= 0) {
-                            output = self.getOutput(true, 'user_match', 'new_user', 0);
+                            output = self.formatOutput(true, 'user_match', 'new_user', 0);
                             break;
                         }
                     }
@@ -342,13 +374,13 @@ var ABTest = (function (window, document, undefined) {
                     active = true;
                     for (var name in userCookies) {
                         if (name.indexOf('_ABTest') >= 0) {
-                            output = self.getOutput(true, 'user_match', 'returning_user', 1);
+                            output = self.formatOutput(true, 'user_match', 'returning_user', 1);
                             break;
                         }
                     }
                     if (output.hasOwnProperty('run')) return output;
                 }
-                return (active) ? self.getOutput(false, 'user_match', null, 0) : self.getOutput(false, 'user_match', null, 1);
+                return (active) ? self.formatOutput(false, 'user_match', null, 0) : self.formatOutput(false, 'user_match', null, 1);
 
             },
             matchIP: function () {
@@ -368,7 +400,7 @@ var ABTest = (function (window, document, undefined) {
                         var breakIp = ip.split('.');
                         if (breakIp.length > 0) {
 
-                            output = self.getOutput(true, 'ip_excludes', ip, 0);
+                            output = self.formatOutput(true, 'ip_excludes', ip, 0);
 
                             breakIp.forEach(function (ele, idx) {
 
@@ -391,12 +423,12 @@ var ABTest = (function (window, document, undefined) {
                         if (breakIp.length > 0) {
 
 
-                            output = self.getOutput(true, 'ip_includes', ip, 1);
+                            output = self.formatOutput(true, 'ip_includes', ip, 1);
 
                             breakIp.forEach(function (ele, idx) {
 
                                 if (ele != '*' && breakUserIp[idx] !== ele) {
-                                    output = self.getOutput(false, 'ip_includes', ip, 0);
+                                    output = self.formatOutput(false, 'ip_includes', ip, 0);
                                     return;
                                 }
                             });
@@ -405,7 +437,7 @@ var ABTest = (function (window, document, undefined) {
                     if (output.hasOwnProperty('run')) return output;
                 }
 
-                return self.getOutput(false, 'ip', null, 1);
+                return self.formatOutput(false, 'ip', null, 1);
             },
             matchLanguage: function () {
 
@@ -421,7 +453,7 @@ var ABTest = (function (window, document, undefined) {
                     excludes.forEach(function (language) {
 
                         if (language.toLowerCase() == userLang) {
-                            output = self.getOutput(true, 'lang_exclude', userLang, 0);
+                            output = self.formatOutput(true, 'lang_exclude', userLang, 0);
                             return;
                         }
 
@@ -433,12 +465,12 @@ var ABTest = (function (window, document, undefined) {
 
                     var includes = this.criteria.language.allowed_languages;
 
-                    output = self.getOutput(false, 'lang_include', userLang, 0);
+                    output = self.formatOutput(false, 'lang_include', userLang, 0);
 
                     includes.forEach(function (language) {
 
                         if (language.toLowerCase() == userLang) {
-                            output = self.getOutput(true, 'lang_include', userLang, 1);
+                            output = self.formatOutput(true, 'lang_include', userLang, 1);
                             return;
                         }
 
@@ -446,19 +478,19 @@ var ABTest = (function (window, document, undefined) {
                     if (output.hasOwnProperty('run')) return output;
                 }
 
-                return self.getOutput(false, 'language', null, 1);
+                return self.formatOutput(false, 'language', null, 1);
 
             },
             matchScript: function() {
 
                 if(this.criteria.script.js == "") {
-                    return this.getOutput(true, 'script', null, 1);
+                    return this.formatOutput(true, 'script', null, 1);
                 }
 
                 if(eval(this.criteria.script.js)) {
-                    return this.getOutput(true, 'script', null, 1);
+                    return this.formatOutput(true, 'script', null, 1);
                 }
-                return this.getOutput(false, 'script', null, 0);
+                return this.formatOutput(false, 'script', null, 0);
             },
             removeLastSlash: function (str) {
 
@@ -469,6 +501,9 @@ var ABTest = (function (window, document, undefined) {
             }
         }
 
+        logic.userBrowserInfo = userBrowserInfo;
+
+        return logic;
     }
 
     return {
@@ -539,7 +574,7 @@ var ABTest = (function (window, document, undefined) {
 
                             data.campaigns.forEach(function(campaign){
                                 LOG(Date.now()-TIME_START + " : Checking if experiment will run now or next time");
-                                var matchResult = self.willCampaignRun(campaign);
+                                var matchResult = self.willCampaignRun(campaign,data.browserInfo);
                                 LOG(matchResult);
                                 if(matchResult.execute) {
                                     LOG(Date.now()-TIME_START + " : experiment passed targetting criteria");
@@ -616,8 +651,8 @@ var ABTest = (function (window, document, undefined) {
                 localStorage.removeItem('_ABTest_V-' + campaign.campaign_id);
             }
         },
-        willCampaignRun: function(campaign) {
-            var matcher = new TargetMatcher();
+        willCampaignRun: function(campaign,userBrowserInfo) {
+            var matcher = new TargetMatcher(userBrowserInfo);
             return matcher.match(campaign);
         },
         removeLastSlash: function(str) {
@@ -639,11 +674,10 @@ var ABTest = (function (window, document, undefined) {
                             data.browserInfo.cookies = self.getAllCookies();
                             data.browserInfo.urlData.referrer = document.referrer;
                             data.browserInfo.urlData.url = document.location.origin;
-                            TargetMatcher.prototype.userBrowserInfo = data.browserInfo;
 
                             data.campaigns.forEach(function(campaign){
 
-                                var matchResult = self.willCampaignRun(campaign);
+                                var matchResult = self.willCampaignRun(campaign,data.browserInfo);
                                 LOG(matchResult);
 
                                 if(matchResult.execute) {
@@ -714,12 +748,14 @@ var ABTest = (function (window, document, undefined) {
         },
         runJS: function (js,callback) {
 
-            this.jQueryLoaded(function(status) {
-                if(status) {
-                    eval(js);
-                }
-                callback(status);
-            })
+            eval(js);
+            callback(status);
+            //this.jQueryLoaded(function(status) {
+            //    if(status) {
+            //        eval(js);
+            //    }
+            //    callback(status);
+            //})
         },
         runCSS: function (css) {
             var styleElement = document.createElement("style");
@@ -759,8 +795,6 @@ var ABTest = (function (window, document, undefined) {
                 "=; expires=Thu, 01 Jan 1970 00:00:00 GMT" +
                 (sDomain ? "; domain=" + sDomain : "") +
                 (sPath ? "; path=" + sPath : "");
-
-
         },
         getAllCookies: function() {
             var cookieObj = {};
