@@ -240,7 +240,7 @@ var ABTest = (function (window, document, undefined) {
 
                     urls.forEach(function (url) {
                         var firstChar = url.charAt(0);
-                        var lastChar = url.charAt(url.length);
+                        var lastChar = url.charAt(url.length+1);
                         if(firstChar == '/' && lastChar == '/') {
                             if(host_url.match(url)) {
                                 output = self.formatOutput(true, 'url_matched', url, 1);
@@ -569,7 +569,7 @@ var ABTest = (function (window, document, undefined) {
                         if(data.browserInfo && data.campaigns && data.campaigns.length > 0) {
                             data.browserInfo.cookies = self.getAllCookies();
                             data.browserInfo.urlData.referrer = document.referrer;
-                            data.browserInfo.urlData.url = document.location.origin;
+                            data.browserInfo.urlData.url = document.location.href;
                             TargetMatcher.prototype.userBrowserInfo = data.browserInfo;
 
                             data.campaigns.forEach(function(campaign){
