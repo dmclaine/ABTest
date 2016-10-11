@@ -152,7 +152,7 @@ var ABTest = (function (window, document, undefined) {
                     }
                 }
                 return {
-                    matches: matches,
+                    //matches: matches,
                     execute: run,
                     reason: reason
                 }
@@ -233,6 +233,7 @@ var ABTest = (function (window, document, undefined) {
 
                 var desktop = this.criteria.device.allow_desktop == "true";
                 var phone = this.criteria.device.allow_mobile == "true";
+                var tablet = this.criteria.device.allow_tablet == "true";
                 var userDevice = this.userBrowserInfo.device;
 
                 if (desktop && userDevice == 'desktop') {
@@ -241,6 +242,11 @@ var ABTest = (function (window, document, undefined) {
                 }
 
                 if (phone && userDevice == 'phone') {
+                    output = this.getOutput(true, 'device_check', userDevice, 1);
+                    return output;
+                }
+
+                if (tablet && userDevice == 'tablet') {
                     output = this.getOutput(true, 'device_check', userDevice, 1);
                     return output;
                 }
