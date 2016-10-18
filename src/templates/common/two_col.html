@@ -1,14 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Pages | Pages</title>
+    <title>{{ page_title }}</title>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="shortcut icon" href="images/icons/favicon.ico">
-    <link rel="apple-touch-icon" href="images/icons/favicon.png">
-    <link rel="apple-touch-icon" sizes="72x72" href="images/icons/favicon-72x72.png">
-    <link rel="apple-touch-icon" sizes="114x114" href="images/icons/favicon-114x114.png">
+    <link rel="icon" href="{{ base_path }}images/Favicon.ico" type="image/x-icon" />
     <!--Loading bootstrap css-->
     <link type="text/css" rel="stylesheet"
           href="http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,300,700">
@@ -40,19 +37,26 @@
     <!--BEGIN TOPBAR-->
     <div id="header-topbar-option-demo" class="page-header-topbar">
         <nav id="topbar" role="navigation" style="margin-bottom: 0;" data-step="3"
-             class="navbar navbar-default navbar-static-top">
+             class="navbar navbar-inverse navbar-static-top">
             <div class="navbar-header">
-                <!--<button type="button" data-toggle="collapse" data-target=".sidebar-collapse" class="navbar-toggle"><span-->
-                        <!--class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span-->
-                        <!--class="icon-bar"></span><span class="icon-bar"></span></button>-->
-                <a id="logo" href="javascript:void(0);" class="navbar-brand"><span class="fa fa-rocket"></span><span
+                <a id="logo" href="/" class="navbar-brand"><span class="fa fa-rocket"></span><span
                         class="logo-text">ABTest</span><span class="logo-text-icon">
                     <i class="fa fa-align-justify sidebar-toggle" aria-hidden="true"></i>
                 </span></a>
             </div>
             <button type="button" class="sidebar-toggle">
-                <i class="fa fa-arrow-left fa-1 x" aria-hidden="true"></i>
+                <i class="fa fa-align-justify fa-1 x" aria-hidden="true"></i>
             </button>
+            <ul class="nav navbar-nav pull-right">
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle color-white" data-toggle="dropdown"  aria-expanded="false"><i class="icon-star"></i> Settings <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a href="/user/logout"><i class="icon-pencil fa-fw"></i> Logout</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
         </nav>
     </div>
     <!--END TOPBAR-->

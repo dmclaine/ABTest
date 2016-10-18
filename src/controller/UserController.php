@@ -43,7 +43,7 @@ class UserController implements ControllerProviderInterface
     {
         return function (Application $app) {
             $app['session']->clear();
-            $app['session']->getFlashBag()->add('msg', 'User logged out successfully');
+            //$app['session']->getFlashBag()->add('msg', 'User logged out successfully');
             return $app->redirect('/');
         };
     }

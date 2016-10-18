@@ -11,7 +11,10 @@ use Symfony\Component\HttpFoundation\Request;
 //});
 
 $app->get('/', function () use ($app) {
-    return $app['twig']->render('login.html');
+    if(!$app['session']->get('user')) {
+        return $app['twig']->render('login.html');
+    }
+    return $app->redirect('/dashboard/campaigns');
 });
 
 $app->get('/col', function () use ($app) {
