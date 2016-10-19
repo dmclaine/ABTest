@@ -50,9 +50,9 @@ class CampaignService
         return $campaigns = $this->campaignModel->getAllCampaigns($data);
     }
 
-    public function getRunningCampaigns()
+    public function getRunningCampaigns($accounts)
     {
-        return $campaigns = $this->campaignModel->getRunningCampaigns();
+        return $campaigns = $this->campaignModel->getRunningCampaigns($accounts);
     }
 
     public function isCampaignRunning($campaign_id)

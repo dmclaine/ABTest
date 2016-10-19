@@ -34,8 +34,11 @@ class DashboardController implements ControllerProviderInterface
         $controllers->get('/campaign/edit/{id}', $this->editCampaign());
        // $controllers->get('/campaign/analytics/{id}', $this->analytics());
         //$controllers->get('/', $this->display());
+        $accounts = implode(',', array_map(function ($entry) {
+            return $entry['account_id'];
+        }, $app['session']->get('user')['account']));
 
-        $runningCampaigns = $this->campaignService->getRunningCampaigns();
+        $runningCampaigns = $this->campaignService->getRunningCampaigns($accounts);
         $app['twig']->addGlobal('runningCampaigns',$runningCampaigns);
         return $controllers;
     }
@@ -143,7 +146,7 @@ class DashboardController implements ControllerProviderInterface
                 ));
 
                 return $app['twig']->render('campaigns.html',array(
-                    'page_title'=>'Campaigns',
+                    'page_title'=>'Experiments',
                     'body_class' => 'campaigns',
                     'data' => $campaigns
                 ));

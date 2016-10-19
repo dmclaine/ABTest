@@ -164,9 +164,9 @@ class CampaignModel
         );
     }
 
-    public function getRunningCampaigns()
+    public function getRunningCampaigns($accounts)
     {
-        return R::getAll("SELECT id, campaign_name FROM campaigns WHERE status=1");
+        return R::getAll("SELECT id, campaign_name FROM campaigns WHERE status=1 AND account_id IN (?)", array($accounts));
     }
 
     public function powerCampaign($data)

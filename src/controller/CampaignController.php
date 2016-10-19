@@ -84,7 +84,11 @@ class CampaignController
     public function getAllCampaigns()
     {
         try {
-            $data = $this->campaignService->getAllCampaigns();
+            $account = $this->app['session']->get('user')['account'];
+            $data = $this->campaignService->getAllCampaigns(array(
+                'archived' => 0,
+                'account' => $account
+            ));
             return $this->app->json(['ret' => true, 'data' => $data]);
         } catch (\Exception $e) {
             return $this->app->json(['ret' => false, 'data' => 'error: ' . $e->getMessage()]);

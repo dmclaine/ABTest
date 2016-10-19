@@ -53,10 +53,10 @@
 
     var applySidebarEvents = function() {
         var sidebar_status = localStorage.getItem('sidebar-slim');
-        if(sidebar_status !== null && sidebar_status =="false") {
-            $('body').removeClass('sidebar-slim');
-        }
-        $('.sidebar-toggle').click(function(){
+
+
+        $('.sidebar-toggle').click(function(e){
+            e.preventDefault();
             $('body').toggleClass('sidebar-slim');
             if($('body').hasClass('sidebar-slim')) {
                 localStorage.setItem('sidebar-slim',true);
@@ -87,7 +87,11 @@
         autoHide();
 
         $(window).resize(autoHide);
-
+        if(sidebar_status !== null && sidebar_status =="false") {
+            $('body').removeClass('sidebar-slim');
+        }else{
+            $('body').addClass('sidebar-slim');
+        }
     }
 
     var editCampaignPageEvents = function() {
