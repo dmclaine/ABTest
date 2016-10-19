@@ -36,13 +36,13 @@
                         <tbody>
 
                         {% for key, campaign in data %}
-                            <tr style="cursor: pointer;" class="campaign-row" data-href="/dashboard/campaign/edit/{{ campaign.id }}">
+                            <tr style="cursor: pointer;" class="campaign-row" data-href="/dashboard/campaign/edit/{{ campaign.campaign_id }}">
                                 <td style="width: 40px;" class="cb">
-                                    <input type="checkbox" class="custom-cb campaign-select-cb" data-id="{{ campaign.id }}">
+                                    <input type="checkbox" class="custom-cb campaign-select-cb" data-id="{{ campaign.campaign_id }}">
                                 </td>
-                                <td>{{ campaign.id }}</td>
+                                <td>{{ campaign.campaign_id }}</td>
                                 <td>{{ campaign.campaign_name }}</td>
-                                <td>Abhi</td>
+                                <td>{{ campaign.name }}</td>
                                 <td>{{ campaign.created_on }}</td>
                                 <td class="running-switch-td">
 

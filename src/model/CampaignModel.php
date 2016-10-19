@@ -31,14 +31,15 @@ class CampaignModel
 
     public function getAllCampaigns($data=array())
     {
-        $sql = 'SELECT *, id as campaign_id FROM campaigns WHERE 1=1 ';
+        $sql = 'SELECT *, c.id as campaign_id FROM campaigns c
+                INNER JOIN users u ON c.created_by = u.id WHERE 1=1 ';
 
         if(isset($data['archived'])) {
-            $sql .= ' AND archived = ' . $data['archived'];
+            $sql .= ' AND c.archived = ' . $data['archived'];
         }
 
         if(isset($data['status'])) {
-            $sql .= ' AND status = ' . $data['status'];
+            $sql .= ' AND c.status = ' . $data['status'];
         }
 
         if(isset($data['account'])) {
@@ -46,7 +47,7 @@ class CampaignModel
                 return $entry['account_id'];
             }, $data['account']));
 
-            $sql .= ' AND account_id IN ('.$accounts.')';
+            $sql .= ' AND c.account_id IN ('.$accounts.')';
         }
         return R::getAll($sql);
     }
@@ -71,6 +72,7 @@ class CampaignModel
                     $campaign->$col = $value;
                 }
                 $campaign->campaign_name = $campaign->campaign_name .'-clone-'. rand(999,99999);
+                $campaign->created_on = $campaign->campaign_name .'-clone-'. rand(999,99999);
                 $new_id = R::store($campaign);
 
                 // goals cloning
@@ -119,12 +121,16 @@ class CampaignModel
     public function save($data)
     {
         //Store Campaigns
-        $campaign = (isset($data['id'])) ? R::load('campaigns',$data['id']) : R::dispense('campaigns');
+        $campaign = (isset($data['id']) && $data['id'] != "") ? R::load('campaigns',$data['id']) : R::dispense('campaigns');
         $campaign_data = $data['general']['general-settings'];
         $variations_data = $data['variations'];
         foreach($campaign_data as $col => $value) {
             $campaign->$col = $value;
         }
+        if(isset($data['id']) && $data['id'] == "") {
+            $campaign->created_by = $data['created_by'];
+        }
+        $campaign->account_id = $data['account_id'];
         $campaign->variations = serialize($variations_data);
         $campaign->traffic = $data['traffic'];
         $campaign->campaign_name = $data['name'];

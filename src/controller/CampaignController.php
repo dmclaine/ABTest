@@ -25,7 +25,14 @@ class CampaignController
     public function saveCampaign()
     {
         try {
+            $account_id = 0;
+            if(isset($this->app['session']->get('user')['account'][0])) {
+                $account_id = $this->app['session']->get('user')['account'][0]['account_id'];
+            }
+            $user_id = $this->app['session']->get('user')['user_id'];
             $data = $this->request->request->get('data');
+            $data['account_id'] = $account_id;
+            $data['created_by'] = $user_id;
             $data = $this->campaignService->save($data);
             return $this->app->json(['ret' => true, 'data' => $data]);
         } catch (\Exception $e) {
