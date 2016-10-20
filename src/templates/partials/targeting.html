@@ -239,7 +239,7 @@
                                 <div class="col-sm-9 controls">
                                     <div class="row">
                                         <div class="col-md-4">
-                                            <input type="text" placeholder="eg. ga_, fb" id="exclude_cookie" class="form-control cookie-block-input tagsinput" value="{{ data.cookies.exclude_cookie|join(',') }}">
+                                            <input type="text" placeholder="eg. ga_, fb" id="exclude_cookie" class="form-control cookie-block-input tagsinput" value="{{ data.cookie.exclude_cookie|join(',') }}">
                                         </div>
                                     </div>
                                 </div>
@@ -249,7 +249,7 @@
                                 <div class="col-sm-9 controls">
                                     <div class="row">
                                         <div class="col-md-4">
-                                            <input type="text" placeholder="eg. abtest" id="include_cookie" class="form-control cookie-block-input tagsinput" value="{{ data.cookies.include_cookie|join(',') }}">
+                                            <input type="text" placeholder="eg. abtest" id="include_cookie" class="form-control cookie-block-input tagsinput" value="{{ data.cookie.include_cookie|join(',') }}">
                                         </div>
                                     </div>
                                 </div>

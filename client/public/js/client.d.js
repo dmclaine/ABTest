@@ -320,9 +320,9 @@ var ABTest = (function (window, document, undefined) {
                     //exclude cookie
                     if (this.criteria.cookie.exclude_cookie && this.criteria.cookie.exclude_cookie.length > 0) {
                         var excludes = this.criteria.cookie.exclude_cookie;
-                        active = true;
                         excludes.forEach(function (name) {
                             if (userCookies[name]) {
+                                active = true;
                                 output = self.formatOutput(true, 'cookie_exclude', name, 0);
                                 return;
                             }
@@ -333,9 +333,9 @@ var ABTest = (function (window, document, undefined) {
                     //include cookie
                     if (this.criteria.cookie.include_cookie && this.criteria.cookie.include_cookie.length > 0) {
                         var includes = this.criteria.cookie.include_cookie;
-                        active = true;
                         includes.forEach(function (name) {
                             if (userCookies[name]) {
+                                active = true;
                                 output = self.formatOutput(true, 'cookie_include', name, 1);
                                 return;
                             }
