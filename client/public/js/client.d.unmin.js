@@ -728,11 +728,11 @@ var ABTest = (function (window, document, undefined) {
                         return;
                     }
                     //we will run the campaign only if it is under time limits
-                    var visibility = document.getElementById('_abtest_path_hides') === null;
-                    if(visibility) {
-                        self.timeoutDetected();
-                        return;
-                    }
+                    //var visibility = document.getElementById('_abtest_path_hides') === null;
+                    //if(visibility) {
+                    //    self.timeoutDetected();
+                    //    return;
+                    //}
 
                     self.runJS(variation.js, function(status){
                         LOG(Date.now()-TIME_START + " : Injected Javascript");
