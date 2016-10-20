@@ -294,7 +294,7 @@ var ABTest = (function (window, document, undefined) {
 
                     //check if there is any browser we are not allowing
                     for (var name in browser) {
-                        if (browser.hasOwnProperty(name) && browser[name] == "false") {
+                        if (browser.hasOwnProperty(name) && browser[name] == "true") {
                             //we didnt allow this browser
                             if (userBrowser.indexOf(name) >= 0) {
 
@@ -316,31 +316,32 @@ var ABTest = (function (window, document, undefined) {
                 var active = false;
                 var userCookies = this.userBrowserInfo.cookies;
                 var output = {};
+                if (this.criteria.cookie) {
+                    //exclude cookie
+                    if (this.criteria.cookie.exclude_cookie && this.criteria.cookie.exclude_cookie.length > 0) {
+                        var excludes = this.criteria.cookie.exclude_cookie;
+                        active = true;
+                        excludes.forEach(function (name) {
+                            if (userCookies[name]) {
+                                output = self.formatOutput(true, 'cookie_exclude', name, 0);
+                                return;
+                            }
+                        })
+                        if (output.hasOwnProperty('run')) return output;
+                    }
 
-                //exclude cookie
-                if (this.criteria.cookie.exclude_cookie && this.criteria.cookie.exclude_cookie.length > 0) {
-                    var excludes = this.criteria.cookie.exclude_cookie;
-                    active = true;
-                    excludes.forEach(function (name) {
-                        if (userCookies[name]) {
-                            output = self.formatOutput(true, 'cookie_exclude', name, 0);
-                            return;
-                        }
-                    })
-                    if (output.hasOwnProperty('run')) return output;
-                }
-
-                //include cookie
-                if (this.criteria.cookie.include_cookie && this.criteria.cookie.include_cookie.length > 0) {
-                    var includes = this.criteria.cookie.include_cookie;
-                    active = true;
-                    includes.forEach(function (name) {
-                        if (userCookies[name]) {
-                            output = self.formatOutput(true, 'cookie_include', name, 1);
-                            return;
-                        }
-                    });
-                    if (output.hasOwnProperty('run')) return output;
+                    //include cookie
+                    if (this.criteria.cookie.include_cookie && this.criteria.cookie.include_cookie.length > 0) {
+                        var includes = this.criteria.cookie.include_cookie;
+                        active = true;
+                        includes.forEach(function (name) {
+                            if (userCookies[name]) {
+                                output = self.formatOutput(true, 'cookie_include', name, 1);
+                                return;
+                            }
+                        });
+                        if (output.hasOwnProperty('run')) return output;
+                    }
                 }
 
                 return (active) ? self.formatOutput(false, 'cookies', null, 0) : self.formatOutput(false, 'cookies', null, 1);
@@ -351,92 +352,94 @@ var ABTest = (function (window, document, undefined) {
 
                 var active = false;
                 var output = {};
-                //include all users ?
-                if (this.criteria.user['all_users'] == 'true') {
-                    return self.formatOutput(true, 'user_match', 'all_users', 1);
-                }
-
-                //only new users
-                else if (this.criteria.user['new_users'] == 'true') {
-                    active = false;
-                    for (var name in userCookies) {
-
-                        if (name.indexOf('_ABTest') >= 0) {
-                            output = self.formatOutput(true, 'user_match', 'new_user', 0);
-                            break;
-                        }
+                if (this.criteria.user) {
+                    //include all users ?
+                    if (this.criteria.user['all_users'] == 'true') {
+                        return self.formatOutput(true, 'user_match', 'all_users', 1);
                     }
-                    if (output.hasOwnProperty('run')) return output;
-                }
 
-                //only returning users
-                else if (this.criteria.user['returning_users'] == 'true') {
-                    active = true;
-                    for (var name in userCookies) {
-                        if (name.indexOf('_ABTest') >= 0) {
-                            output = self.formatOutput(true, 'user_match', 'returning_user', 1);
-                            break;
+                    //only new users
+                    else if (this.criteria.user['new_users'] == 'true') {
+                        active = false;
+                        for (var name in userCookies) {
+
+                            if (name.indexOf('_ABTest') >= 0) {
+                                output = self.formatOutput(true, 'user_match', 'new_user', 0);
+                                break;
+                            }
                         }
+                        if (output.hasOwnProperty('run')) return output;
                     }
-                    if (output.hasOwnProperty('run')) return output;
+
+                    //only returning users
+                    else if (this.criteria.user['returning_users'] == 'true') {
+                        active = true;
+                        for (var name in userCookies) {
+                            if (name.indexOf('_ABTest') >= 0) {
+                                output = self.formatOutput(true, 'user_match', 'returning_user', 1);
+                                break;
+                            }
+                        }
+                        if (output.hasOwnProperty('run')) return output;
+                    }
                 }
                 return (active) ? self.formatOutput(false, 'user_match', null, 0) : self.formatOutput(false, 'user_match', null, 1);
 
             },
             matchIP: function () {
 
-                var userIp = '127.0.0.1';//this.userBrowserInfo.ip;
+                var userIp = this.userBrowserInfo.ip;
 
                 var breakUserIp = userIp.split('.');
                 var output = {};
                 var self = this;
+                if(this.criteria.ip) {
+                    //ip excludes
+                    if (this.criteria.ip.exclude_ips && this.criteria.ip.exclude_ips.length > 0) {
+                        var excludes = this.criteria.ip.exclude_ips;
 
-                //ip excludes
-                if (this.criteria.ip.exclude_ips && this.criteria.ip.exclude_ips.length > 0) {
-                    var excludes = this.criteria.ip.exclude_ips;
+                        excludes.forEach(function (ip) {
 
-                    excludes.forEach(function (ip) {
+                            var breakIp = ip.split('.');
+                            if (breakIp.length > 0) {
 
-                        var breakIp = ip.split('.');
-                        if (breakIp.length > 0) {
+                                output = self.formatOutput(true, 'ip_excludes', ip, 0);
 
-                            output = self.formatOutput(true, 'ip_excludes', ip, 0);
+                                breakIp.forEach(function (ele, idx) {
 
-                            breakIp.forEach(function (ele, idx) {
+                                    if (ele != '*' && breakUserIp[idx] != ele) {
+                                        output = {};
+                                        return;
+                                    }
+                                });
+                            }
+                        });
+                        if (output.hasOwnProperty('run')) return output;
+                    }
 
-                                if (ele != '*' && breakUserIp[idx] != ele) {
-                                    output = {};
-                                    return;
-                                }
-                            });
-                        }
-                    });
-                    if (output.hasOwnProperty('run')) return output;
+                    //ip includes
+                    if (this.criteria.ip.include_ips && this.criteria.ip.include_ips.length > 0) {
+                        var includes = this.criteria.ip.include_ips;
+                        includes.forEach(function (ip) {
+
+                            var breakIp = ip.split('.');
+                            if (breakIp.length > 0) {
+
+
+                                output = self.formatOutput(true, 'ip_includes', ip, 1);
+
+                                breakIp.forEach(function (ele, idx) {
+
+                                    if (ele != '*' && breakUserIp[idx] !== ele) {
+                                        output = self.formatOutput(false, 'ip_includes', ip, 0);
+                                        return;
+                                    }
+                                });
+                            }
+                        });
+                        if (output.hasOwnProperty('run')) return output;
+                    }
                 }
-
-                //ip includes
-                if (this.criteria.ip.include_ips && this.criteria.ip.include_ips.length > 0) {
-                    var includes = this.criteria.ip.include_ips;
-                    includes.forEach(function (ip) {
-
-                        var breakIp = ip.split('.');
-                        if (breakIp.length > 0) {
-
-
-                            output = self.formatOutput(true, 'ip_includes', ip, 1);
-
-                            breakIp.forEach(function (ele, idx) {
-
-                                if (ele != '*' && breakUserIp[idx] !== ele) {
-                                    output = self.formatOutput(false, 'ip_includes', ip, 0);
-                                    return;
-                                }
-                            });
-                        }
-                    });
-                    if (output.hasOwnProperty('run')) return output;
-                }
-
                 return self.formatOutput(false, 'ip', null, 1);
             },
             matchLanguage: function () {
@@ -445,50 +448,52 @@ var ABTest = (function (window, document, undefined) {
 
                 var output = {};
                 var self = this;
+                if(this.criteria.language) {
+                    //language excludes
+                    if (this.criteria.language.exclude_languages && this.criteria.language.exclude_languages.length > 0) {
+                        var excludes = this.criteria.language.exclude_languages;
 
-                //language excludes
-                if (this.criteria.language.exclude_languages && this.criteria.language.exclude_languages.length > 0) {
-                    var excludes = this.criteria.language.exclude_languages;
+                        excludes.forEach(function (language) {
 
-                    excludes.forEach(function (language) {
+                            if (language.toLowerCase() == userLang) {
+                                output = self.formatOutput(true, 'lang_exclude', userLang, 0);
+                                return;
+                            }
 
-                        if (language.toLowerCase() == userLang) {
-                            output = self.formatOutput(true, 'lang_exclude', userLang, 0);
-                            return;
-                        }
+                        });
+                        if (output.hasOwnProperty('run')) return output;
+                    }
+                    //language includes
+                    if (this.criteria.language.allowed_languages && this.criteria.language.allowed_languages.length > 0) {
 
-                    });
-                    if (output.hasOwnProperty('run')) return output;
+                        var includes = this.criteria.language.allowed_languages;
+
+                        output = self.formatOutput(false, 'lang_include', userLang, 0);
+
+                        includes.forEach(function (language) {
+
+                            if (language.toLowerCase() == userLang) {
+                                output = self.formatOutput(true, 'lang_include', userLang, 1);
+                                return;
+                            }
+
+                        });
+                        if (output.hasOwnProperty('run')) return output;
+                    }
                 }
-                //language includes
-                if (this.criteria.language.allowed_languages && this.criteria.language.allowed_languages.length > 0) {
-
-                    var includes = this.criteria.language.allowed_languages;
-
-                    output = self.formatOutput(false, 'lang_include', userLang, 0);
-
-                    includes.forEach(function (language) {
-
-                        if (language.toLowerCase() == userLang) {
-                            output = self.formatOutput(true, 'lang_include', userLang, 1);
-                            return;
-                        }
-
-                    });
-                    if (output.hasOwnProperty('run')) return output;
-                }
-
                 return self.formatOutput(false, 'language', null, 1);
 
             },
             matchScript: function() {
 
-                if(this.criteria.script.js == "") {
-                    return this.formatOutput(true, 'script', null, 1);
-                }
+                if(this.criteria.script) {
+                    if (this.criteria.script.js == "") {
+                        return this.formatOutput(true, 'script', null, 1);
+                    }
 
-                if(eval(this.criteria.script.js)) {
-                    return this.formatOutput(true, 'script', null, 1);
+                    if (eval(this.criteria.script.js)) {
+                        return this.formatOutput(true, 'script', null, 1);
+                    }
                 }
                 return this.formatOutput(false, 'script', null, 0);
             },
