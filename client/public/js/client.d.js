@@ -702,7 +702,10 @@ var ABTest = (function (window, document, undefined) {
                     
                 }
             });
-        }, 
+        },
+        timeoutDetected: function() {
+            LOG(Date.now()-TIME_START + " : Timeout detected");
+        },
         execute: function(campaign,callback) {
 
             var self = this;
@@ -724,6 +727,13 @@ var ABTest = (function (window, document, undefined) {
                         callback(status);
                         return;
                     }
+                    //we will run the campaign only if it is under time limits
+                    var visibility = document.getElementById('_abtest_path_hides') !== null;
+                    if(visibility) {
+                        self.timeoutDetected();
+                        return;
+                    }
+
                     self.runJS(variation.js, function(status){
                         LOG(Date.now()-TIME_START + " : Injected Javascript");
                         self.runCSS(variation.css);
@@ -754,7 +764,7 @@ var ABTest = (function (window, document, undefined) {
         runJS: function (js,callback) {
 
             eval(js);
-            callback(status);
+            callback(true);
             //this.jQueryLoaded(function(status) {
             //    if(status) {
             //        eval(js);
