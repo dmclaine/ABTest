@@ -32,7 +32,7 @@ class CampaignModel
     public function getAllCampaigns($data=array())
     {
         $sql = 'SELECT *, c.id as campaign_id FROM campaigns c
-                INNER JOIN users u ON c.created_by = u.id WHERE 1=1 ';
+                LEFT JOIN users u ON c.created_by = u.id WHERE 1=1 ';
 
         if(isset($data['archived'])) {
             $sql .= ' AND c.archived = ' . $data['archived'];

@@ -27,6 +27,15 @@ class ReportingController implements ControllerProviderInterface
     private $visitors;
 
     /**
+     * @var bool
+     */
+    private $doCache = true;
+    /**
+     * In secs. for 1 hour
+     * @var int
+     */
+    private $cacheTime = 3600;
+    /**
      * ReportingController constructor.
      * @param Application $app
      */
@@ -36,6 +45,14 @@ class ReportingController implements ControllerProviderInterface
         $this->analyticsService = $app['AnalyticsService'];
         $this->campaignService = $app['CampaignService'];
         $this->goalService = $app['GoalService'];
+
+        $referrer = $_SERVER['HTTP_REFERER'];
+        //are we giving back the cache data ?
+        //we need a better way to do this
+        if(strpos($referrer,'nocache=true') > 0)
+        {
+            $this->doCache = false;
+        }
     }
 
     /**
@@ -88,59 +105,68 @@ class ReportingController implements ControllerProviderInterface
      */
     private function getGoalReport($goal)
     {
-        $filters = $this->getFilters($goal);
-        $total_visitors = $this->totalVisitorsInGoal($filters,$goal);
+        $campaign_id = $this->app['session']->get('campaign_id');
 
-        if($goal['action'] == 'event') {
-
-            $sequence = "";
-            if($goal['e_category'] != "") {
-                $sequence .= 'ga:eventCategory=='.$goal['e_category'].',';
-            }
-            if($goal['e_action'] != "") {
-                $sequence .= 'ga:eventAction=='.$goal['e_action'] . ',';
-            }
-            if($goal['e_label'] != "") {
-                $sequence .= 'ga:eventLabel=='.$goal['e_label'];
-            }
-            $sequence = rtrim($sequence,',');
-            $params = array(
-                'metrics'=> array('ga:sessions'),
-                'dimensions'=> array('ga:eventLabel','ga:date','ga:segment'),
-                'filters' => $filters,
-                'campaign_id' => $goal['campaign_id'],
-                'sort' => array(
-                    'name' => 'ga:date',
-                    'order' => 'ASCENDING'
-                ),
-                'property' => 'category'
-            );
-            if($sequence != "") {
-                $params['sequence'] = 'sessions::sequence::'.$sequence;
-            }
-
+        if ($this->app['cache']->contains('report-'.$campaign_id) && $this->doCache)
+        {
+            $data = $this->app['cache']->fetch('report-'.$campaign_id);
         }
-        else if($goal['action'] == 'action-pp') {
+        else {
+            $filters = $this->getFilters($goal);
+            $total_visitors = $this->totalVisitorsInGoal($filters, $goal);
 
-            $sequence = 'sessions::sequence::ga:landingPagePath=='.$goal['page_path'].';->ga:pagePath'.$goal['action_pp_pattern'].$goal['action_pp'];
-            $params = array(
-                'metrics'=> array('ga:sessions'),
-                'dimensions'=> array('ga:eventLabel','ga:date','ga:segment'),
-                'filters' => $filters,
-                'campaign_id' => $goal['campaign_id'],
-                'sort' => array(
-                    'name' => 'ga:date',
-                    'order' => 'ASCENDING'
-                ),
-                'sequence' => $sequence
+            if ($goal['action'] == 'event') {
+
+                $sequence = "";
+                if ($goal['e_category'] != "") {
+                    $sequence .= 'ga:eventCategory==' . $goal['e_category'] . ',';
+                }
+                if ($goal['e_action'] != "") {
+                    $sequence .= 'ga:eventAction==' . $goal['e_action'] . ',';
+                }
+                if ($goal['e_label'] != "") {
+                    $sequence .= 'ga:eventLabel==' . $goal['e_label'];
+                }
+                $sequence = rtrim($sequence, ',');
+                $params = array(
+                    'metrics' => array('ga:sessions'),
+                    'dimensions' => array('ga:eventLabel', 'ga:date', 'ga:segment'),
+                    'filters' => $filters,
+                    'campaign_id' => $goal['campaign_id'],
+                    'sort' => array(
+                        'name' => 'ga:date',
+                        'order' => 'ASCENDING'
+                    ),
+                    'property' => 'category'
+                );
+                if ($sequence != "") {
+                    $params['sequence'] = 'sessions::sequence::' . $sequence;
+                }
+
+            } else if ($goal['action'] == 'action-pp') {
+
+                $sequence = 'sessions::sequence::ga:landingPagePath==' . $goal['page_path'] . ';->ga:pagePath' . $goal['action_pp_pattern'] . $goal['action_pp'];
+                $params = array(
+                    'metrics' => array('ga:sessions'),
+                    'dimensions' => array('ga:eventLabel', 'ga:date', 'ga:segment'),
+                    'filters' => $filters,
+                    'campaign_id' => $goal['campaign_id'],
+                    'sort' => array(
+                        'name' => 'ga:date',
+                        'order' => 'ASCENDING'
+                    ),
+                    'sequence' => $sequence
+                );
+
+            }
+
+            $data = array(
+                'report' => $this->analyticsService->analyticsRequest($params),
+                'participants' => $total_visitors
             );
-
+            $this->app['cache']->save('report-'.$campaign_id, $data,$this->cacheTime);
         }
 
-        $data = array(
-            'report' => $this->analyticsService->analyticsRequest($params),
-            'participants' => $total_visitors
-        );
         return $data;
     }
 
@@ -241,13 +267,15 @@ class ReportingController implements ControllerProviderInterface
 
                 $days_running = floor($datediff / (60 * 60 * 24));
             }
-//            if ($app['cache']->contains('traffic-'.$campaign_id)) {
-//                $body = $app['cache']->fetch('traffic-'.$campaign_id);
-//            } else {
+            if ($app['cache']->contains('traffic-'.$campaign_id) && $this->doCache)
+            {
+                $body = $app['cache']->fetch('traffic-'.$campaign_id);
+            }
+            else
+            {
                 $vids = $this->getVariationIds($campaign_id);
                 $prefix = 'ga:eventLabel==ABTest-' . $campaign_id . ':';
                 $filters = $prefix . implode(',' . $prefix, $vids);
-               // $filters = 'ga:eventLabel==ABTest-63:Control,ga:eventLabel==ABTest-63:Variation 1';
                 $data = $this->analyticsService->analyticsRequest(array(
                     'metrics' => array('ga:sessions'),
                     'dimensions' => array('ga:eventLabel', 'ga:date'),
@@ -264,9 +292,9 @@ class ReportingController implements ControllerProviderInterface
                     'days_running' => $days_running,
                     'vnames'        => $vnames
                 ));
-                //$app['cache']->save('traffic-'.$campaign_id, $body,20);
-            //}
-            return $body;//new Response($body, 200, array('Cache-Control' => 's-maxage=3600, public'));
+                $app['cache']->save('traffic-'.$campaign_id, $body,$this->cacheTime);
+            }
+            return new Response($body, 200, array('Cache-Control' => 's-maxage=3600, public'));
         };
     }
 

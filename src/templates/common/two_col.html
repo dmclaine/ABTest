@@ -73,18 +73,22 @@
                         <a href="/dashboard/campaigns">
                             <i class="fa fa-balance-scale fa-fw"></i>
                             <span class="menu-title">All Experiments</span>
-                            <span class="fa arrow"></span>
+                            <!--<span class="fa arrow"></span>-->
                         </a>
-                        <ul class="nav nav-second-level collapse in" aria-expanded="true" style="height: calc(100vh - 400px); overflow-y: scroll; ">
-                            {% for campaign in runningCampaigns %}
-                                <li>
-                                    <a href="/dashboard/campaign/edit/{{ campaign.id }}">
-                                        &nbsp;&nbsp;&nbsp;
-                                        {{ campaign.campaign_name }}
-                                    </a>
-                                </li>
-                            {% endfor %}
-                        </ul>
+                        <!--<ul class="nav nav-second-level collapse in" aria-expanded="true" style="height: calc(100vh - 400px); overflow-y: scroll; ">-->
+                            <!--{% for campaign in runningCampaigns %}-->
+                                <!--<li>-->
+                                    <!--<a href="/dashboard/campaign/edit/{{ campaign.id }}">-->
+                                        <!--&nbsp;&nbsp;&nbsp;-->
+                                        <!--{{ campaign.campaign_name }}-->
+                                    <!--</a>-->
+                                <!--</li>-->
+                            <!--{% endfor %}-->
+                        <!--</ul>-->
+                        <a href="/dashboard/campaign/new">
+                            <i class="fa fa-plus"></i>
+                            <span class="menu-title">New Campaign</span>
+                        </a>
                     </li>
                 </ul>
             </div>

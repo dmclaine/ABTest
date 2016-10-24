@@ -10,6 +10,9 @@ use Silex\Application;
  */
 class AnalyticsService
 {
+    /**
+     * @var \Google_Client
+     */
     public $client;
     /**
      * @var mixed
@@ -23,6 +26,11 @@ class AnalyticsService
      * @var \Google_Service_Oauth2
      */
     private $oauth;
+
+    /**
+     * @var
+     */
+    private $authData = null;
 
     /**
      * AnalyticsService constructor.
@@ -160,16 +168,21 @@ class AnalyticsService
      */
     public function validateAuthData($authData)
     {
-        $this->app['session']->set('access_token',$authData);
-        $this->client->setAccessToken($authData);
+//        if ($this->app['cache']->contains('authData')) {
+//            $authData = $this->app['cache']->fetch('authData');
+//        } else {
+            $this->app['session']->set('access_token', $authData);
+            $this->client->setAccessToken($authData);
 
-        if($this->client->isAccessTokenExpired()) {
-            $authData = $this->client->refreshToken($authData['refresh_token']);
-            $authData['expire_at'] = time() + $authData['expires_in'];
-            $authData['campaign_id'] = $this->app['session']->get('campaign_id');
-            $this->app['session']->set('access_token',$authData['access_token']);
-            $id = $this->manageAuthData($authData);
-        }
+            if ($this->client->isAccessTokenExpired()) {
+                $authData = $this->client->refreshToken($authData['refresh_token']);
+                $authData['expire_at'] = time() + $authData['expires_in'];
+                $authData['campaign_id'] = $this->app['session']->get('campaign_id');
+                $this->app['session']->set('access_token', $authData['access_token']);
+                $id = $this->manageAuthData($authData);
+            }
+//            $this->app['cache']->save('authData', $authData, 30);
+//        }
         return $authData;
     }
 
