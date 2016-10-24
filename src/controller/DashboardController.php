@@ -97,7 +97,7 @@ class DashboardController implements ControllerProviderInterface
     {
         return function (Application $app, Request $request) {
             try {
-                $app['session']->delete('campaign_id');
+                $app['session']->remove('campaign_id');
                 return $app['twig']->render('editCampaign.html',array(
                     'page_title'=>'New Campaign',
                     'mode' => 'new',
