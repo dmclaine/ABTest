@@ -2,6 +2,7 @@
 namespace src\controller;
 use Silex\Application;
 use Silex\Api\ControllerProviderInterface;
+use src\service\AnalyticsService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Acl\Exception\Exception;
 
@@ -15,7 +16,7 @@ use Symfony\Component\Security\Acl\Exception\Exception;
 class AnalyticsController implements ControllerProviderInterface
 {
     /**
-     * @var mixed
+     * @var  AnalyticsService
      */
     private $analyticsService;
     /**
@@ -30,6 +31,7 @@ class AnalyticsController implements ControllerProviderInterface
     public function __construct(Application $app)
     {
         $this->app = $app;
+
         $this->analyticsService = $app['AnalyticsService'];
     }
 
@@ -62,7 +64,6 @@ class AnalyticsController implements ControllerProviderInterface
             $campaign_id = $request->get('id');
             $this->analyticsService->removeAnalytics($campaign_id);
             $authUrl = $this->analyticsService->client->createAuthUrl();
-            $authUrl = str_replace('approval_prompt=auto','prompt=consent',$authUrl);
             return $app->json(['ret' => true, 'data'=> $app['twig']->render('partials/analyticsNotConnected.html',array(
                 'authUrl' => $authUrl
             ))]);
@@ -93,8 +94,6 @@ class AnalyticsController implements ControllerProviderInterface
                     ));
                 }
                 $authUrl = $this->analyticsService->client->createAuthUrl();
-                $authUrl = str_replace('approval_prompt=auto','prompt=consent',$authUrl);
-                //prompt='consent'
 
                 return $app['twig']->render('partials/analyticsNotConnected.html',array(
                     'authUrl' => $authUrl

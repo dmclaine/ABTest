@@ -22,5 +22,4 @@ require __DIR__ . '/../src/Services.php';
 require __DIR__ . '/../src/Routers.php';
 
 $app->run();
-
 ?>

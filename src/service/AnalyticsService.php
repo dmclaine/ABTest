@@ -42,7 +42,7 @@ class AnalyticsService
         $this->app = $app;
         // Create the client object and set the authorization configuration
         // from the client_secrets.json you downloaded from the Developers Console.
-        $this->client = new \Google_Client();
+        $this->client = new \Google_Client(array('prompt'=>'consent'));
         $this->client->setAuthConfig( __DIR__ . '/../../config/analytics-credentials.json');
         $this->client->setRedirectUri('http://' . $_SERVER['HTTP_HOST'] . '/analytics/authCallback');
         $this->client->setAccessType('offline');

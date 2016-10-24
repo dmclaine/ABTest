@@ -153,6 +153,7 @@ class CampaignModel
     }
 
     /**
+     * @property created_by
      * @param $data
      * @return array
      */
