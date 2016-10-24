@@ -2,6 +2,9 @@
 namespace src\controller;
 use Silex\Application;
 use Silex\Api\ControllerProviderInterface;
+use src\service\AnalyticsService;
+use src\service\CampaignService;
+use src\service\GoalService;
 use Symfony\Component\HttpFoundation\Request;
 
 
@@ -14,15 +17,15 @@ use Symfony\Component\HttpFoundation\Request;
 class DashboardController implements ControllerProviderInterface
 {
     /**
-     * @var mixed
+     * @var CampaignService
      */
     private $campaignService;
     /**
-     * @var mixed
+     * @var AnalyticsService
      */
     private $analyticsService;
     /**
-     * @var mixed
+     * @var GoalService
      */
     private $goalService;
 
@@ -94,6 +97,7 @@ class DashboardController implements ControllerProviderInterface
     {
         return function (Application $app, Request $request) {
             try {
+                $app['session']->delete('campaign_id');
                 return $app['twig']->render('editCampaign.html',array(
                     'page_title'=>'New Campaign',
                     'mode' => 'new',
