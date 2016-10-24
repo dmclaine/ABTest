@@ -372,10 +372,16 @@
         function getTrafficChart()
         {
             messageBox('Loading Traffic Report..');
-            $.get('/reporting/traffic-report', function(data) {
-                messageBox('Loading Goals Report..');
-                $('#report-overview').html(data);
-            })
+            $.ajax({
+                url: '/reporting/traffic-report',
+                success: function(data){
+                    messageBox('Loading Goals Report..');
+                    $('#report-overview').html(data);
+                },
+                error: function(data) {
+                    $('#report-overview').html('');
+                }
+            });
         }
 
         function getGoalsChart()
