@@ -5,18 +5,42 @@ use Silex\Api\ControllerProviderInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 
+/**
+ * Class GoalController
+ * @package src\controller
+ * @author Abhishek Saha <abhishek.saha@rocket-internet.de>
+ * @Date    ${DATE}
+ */
 class GoalController implements ControllerProviderInterface
 {
+    /**
+     * @var mixed
+     */
     private $analyticsService;
+    /**
+     * @var mixed
+     */
     private $goalService;
+    /**
+     * @var Application
+     */
     private $app;
 
+    /**
+     * GoalController constructor.
+     * @param Application $app
+     */
     public function __construct(Application $app)
     {
         $this->app = $app;
         $this->analyticsService = $app['AnalyticsService'];
         $this->goalService = $app['GoalService'];
     }
+
+    /**
+     * @param Application $app
+     * @return mixed
+     */
     public function connect(Application $app)
     {
         $controllers = $app['controllers_factory'];
@@ -37,7 +61,9 @@ class GoalController implements ControllerProviderInterface
     }
 
 
-
+    /**
+     * @return \Closure
+     */
     function getEventCategories()
     {
         return function (Application $app, Request $request) {
@@ -60,6 +86,9 @@ class GoalController implements ControllerProviderInterface
         };
     }
 
+    /**
+     * @return \Closure
+     */
     function getEventActions()
     {
 
@@ -86,6 +115,10 @@ class GoalController implements ControllerProviderInterface
         };
 
     }
+
+    /**
+     * @return \Closure
+     */
     function getEventLabels() {
 
         return function (Application $app, Request $request) {
@@ -113,6 +146,9 @@ class GoalController implements ControllerProviderInterface
 
     }
 
+    /**
+     * @return \Closure
+     */
     function displayGoalPopup()
     {
         return function (Application $app, Request $request) {
@@ -124,6 +160,9 @@ class GoalController implements ControllerProviderInterface
         };
     }
 
+    /**
+     * @return \Closure
+     */
     function saveGoal()
     {
         return function (Application $app, Request $request) {
@@ -138,6 +177,9 @@ class GoalController implements ControllerProviderInterface
 
     }
 
+    /**
+     * @return \Closure
+     */
     function deleteGoal()
     {
         return function (Application $app, Request $request) {

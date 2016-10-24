@@ -5,16 +5,37 @@ use Silex\Api\ControllerProviderInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 
+/**
+ * Class AnalyticsController
+ * @package src\controller
+ * @author Abhishek Saha <abhishek.saha@rocket-internet.de>
+ * @Date    ${DATE}
+ */
 class AnalyticsController implements ControllerProviderInterface
 {
+    /**
+     * @var mixed
+     */
     private $analyticsService;
+    /**
+     * @var Application
+     */
     private $app;
 
+    /**
+     * AnalyticsController constructor.
+     * @param Application $app
+     */
     public function __construct(Application $app)
     {
         $this->app = $app;
         $this->analyticsService = $app['AnalyticsService'];
     }
+
+    /**
+     * @param Application $app
+     * @return mixed
+     */
     public function connect(Application $app)
     {
         $controllers = $app['controllers_factory'];
@@ -31,6 +52,9 @@ class AnalyticsController implements ControllerProviderInterface
         return $controllers;
     }
 
+    /**
+     * @return \Closure
+     */
     public function disconnect()
     {
         return function (Application $app, Request $request) {
@@ -43,6 +67,9 @@ class AnalyticsController implements ControllerProviderInterface
         };
     }
 
+    /**
+     * @return \Closure
+     */
     public function display()
     {
         return function (Application $app, Request $request) {
@@ -77,7 +104,9 @@ class AnalyticsController implements ControllerProviderInterface
     }
 
 
-
+    /**
+     * @return \Closure
+     */
     public function authCallback()
     {
         return function (Application $app, Request $request) {

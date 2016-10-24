@@ -5,18 +5,42 @@ use Silex\Api\ControllerProviderInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 
+/**
+ * Class DashboardController
+ * @package src\controller
+ * @author Abhishek Saha <abhishek.saha@rocket-internet.de>
+ * @Date    ${DATE}
+ */
 class DashboardController implements ControllerProviderInterface
 {
+    /**
+     * @var mixed
+     */
     private $campaignService;
+    /**
+     * @var mixed
+     */
     private $analyticsService;
+    /**
+     * @var mixed
+     */
     private $goalService;
 
+    /**
+     * DashboardController constructor.
+     * @param Application $app
+     */
     public function __construct(Application $app)
     {
         $this->campaignService = $app['CampaignService'];
         $this->analyticsService = $app['AnalyticsService'];
         $this->goalService = $app['GoalService'];
     }
+
+    /**
+     * @param Application $app
+     * @return mixed
+     */
     public function connect(Application $app)
     {
         $controllers = $app['controllers_factory'];
@@ -32,8 +56,6 @@ class DashboardController implements ControllerProviderInterface
         $controllers->post('/campaigns/do-archive', $this->doArchive());
         $controllers->post('/campaigns/do-duplicate', $this->doDuplicate());
         $controllers->get('/campaign/edit/{id}', $this->editCampaign());
-       // $controllers->get('/campaign/analytics/{id}', $this->analytics());
-        //$controllers->get('/', $this->display());
         $accounts = implode(',', array_map(function ($entry) {
             return $entry['account_id'];
         }, $app['session']->get('user')['account']));
@@ -43,6 +65,9 @@ class DashboardController implements ControllerProviderInterface
         return $controllers;
     }
 
+    /**
+     * @return \Closure
+     */
     public function displaySnippet()
     {
         return function (Application $app, Request $request) {
@@ -62,6 +87,9 @@ class DashboardController implements ControllerProviderInterface
         };
     }
 
+    /**
+     * @return \Closure
+     */
     public function newCampaign()
     {
         return function (Application $app, Request $request) {
@@ -80,6 +108,9 @@ class DashboardController implements ControllerProviderInterface
 
     }
 
+    /**
+     * @return array
+     */
     private function defaultData()
     {
         return array(
@@ -104,6 +135,9 @@ class DashboardController implements ControllerProviderInterface
     }
 
 
+    /**
+     * @return \Closure
+     */
     public function editCampaign()
     {
         return function (Application $app, Request $request) {
@@ -135,6 +169,9 @@ class DashboardController implements ControllerProviderInterface
 
     }
 
+    /**
+     * @return \Closure
+     */
     public function listCampaigns()
     {
         return function (Application $app, Request $request) {
@@ -157,6 +194,9 @@ class DashboardController implements ControllerProviderInterface
 
     }
 
+    /**
+     * @return \Closure
+     */
     public function doArchive()
     {
         return function (Application $app, Request $request) {
@@ -171,6 +211,9 @@ class DashboardController implements ControllerProviderInterface
         };
     }
 
+    /**
+     * @return \Closure
+     */
     public function doDuplicate()
     {
         return function (Application $app, Request $request) {
@@ -185,6 +228,9 @@ class DashboardController implements ControllerProviderInterface
         };
     }
 
+    /**
+     * @return \Closure
+     */
     public function archivedCampaigns()
     {
         return function (Application $app, Request $request) {

@@ -60,6 +60,7 @@ class GoogleAnalyticsAPI {
      *
      * @access public
      * @param String $auth (default: 'web') 'web' for Web-applications with end-users involved, 'service' for service applications (server-to-server)
+     * @throws Exception
      */
     public function __construct($auth='web') {
 
@@ -141,6 +142,7 @@ class GoogleAnalyticsAPI {
      *
      * @access public
      * @return array data
+     * @throws Exception
      */
     public function getWebProperties() {
 
@@ -157,6 +159,7 @@ class GoogleAnalyticsAPI {
      *
      * @access public
      * @return array data
+     * @throws Exception
      */
     public function getProfiles() {
 
@@ -172,6 +175,7 @@ class GoogleAnalyticsAPI {
      *
      * @access public
      * @return array data
+     * @throws Exception
      */
     public function getAccounts() {
 
@@ -186,7 +190,9 @@ class GoogleAnalyticsAPI {
      * Get all accounts
      *
      * @access public
+     * @param $id
      * @return array data
+     * @throws Exception
      */
     public function getPropertiesById($id) {
 
@@ -201,7 +207,10 @@ class GoogleAnalyticsAPI {
      * Get  profile
      *
      * @access public
+     * @param $id
+     * @param $webPropertyId
      * @return array data
+     * @throws Exception
      */
     public function getProfileById($id,$webPropertyId) {
 
@@ -216,7 +225,11 @@ class GoogleAnalyticsAPI {
      *
      * The following methods implement queries for the most useful statistics, seperated by topics: Audience/Content/Traffic Sources
      *
-     *****************************************************************************************************************************/
+     ****************************************************************************************************************************
+     * @param array $params
+     * @return mixed
+     * @throws \Exception
+     */
 
     /*
      * AUDIENCE
@@ -502,7 +515,7 @@ abstract class GoogleOauth {
 
     /**
      * To be implemented by the subclasses
-     *
+     * @param null $data
      */
     public function getAccessToken($data=null) {}
 
@@ -531,6 +544,7 @@ class GoogleOauthService extends GoogleOauth {
      * @param string $clientId (default: '') Client-ID of your project from the Google APIs console
      * @param string $email (default: '') E-Mail address of your project from the Google APIs console
      * @param mixed $privateKey (default: null) Path to your private key file (*.p12)
+     * @throws Exception
      */
     public function __construct($clientId='', $email='', $privateKey=null) {
         if (!function_exists('openssl_sign')) throw new Exception('openssl extension for PHP is needed.');
@@ -555,6 +569,7 @@ class GoogleOauthService extends GoogleOauth {
      * @access public
      * @param mixed $data (default: null) No data needed in this implementation
      * @return array Array with keys: access_token, expires_in
+     * @throws Exception
      */
     public function getAccessToken($data=null) {
 
@@ -678,6 +693,7 @@ class GoogleOauthWeb extends GoogleOauth {
      * @access public
      * @param array $params Custom parameters
      * @return string The auth login-url
+     * @throws \Exception
      */
     public function buildAuthUrl($params = array()) {
 
@@ -706,6 +722,7 @@ class GoogleOauthWeb extends GoogleOauth {
      * @access public
      * @param mixed $data The code received with GET after auth
      * @return array Array with the following keys: access_token, refresh_token, expires_in
+     * @throws Exception
      */
     public function getAccessToken($data=null) {
 
@@ -733,6 +750,7 @@ class GoogleOauthWeb extends GoogleOauth {
      * @access public
      * @param mixed $refreshToken The refreshToken
      * @return array Array with the following keys: access_token, expires_in
+     * @throws Exception
      */
     public function refreshAccessToken($refreshToken) {
 
@@ -758,6 +776,7 @@ class GoogleOauthWeb extends GoogleOauth {
      *
      * @access public
      * @param mixed $token accessToken or refreshToken
+     * @return mixed
      */
     public function revokeAccess($token) {
 

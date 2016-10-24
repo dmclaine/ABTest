@@ -2,19 +2,36 @@
 namespace src\controller;
 use Silex\Application;
 use Silex\Api\ControllerProviderInterface;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 
+
+/**
+ * Class UserController
+ * @package src\controller
+ * @author Abhishek Saha <abhishek.saha@rocket-internet.de>
+ * @Date    ${DATE}
+ */
 class UserController implements ControllerProviderInterface
 {
 
     /* var @$userService src\service\UserService */
+    /**
+     * @var mixed
+     */
     private $userService;
 
+    /**
+     * UserController constructor.
+     * @param Application $app
+     */
     public function __construct(Application $app)
     {
         $this->userService = $app['UserService'];
     }
+
+    /**
+     * @param Application $app
+     * @return mixed
+     */
     public function connect(Application $app)
     {
         $controllers = $app['controllers_factory'];
@@ -23,6 +40,9 @@ class UserController implements ControllerProviderInterface
         return $controllers;
     }
 
+    /**
+     * @return \Closure
+     */
     public function authenticateUser()
     {
         return function (Application $app) {
@@ -39,6 +59,9 @@ class UserController implements ControllerProviderInterface
         };
     }
 
+    /**
+     * @return \Closure
+     */
     public function logoutUser()
     {
         return function (Application $app) {

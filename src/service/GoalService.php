@@ -1,30 +1,49 @@
 <?php
 namespace src\service;
 use Silex\Application;
+
+/**
+ * Class GoalService
+ * @package src\service
+ * @author Abhishek Saha <abhishek.saha@rocket-internet.de>
+ * @Date    ${DATE}
+ */
 class GoalService
 {
-
     /**
-     * @var mixed  $campaignModel src\campaignModel
+     * GoalService constructor.
+     * @param Application $app
      */
-    private $goalModel;
-
     function __construct(Application $app)
     {
         $this->goalsModel = $app['GoalsModel'];
     }
-    public function saveGoal($data,$campaign_id)
+
+    /**
+     * @param $data
+     * @param $campaign_id
+     * @return mixed
+     */
+    public function saveGoal($data, $campaign_id)
     {
         $defaults = $this->getDefaultGoalInputs();
         $goalData = array_merge($defaults,$data);
         return $this->goalsModel->saveGoalData($goalData,$campaign_id);
     }
 
+    /**
+     * @param $goalId
+     * @return mixed
+     */
     public function deleteGoal($goalId)
     {
         return $this->goalsModel->deleteGoal($goalId);
     }
 
+    /**
+     * @param $id
+     * @return array
+     */
     public function getGoalById($id)
     {
         if($id == 0) {
@@ -33,12 +52,19 @@ class GoalService
         return $this->goalsModel->getGoalById($id);
     }
 
+    /**
+     * @param $campaign_id
+     * @return mixed
+     */
     public function getAllGoals($campaign_id)
     {
         return $campaigns = $this->goalsModel->getAllGoals($campaign_id);
     }
 
 
+    /**
+     * @return array
+     */
     private function getDefaultGoalInputs()
     {
         return array(
@@ -60,7 +86,12 @@ class GoalService
         );
     }
 
-    function calculateSignificance($data,$campaign_id)
+    /**
+     * @param $data
+     * @param $campaign_id
+     * @return array
+     */
+    function calculateSignificance($data, $campaign_id)
     {
         $report = array();
         $significance = array();
@@ -106,20 +137,40 @@ class GoalService
     }
 }
 
+/**
+ * Class Calculator
+ * @package src\service
+ * @author Abhishek Saha <abhishek.saha@rocket-internet.de>
+ * @Date    ${DATE}
+ */
 class Calculator
 {
 
+    /**
+     * @param $t
+     * @return float|int
+     */
     function cr($t)
     {
         return ($t[0] == 0) ? 0 : $t[1]/$t[0];
     }
 
+    /**
+     * @param $c
+     * @param $t
+     * @return float
+     */
     function zscore($c, $t)
     {
         $z = $this->cr($t)-$this->cr($c);
         $s = (($t[0] == 0) ? 0 : ($this->cr($t)*(1-$this->cr($t)))/$t[0]) + (($c[0] == 0) ? 0: ($this->cr($c)*(1-$this->cr($c)))/$c[0]);
         return $z/sqrt($s);
     }
+
+    /**
+     * @param $x
+     * @return float
+     */
     function cumnormdist($x)
     {
         $b1 =  0.319381530;
@@ -140,6 +191,11 @@ class Calculator
                 ( $t *( $t * ( $t * ( $t * $b5 + $b4 ) + $b3 ) + $b2 ) + $b1 ));
         }
     }
+
+    /**
+     * @param $conv
+     * @return array
+     */
     function ssize($conv)
     {
         $a = 3.84145882689;
@@ -150,6 +206,14 @@ class Calculator
         }
         return $res;
     }
+
+    /**
+     * @param $control_number_visitors
+     * @param $control_number_conversions
+     * @param $treatment_number_visitors
+     * @param $treatment_number_conversions
+     * @return array
+     */
     function calculate($control_number_visitors, $control_number_conversions, $treatment_number_visitors, $treatment_number_conversions)
     {
 

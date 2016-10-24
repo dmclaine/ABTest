@@ -1,4 +1,5 @@
 <?php
+
 namespace src\controller;
 use Silex\Application;
 use Silex\Api\ControllerProviderInterface;
@@ -6,12 +7,29 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 
+/**
+ * @property mixed campaignService
+ * @property mixed goalService
+ */
 class ReportingController implements ControllerProviderInterface
 {
+    /**
+     * @var mixed
+     */
     private $analyticsService;
+    /**
+     * @var Application
+     */
     private $app;
+    /**
+     * @var
+     */
     private $visitors;
 
+    /**
+     * ReportingController constructor.
+     * @param Application $app
+     */
     public function __construct(Application $app)
     {
         $this->app = $app;
@@ -19,6 +37,11 @@ class ReportingController implements ControllerProviderInterface
         $this->campaignService = $app['CampaignService'];
         $this->goalService = $app['GoalService'];
     }
+
+    /**
+     * @param Application $app
+     * @return mixed
+     */
     public function connect(Application $app)
     {
         $controllers = $app['controllers_factory'];
@@ -35,6 +58,9 @@ class ReportingController implements ControllerProviderInterface
         return $controllers;
     }
 
+    /**
+     * @return \Closure
+     */
     function displayGoalReports()
     {
         return function (Application $app, Request $request) {
@@ -56,6 +82,10 @@ class ReportingController implements ControllerProviderInterface
         };
     }
 
+    /**
+     * @param $goal
+     * @return array
+     */
     private function getGoalReport($goal)
     {
         $filters = $this->getFilters($goal);
@@ -114,6 +144,11 @@ class ReportingController implements ControllerProviderInterface
         return $data;
     }
 
+    /**
+     * @param $filters
+     * @param $goal
+     * @return mixed
+     */
     private function totalVisitorsInGoal($filters, $goal)
     {
         if(isset($this->visitors[$goal['page_path']])) {
@@ -133,7 +168,12 @@ class ReportingController implements ControllerProviderInterface
         return $data;
     }
 
-    private function getFilters($goal,$addPagePath = true)
+    /**
+     * @param $goal
+     * @param bool $addPagePath
+     * @return string
+     */
+    private function getFilters($goal, $addPagePath = true)
     {
         $vids = $this->getVariationIds($goal['campaign_id']);
         $prefix = 'ga:eventLabel==ABTest-'.$goal['campaign_id'].':';
@@ -146,6 +186,10 @@ class ReportingController implements ControllerProviderInterface
 
     }
 
+    /**
+     * @param $cid
+     * @return array
+     */
     function getVariationNames($cid)
     {
         $data = array();
@@ -157,6 +201,10 @@ class ReportingController implements ControllerProviderInterface
         return $data;
     }
 
+    /**
+     * @param $cid
+     * @return array|null
+     */
     function getVariationIds($cid)
     {
         static $vids = null;
@@ -174,6 +222,9 @@ class ReportingController implements ControllerProviderInterface
         return $vids;
     }
 
+    /**
+     * @return \Closure
+     */
     function displayTrafficReport()
     {
         return function (Application $app, Request $request) {
@@ -219,6 +270,9 @@ class ReportingController implements ControllerProviderInterface
         };
     }
 
+    /**
+     * @return \Closure
+     */
     public function setStartDate()
     {
         return function (Application $app, Request $request) {

@@ -3,13 +3,33 @@ namespace src\model;
 use Silex\Application;
 use RedBeanPHP\Facade as R;
 
+/**
+ * Class UserModel
+ * @package src\model
+ * @author Abhishek Saha <abhishek.saha@rocket-internet.de>
+ * @Date    ${DATE}
+ */
 class UserModel
 {
+    /**
+     * @var mixed
+     */
     private $db;
+
+    /**
+     * UserModel constructor.
+     * @param Application $app
+     */
     function __construct(Application $app)
     {
         $this->db = $app['db'];
     }
+
+    /**
+     * @param $email
+     * @param $password
+     * @return array
+     */
     public function validateUser($email, $password)
     {
         $user = R::getRow('SELECT * FROM users u
@@ -34,6 +54,10 @@ class UserModel
         }
     }
 
+    /**
+     * @param $data
+     * @return int|string
+     */
     public function insertLog($data)
     {
         $log = R::dispense('log');
@@ -48,6 +72,10 @@ class UserModel
         return R::store($log);
     }
 
+    /**
+     * @param $criteria
+     * @return array
+     */
     public function getLogs($criteria)
     {
         $defaults = array(

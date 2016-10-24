@@ -1,17 +1,39 @@
 <?php
 namespace src\controller;
 use Silex\Application;
-use Silex\Api\ControllerProviderInterface;
+
 use Symfony\Component\HttpFoundation\Request;
 
 
+/**
+ * Class CampaignController
+ * @package src\controller
+ * @author Abhishek Saha <abhishek.saha@rocket-internet.de>
+ * @Date    ${DATE}
+ */
 class CampaignController
 {
+    /**
+     * @var mixed
+     */
     private $campaignService;
+    /**
+     * @var mixed
+     */
     private $userService;
+    /**
+     * @var Application
+     */
     private $app;
+    /**
+     * @var Request
+     */
     private $request;
 
+    /**
+     * CampaignController constructor.
+     * @param Application $app
+     */
     public function __construct(Application $app)
     {
         $this->app = $app;
@@ -22,6 +44,9 @@ class CampaignController
 
     }
 
+    /**
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     */
     public function saveCampaign()
     {
         try {
@@ -40,6 +65,9 @@ class CampaignController
         }
     }
 
+    /**
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     */
     public function powerCampaign()
     {
         try {
@@ -77,6 +105,9 @@ class CampaignController
         }
     }
 
+    /**
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     */
     public function getCampaignDataByID()
     {
         try {
@@ -88,6 +119,9 @@ class CampaignController
         }
     }
 
+    /**
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     */
     public function getAllCampaigns()
     {
         try {

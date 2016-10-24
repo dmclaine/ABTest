@@ -122,11 +122,7 @@ class CampaignModel
     {
         //Store Campaigns
         $campaign = (isset($data['id']) && $data['id'] != "") ? R::load('campaigns',$data['id']) : R::dispense('campaigns');
-        $campaign_data = $data['general']['general-settings'];
         $variations_data = $data['variations'];
-        foreach($campaign_data as $col => $value) {
-            $campaign->$col = $value;
-        }
         if(isset($data['id']) && $data['id'] == "") {
             $campaign->created_by = $data['created_by'];
         }

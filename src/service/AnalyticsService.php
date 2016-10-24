@@ -1,19 +1,33 @@
 <?php
 namespace src\service;
 use Silex\Application;
+
+/**
+ * Class AnalyticsService
+ * @package src\service
+ * @author Abhishek Saha <abhishek.saha@rocket-internet.de>
+ * @Date    ${DATE}
+ */
 class AnalyticsService
 {
-
-    /**
-     * @var mixed  $campaignModel src\campaignModel
-     */
-
-
     public $client;
+    /**
+     * @var mixed
+     */
     private $analyticsModel;
+    /**
+     * @var Application
+     */
     private $app;
+    /**
+     * @var \Google_Service_Oauth2
+     */
     private $oauth;
 
+    /**
+     * AnalyticsService constructor.
+     * @param Application $app
+     */
     function __construct(Application $app)
     {
         $this->analyticsModel = $app['AnalyticsModel'];
@@ -33,6 +47,10 @@ class AnalyticsService
         $this->oauth = new \Google_Service_Oauth2($this->client);
     }
 
+    /**
+     * @param $campaign_id
+     * @return array|null
+     */
     function getAuthData($campaign_id)
     {
         static $data = null;
@@ -47,16 +65,28 @@ class AnalyticsService
 
     }
 
+    /**
+     * @param $campaign_id
+     * @return mixed
+     */
     function removeAnalytics($campaign_id)
     {
         return $this->analyticsModel->removeAnalytics($campaign_id);
     }
 
+    /**
+     * @param $campaign_id
+     * @return mixed
+     */
     function getSelectedProperties($campaign_id)
     {
         return $this->analyticsModel->getSelectedProperties($campaign_id);
     }
 
+    /**
+     * @param $campaign_id
+     * @return array
+     */
     function getAccounts($campaign_id)
     {
         $data = array('accounts' => array(), 'properties' => array(), 'profiles' => array());
@@ -97,6 +127,9 @@ class AnalyticsService
 
     }
 
+    /**
+     *
+     */
     function checkAccess()
     {
 
@@ -112,11 +145,19 @@ class AnalyticsService
         }
     }
 
+    /**
+     * @param $data
+     * @return mixed
+     */
     function manageAuthData($data)
     {
         return $this->analyticsModel->manageAuthData($data);
     }
 
+    /**
+     * @param $authData
+     * @return array
+     */
     public function validateAuthData($authData)
     {
         $this->app['session']->set('access_token',$authData);
@@ -132,16 +173,26 @@ class AnalyticsService
         return $authData;
     }
 
+    /**
+     * @return \Google_Service_Oauth2_Userinfoplus
+     */
     public function getMe()
     {
         return $userInfo = $this->oauth->userinfo->get();
     }
 
+    /**
+     *
+     */
     function getEventProperty()
     {
 
     }
 
+    /**
+     * @param array $data
+     * @return array
+     */
     function analyticsRequest($data = array())
     {
         // Create the ReportRequest object.
@@ -208,6 +259,10 @@ class AnalyticsService
         return $this->formatReport($data);
     }
 
+    /**
+     * @param $reports
+     * @return array
+     */
     function formatReport($reports) {
 
         $data = array();

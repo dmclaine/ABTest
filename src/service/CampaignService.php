@@ -1,6 +1,13 @@
 <?php
 namespace src\service;
 use Silex\Application;
+
+/**
+ * Class CampaignService
+ * @package src\service
+ * @author Abhishek Saha <abhishek.saha@rocket-internet.de>
+ * @Date    ${DATE}
+ */
 class CampaignService
 {
 
@@ -9,13 +16,21 @@ class CampaignService
      */
     private $campaignModel;
 
+    /**
+     * CampaignService constructor.
+     * @param Application $app
+     */
     function __construct(Application $app)
     {
         $this->campaignModel = $app['CampaignModel'];
     }
+
+    /**
+     * @param $data
+     * @return mixed
+     */
     public function save($data)
     {
-        //$data['targets'] = array_merge_recursive($data['targets'],$this->getDefaultTargets());
         $defaults = $this->getDefaultTargets();
         $data['targets']['user'] = array_merge($defaults['user'],$data['targets']['user']);
         $data['targets']['ip'] = isset($data['targets']['ip']) ? array_merge($defaults['ip'],$data['targets']['ip']) : $defaults['ip'];
@@ -23,15 +38,24 @@ class CampaignService
         $data['targets']['device'] = array_merge($defaults['device'],$data['targets']['device']);
         $data['targets']['script'] = array_merge($defaults['script'], $data['targets']['script']);
         $data['targets']['language'] = isset($data['targets']['language']) ? array_merge($defaults['language'], $data['targets']['language']) :$defaults['language'];
+        $data['targets']['cookie'] = isset($data['targets']['cookie']) ? array_merge($defaults['cookie'], $data['targets']['cookie']) :$defaults['cookie'];
 
         return $this->campaignModel->save($data);
     }
 
+    /**
+     * @param $campaign_id
+     * @return mixed
+     */
     public function isAnalyticsConnected($campaign_id)
     {
         return $this->campaignModel->isAnalyticsConnected($campaign_id);
     }
 
+    /**
+     * @param $id
+     * @return mixed
+     */
     public function getCampaignDataByID($id)
     {
         static $campaign = array();
@@ -45,47 +69,82 @@ class CampaignService
         return $campaign[$id];
     }
 
+    /**
+     * @param array $data
+     * @return mixed
+     */
     public function getAllCampaigns($data=array())
     {
         return $campaigns = $this->campaignModel->getAllCampaigns($data);
     }
 
+    /**
+     * @param $accounts
+     * @return mixed
+     */
     public function getRunningCampaigns($accounts)
     {
         return $campaigns = $this->campaignModel->getRunningCampaigns($accounts);
     }
 
+    /**
+     * @param $campaign_id
+     * @return mixed
+     */
     public function isCampaignRunning($campaign_id)
     {
         return $this->campaignModel->isCampaignRunning($campaign_id);
     }
 
+    /**
+     * @param $campaign_ids
+     * @return mixed
+     */
     public function doArchive($campaign_ids)
     {
         return $this->campaignModel->doArchive($campaign_ids);
     }
 
+    /**
+     * @param $campaign_ids
+     * @return mixed
+     */
     public function doDuplicate($campaign_ids)
     {
         return $this->campaignModel->doDuplicate($campaign_ids);
     }
 
 
+    /**
+     * @param $status
+     * @return mixed
+     */
     public function powerCampaign($status)
     {
         return $this->campaignModel->powerCampaign($status);
     }
 
+    /**
+     * @param $data
+     */
     public function setStartDate($data)
     {
         $this->campaignModel->setStartDate($data);
     }
 
+    /**
+     * @param $campaign_id
+     * @return mixed
+     */
     public function getStartDate($campaign_id)
     {
         return $this->campaignModel->getStartData($campaign_id);
     }
 
+    /**
+     * @param $campaigns
+     * @return mixed
+     */
     private function formatCampaign($campaigns)
     {
         $campaigns['user'] = json_decode($campaigns['user'],true);
@@ -100,6 +159,9 @@ class CampaignService
         return $campaigns;
     }
 
+    /**
+     * @return array
+     */
     private function getDefaultTargets()
     {
         $targets = array(
