@@ -3,6 +3,7 @@ namespace src\controller;
 use Silex\Application;
 use Silex\Api\ControllerProviderInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Acl\Exception\Exception;
 
 
 /**
@@ -111,7 +112,11 @@ class AnalyticsController implements ControllerProviderInterface
     {
         return function (Application $app, Request $request) {
 
-            $code = $request->get('code');
+            $params = $request->get('code');
+            parse_str($request->query->all()['route'],$params);
+            if(isset($code['/analytics/authCallback?code'])) {
+                $code = $code['/analytics/authCallback?code'];
+            }
             $this->analyticsService->client->authenticate($code);
             $data = array();
 
