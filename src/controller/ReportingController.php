@@ -304,11 +304,12 @@ class ReportingController implements ControllerProviderInterface
     public function setStartDate()
     {
         return function (Application $app, Request $request) {
-            $r = $request->get('campaign_start_date');
-                $app['session']->set('campaign_start_date',$request->get('campaign_start_date'));
-                $app['session']->set('campaign_end_date',$request->get('campaign_end_date'));
-                return $app->json(['ret' => false, 'data' => ': ']);
-
+            $campaign_id = $app['session']->get('campaign_id');
+            $app['session']->set('campaign_start_date',$request->get('campaign_start_date'));
+            $app['session']->set('campaign_end_date',$request->get('campaign_end_date'));
+            $app['cache']->delete('traffic-'.$campaign_id);
+            $app['cache']->delete('report-'.$campaign_id);
+            return $app->json(['ret' => true]);
         };
     }
 }
