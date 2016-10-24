@@ -215,6 +215,9 @@ class AnalyticsService
 
         $request->setViewId($authData['profile']);
 
+        if($authData['profile'] == ""){
+            return null;
+        }
         $this->client->setAccessToken($authData['access_token']);
 
         // Create the DateRange object.
