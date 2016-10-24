@@ -459,7 +459,7 @@
                 url: '/analytics/disconnect/' + $("#campaign-id").val(),
                 method: 'DELETE',
                 success: function(data) {
-                    $("#analytics-tab .panel-body").html(unescape(data.data));
+                    $("#analytics-connection").html(unescape(data.data));
                 }
             })
         });

@@ -48,7 +48,7 @@ class AnalyticsController implements ControllerProviderInterface
         });
         $controllers->get('/authCallback', $this->authCallback());
         $controllers->get('/display/{id}', $this->display());
-        $controllers->delete('/disconnect/{id}', $this->disconnect());
+        $controllers->delete('/disconnect/{id}', $this->disconnectAnalytics());
 
         return $controllers;
     }
@@ -56,12 +56,13 @@ class AnalyticsController implements ControllerProviderInterface
     /**
      * @return \Closure
      */
-    public function disconnect()
+    public function disconnectAnalytics()
     {
         return function (Application $app, Request $request) {
             $campaign_id = $request->get('id');
             $this->analyticsService->removeAnalytics($campaign_id);
             $authUrl = $this->analyticsService->client->createAuthUrl();
+            $authUrl = str_replace('approval_prompt=auto','prompt=consent',$authUrl);
             return $app->json(['ret' => true, 'data'=> $app['twig']->render('partials/analyticsNotConnected.html',array(
                 'authUrl' => $authUrl
             ))]);
@@ -92,7 +93,8 @@ class AnalyticsController implements ControllerProviderInterface
                     ));
                 }
                 $authUrl = $this->analyticsService->client->createAuthUrl();
-
+                $authUrl = str_replace('approval_prompt=auto','prompt=consent',$authUrl);
+                //prompt='consent'
 
                 return $app['twig']->render('partials/analyticsNotConnected.html',array(
                     'authUrl' => $authUrl
