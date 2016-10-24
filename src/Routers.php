@@ -35,12 +35,12 @@ $app->mount('/reporting', $app['ReportingController']);
 
 $app->mount('/goal', $app['GoalController']);
 
-$app->post('/campaign/save', function() use ($app) {
-    return ($app['CampaignController']->saveCampaign());
+$app->post('/campaign/save', function(Request $request) use ($app) {
+    return ($app['CampaignController']->saveCampaign($request));
 });
 
-$app->put('/campaign/power', function() use ($app) {
-    return ($app['CampaignController']->powerCampaign());
+$app->put('/campaign/power', function(Request $request) use ($app) {
+    return ($app['CampaignController']->powerCampaign($request));
 });
 
 $app->mount('/user', $app['UserController']);

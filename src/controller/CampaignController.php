@@ -2,6 +2,7 @@
 namespace src\controller;
 use Silex\Application;
 
+use Silex\Controller;
 use Symfony\Component\HttpFoundation\Request;
 
 
@@ -45,9 +46,10 @@ class CampaignController
     }
 
     /**
+     * @param Request $request
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
-    public function saveCampaign()
+    public function saveCampaign(Request $request)
     {
         try {
             $account_id = 0;
@@ -55,7 +57,7 @@ class CampaignController
                 $account_id = $this->app['session']->get('user')['account'][0]['account_id'];
             }
             $user_id = $this->app['session']->get('user')['user_id'];
-            $data = $this->request->request->get('data');
+            $data = $request->get('data');
             $data['account_id'] = $account_id;
             $data['created_by'] = $user_id;
             $data = $this->campaignService->save($data);
@@ -66,12 +68,13 @@ class CampaignController
     }
 
     /**
+     * @param Request $request
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
-    public function powerCampaign()
+    public function powerCampaign(Request $request)
     {
         try {
-            $data = $this->request->request->get('data');
+            $data = $request->get('data');
             $affected = $this->campaignService->powerCampaign($data);
             $this->userService->insertLog(array(
                 'code' => 'STATUS_CHANGE',
