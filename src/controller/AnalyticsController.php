@@ -112,10 +112,9 @@ class AnalyticsController implements ControllerProviderInterface
     {
         return function (Application $app, Request $request) {
 
-            $params = $request->get('code');
             parse_str($request->query->all()['route'],$params);
-            if(isset($code['/analytics/authCallback?code'])) {
-                $code = $code['/analytics/authCallback?code'];
+            if(isset($params['/analytics/authCallback?code'])) {
+                $code = $params['/analytics/authCallback?code'];
             }
             $this->analyticsService->client->authenticate($code);
             $data = array();
