@@ -81,7 +81,7 @@ class AnalyticsController implements ControllerProviderInterface
                 $app['session']->set('campaign_id', $campaign_id);
                 $authData = $this->analyticsService->getAuthData($campaign_id);
 
-                if(isset($authData['access_token']))
+                if(isset($authData['access_token']) && $campaign_id != 0)
                 {
                     $authData['campaign_id'] = $campaign_id;
                     $data = $this->analyticsService->getAccounts($campaign_id);
