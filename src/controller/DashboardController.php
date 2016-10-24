@@ -147,7 +147,8 @@ class DashboardController implements ControllerProviderInterface
                 $isConnected = $this->campaignService->isAnalyticsConnected($id);
                 $goals = $this->goalService->getAllGoals($id);
                 $app['session']->set('campaign_id', $id);
-                if($app['session']->get('campaign_start_date') == null) {
+
+                if(!$this->validateDate($app['session']->get('campaign_start_date'))) {
                     $app['session']->set('campaign_end_date', date('Y-m-d'));
                     $app['session']->set('campaign_start_date', $data['start_date']);
                 }
@@ -169,6 +170,11 @@ class DashboardController implements ControllerProviderInterface
 
     }
 
+    function validateDate($date)
+    {
+        $d = DateTime::createFromFormat('Y-m-d', $date);
+        return $d && $d->format('Y-m-d') === $date;
+    }
     /**
      * @return \Closure
      */

@@ -3,20 +3,27 @@
 namespace src\controller;
 use Silex\Application;
 use Silex\Api\ControllerProviderInterface;
+use src\service\AnalyticsService;
+use src\service\CampaignService;
+use src\service\GoalService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 
-/**
- * @property mixed campaignService
- * @property mixed goalService
- */
 class ReportingController implements ControllerProviderInterface
 {
     /**
-     * @var mixed
+     * @var AnalyticsService
      */
     private $analyticsService;
+    /**
+     * @var CampaignService
+     */
+    private $campaignService;
+    /**
+     * @var GoalService
+     */
+    private $goalService;
     /**
      * @var Application
      */
