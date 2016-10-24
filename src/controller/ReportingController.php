@@ -267,7 +267,7 @@ class ReportingController implements ControllerProviderInterface
             $is_running = $this->campaignService->isCampaignRunning($campaign_id);
             $vnames = $this->getVariationNames($campaign_id);
 
-            if($is_running) {
+            if($is_running && $start_date != "") {
                 $now = time(); // or your date as well
                 $start_date =  strtotime($start_date);
                 $datediff = $now - $start_date;
