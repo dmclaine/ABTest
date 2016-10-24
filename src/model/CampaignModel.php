@@ -3,13 +3,28 @@ namespace src\model;
 use Silex\Application;
 use RedBeanPHP\Facade as R;
 
+/**
+ * Class CampaignModel
+ * @package src\model
+ * @author Abhishek Saha <abhishek.saha@rocket-internet.de>
+ * @Date    ${DATE}
+ */
 class CampaignModel
 {
+    /**
+     * CampaignModel constructor.
+     * @param Application $app
+     */
     function __construct(Application $app)
     {
         //initialize
         $app['db'];
     }
+
+    /**
+     * @param $id
+     * @return array
+     */
     public function getCampaignDataByID($id)
     {
         $data = R::getRow("SELECT *,c.id as campaign_id FROM campaigns c INNER JOIN rules r ON c.id = r.campaign_id WHERE c.id=$id");
@@ -23,12 +38,20 @@ class CampaignModel
         return $data;
     }
 
+    /**
+     * @param $campaign_id
+     * @return string
+     */
     public function isAnalyticsConnected($campaign_id)
     {
         $data = R::getRow("SELECT * FROM analytics WHERE campaign_id = ?", array($campaign_id));
         return ($data) ? 'true': 'false';
     }
 
+    /**
+     * @param array $data
+     * @return array
+     */
     public function getAllCampaigns($data=array())
     {
         $sql = 'SELECT *, c.id as campaign_id FROM campaigns c
@@ -52,11 +75,18 @@ class CampaignModel
         return R::getAll($sql);
     }
 
+    /**
+     * @param $campaign_ids
+     * @return int
+     */
     public function doArchive($campaign_ids)
     {
         return R::exec('UPDATE campaigns SET archived=1 WHERE id IN (?)',array(implode(',',$campaign_ids)));
     }
 
+    /**
+     * @param $campaign_ids
+     */
     public function doDuplicate($campaign_ids)
     {
         if(is_array($campaign_ids))
@@ -113,11 +143,19 @@ class CampaignModel
         }
     }
 
+    /**
+     * @param $campaign_id
+     * @return string
+     */
     public function isCampaignRunning($campaign_id)
     {
        return R::getCell('SELECT status FROM campaigns WHERE id=?',array($campaign_id));
     }
 
+    /**
+     * @param $data
+     * @return array
+     */
     public function save($data)
     {
         //Store Campaigns
@@ -125,8 +163,9 @@ class CampaignModel
         $variations_data = $data['variations'];
         if(isset($data['id']) && $data['id'] == "") {
             $campaign->created_by = $data['created_by'];
+            $campaign->account_id = $data['account_id'];
         }
-        $campaign->account_id = $data['account_id'];
+
         $campaign->variations = serialize($variations_data);
         $campaign->traffic = $data['traffic'];
         $campaign->campaign_name = $data['name'];
@@ -166,27 +205,48 @@ class CampaignModel
         );
     }
 
+    /**
+     * @param $accounts
+     * @return array
+     */
     public function getRunningCampaigns($accounts)
     {
         return R::getAll("SELECT id, campaign_name FROM campaigns WHERE status=1 AND account_id IN (?)", array($accounts));
     }
 
+    /**
+     * @param $data
+     * @return int
+     */
     public function powerCampaign($data)
     {
         return R::exec('UPDATE campaigns SET status=? WHERE id=?', array($data['status'],$data['campaign_id']));
     }
 
+    /**
+     * @param $data
+     * @return int
+     */
     public function setStartDate($data)
     {
         return R::exec('UPDATE campaigns SET start_date=? WHERE id=?', array($data['start_date'], $data['campaign_id']));
     }
 
+    /**
+     * @param $campaign_id
+     * @return string
+     */
     public function getStartData($campaign_id)
     {
         return R::getCell('SELECT start_date FROM campaigns WHERE id=?', array($campaign_id));
     }
 
-    function is_serialized( $data, $strict = true ) {
+    /**
+     * @param $data
+     * @param bool $strict
+     * @return bool
+     */
+    function is_serialized($data, $strict = true ) {
         // if it isn't a string, it isn't serialized.
         if ( ! is_string( $data ) ) {
             return false;
