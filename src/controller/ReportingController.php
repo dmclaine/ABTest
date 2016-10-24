@@ -269,10 +269,10 @@ class ReportingController implements ControllerProviderInterface
 
             if($is_running) {
                 $now = time(); // or your date as well
-                $start_date = strtotime($start_date);
+                $start_date =  strtotime($start_date);
                 $datediff = $now - $start_date;
 
-                $days_running = floor($datediff / (60 * 60 * 24));
+                $days_running = ($start_date == "") ? 0 : floor($datediff / (60 * 60 * 24));
             }
             if ($app['cache']->contains('traffic-'.$campaign_id) && $this->doCache)
             {
