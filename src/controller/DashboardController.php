@@ -148,9 +148,10 @@ class DashboardController implements ControllerProviderInterface
                 $goals = $this->goalService->getAllGoals($id);
                 $app['session']->set('campaign_id', $id);
 
+                $start_date = ($data['start_date'] == "") ? date('Y-m-d') : $data['start_date'];
                 if(!$this->validateDate($app['session']->get('campaign_start_date'))) {
                     $app['session']->set('campaign_end_date', date('Y-m-d'));
-                    $app['session']->set('campaign_start_date', $data['start_date']);
+                    $app['session']->set('campaign_start_date', $start_date);
                 }
                 return $app['twig']->render('editCampaign.html',array(
                     'page_title'=>'Editing Campaign',
