@@ -398,6 +398,10 @@
             messageBox('Loading..');
             $.get('/analytics/display/' + campaign_id, function(data){
                 $('#overview-tab #analytics-connection.panel-body').html(data);
+
+                if(document.location.pathname == '/dashboard/campaign/new' && $('#analytics-connection.false')) {
+                    $('#analytics-connection .btn').attr('disabled',true).removeAttr('href');
+                }
                 $('#account-select').trigger('change');
 
                 if($('#disconnect-analytics').length > 0) {
