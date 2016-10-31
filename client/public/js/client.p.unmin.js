@@ -235,7 +235,7 @@ var ABTest = (function (window, document, undefined) {
                 //url matches
                 if (this.criteria.url.url) {
 
-                    var host_url = this.removeLastSlash(this.userBrowserInfo.urlData.url);
+                    var host_url = this.userBrowserInfo.urlData.url;
                     var urls = this.criteria.url.url;
 
                     urls.forEach(function (url) {
@@ -678,8 +678,7 @@ var ABTest = (function (window, document, undefined) {
                         if(data.browserInfo && data.campaigns) {
                             data.browserInfo.cookies = self.getAllCookies();
                             data.browserInfo.urlData.referrer = document.referrer;
-                            data.browserInfo.urlData.url = document.location.origin;
-
+                            data.browserInfo.urlData.url = self.documentUrl;
                             data.campaigns.forEach(function(campaign){
 
                                 var matchResult = self.willCampaignRun(campaign,data.browserInfo);
