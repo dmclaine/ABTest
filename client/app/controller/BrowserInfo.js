@@ -35,7 +35,14 @@ var BrowserInfo = function(req) {
 
     /* Device */
     var md = new MobileDetect(UA);
-    info.device = (md.phone()) ? 'phone' : (md.tablet()) ? 'tablet': 'desktop';
+
+    info.device = 'desktop';
+
+    if(md.phone() !== null || md.mobile() !== null) {
+        info.device = 'phone';
+    }else if(md.tablet() !== null) {
+        info.device = 'tablet';
+    }
 
     /* Cookies */
     if(req.query.c) {

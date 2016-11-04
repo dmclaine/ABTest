@@ -2,6 +2,8 @@
 namespace src\controller;
 use Silex\Application;
 use Silex\Api\ControllerProviderInterface;
+use src\service\AnalyticsService;
+use src\service\GoalService;
 use Symfony\Component\HttpFoundation\Request;
 
 
@@ -14,11 +16,11 @@ use Symfony\Component\HttpFoundation\Request;
 class GoalController implements ControllerProviderInterface
 {
     /**
-     * @var mixed
+     * @var AnalyticsService
      */
     private $analyticsService;
     /**
-     * @var mixed
+     * @var GoalService
      */
     private $goalService;
     /**

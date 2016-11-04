@@ -152,7 +152,7 @@ class ReportingController implements ControllerProviderInterface
 
             } else if ($goal['action'] == 'action-pp') {
 
-                $sequence = 'sessions::sequence::ga:landingPagePath==' . $goal['page_path'] . ';->ga:pagePath' . $goal['action_pp_pattern'] . $goal['action_pp'];
+                $sequence = 'sessions::sequence::ga:landingPagePath'. $goal['action_arrive_pp_pattern'] . $goal['page_path'] . ';->ga:pagePath' . $goal['action_pp_pattern'] . $goal['action_pp'];
                 $params = array(
                     'metrics' => array('ga:sessions'),
                     'dimensions' => array('ga:eventLabel', 'ga:date', 'ga:segment'),

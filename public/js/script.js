@@ -974,7 +974,8 @@
             arrive_action: $goalModalItem.find('.goal-arrive').val(),
             page_path: $goalModalItem.find('.arrive-action-pathpath input').val(),
             action: $goalModalItem.find('.result-actions select').val(),
-            action_pp_pattern: $goalModalItem.find('.result-action-url-pattern').val(),
+            action_pp_pattern: $goalModalItem.find('.result-action-pp-pattern').val(),
+            action_arrive_pp_pattern: $goalModalItem.find('.arrive-action-pp-pattern').val(),
             action_pp:  $goalModalItem.find('.result-action-pp input').val(),
             e_label:  $goalModalItem.find('.result-action-goal-label.tt-input').val(),
             e_action:  $goalModalItem.find('.result-action-goal-action.tt-input').val(),
@@ -987,6 +988,7 @@
         messageBox('Saving..');
         saveGoals(goalObj, function() {
             messageBox('Saved!');
+            $goalModal.modal('hide');
             main.editCampaignPageEvents.overview.goalChart();
         });
     }

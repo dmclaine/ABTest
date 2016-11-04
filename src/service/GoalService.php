@@ -1,6 +1,7 @@
 <?php
 namespace src\service;
 use Silex\Application;
+use src\model\GoalsModel;
 
 /**
  * Class GoalService
@@ -10,6 +11,10 @@ use Silex\Application;
  */
 class GoalService
 {
+    /**
+     * @var GoalsModel
+     */
+    private $goalsModel;
     /**
      * GoalService constructor.
      * @param Application $app
