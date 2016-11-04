@@ -119,7 +119,7 @@ class ReportingController implements ControllerProviderInterface
             $data = $this->app['cache']->fetch('report-'.$campaign_id);
         }
         else {
-            $filters = $this->getFilters($goal);
+            $filters = $this->getFilters($goal,false);
             $total_visitors = $this->totalVisitorsInGoal($filters, $goal);
 
             if ($goal['action'] == 'event') {
@@ -147,7 +147,7 @@ class ReportingController implements ControllerProviderInterface
                     'property' => 'category'
                 );
                 if ($sequence != "") {
-                    $params['sequence'] = 'sessions::sequence::' . $sequence;
+                    $params['sequence'] = 'sessions::sequence::ga:landingPagePath'. $goal['action_arrive_pp_pattern'] . $goal['page_path'].';->' . $sequence;
                 }
 
             } else if ($goal['action'] == 'action-pp') {
