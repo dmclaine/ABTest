@@ -36,7 +36,7 @@ class ReportingController implements ControllerProviderInterface
     /**
      * @var bool
      */
-    private $doCache = true;
+    private $doCache = false;
     /**
      * In secs. for 1 hour
      * @var int
@@ -126,15 +126,15 @@ class ReportingController implements ControllerProviderInterface
 
                 $sequence = "";
                 if ($goal['e_category'] != "") {
-                    $sequence .= 'ga:eventCategory==' . $goal['e_category'] . ',';
+                    $sequence .= 'ga:eventCategory==' . $goal['e_category'] . ';';
                 }
                 if ($goal['e_action'] != "") {
-                    $sequence .= 'ga:eventAction==' . $goal['e_action'] . ',';
+                    $sequence .= 'ga:eventAction==' . $goal['e_action'] . ';';
                 }
                 if ($goal['e_label'] != "") {
                     $sequence .= 'ga:eventLabel==' . $goal['e_label'];
                 }
-                $sequence = rtrim($sequence, ',');
+                $sequence = rtrim($sequence, ';');
                 $params = array(
                     'metrics' => array('ga:sessions'),
                     'dimensions' => array('ga:eventLabel', 'ga:date', 'ga:segment'),
@@ -147,7 +147,7 @@ class ReportingController implements ControllerProviderInterface
                     'property' => 'category'
                 );
                 if ($sequence != "") {
-                    $params['sequence'] = 'sessions::sequence::ga:landingPagePath'. $goal['action_arrive_pp_pattern'] . $goal['page_path'].';->' . $sequence;
+                    $params['sequence'] = 'sessions::sequence::ga:landingPagePath'. $goal['action_arrive_pp_pattern'] . $goal['page_path'].';->>' . $sequence;
                 }
 
             } else if ($goal['action'] == 'action-pp') {
@@ -188,7 +188,7 @@ class ReportingController implements ControllerProviderInterface
             return $this->visitors[$goal['page_path']];
         }
 
-        $sequence = 'sessions::sequence::ga:landingPagePath=='.$goal['page_path'];
+        $sequence = 'sessions::sequence::ga:landingPagePath'.$goal['action_arrive_pp_pattern'].$goal['page_path'];
         $params = array(
             'metrics'=> array('ga:sessions'),
             'dimensions'=> array('ga:eventLabel','ga:segment'),

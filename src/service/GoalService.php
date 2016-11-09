@@ -112,7 +112,7 @@ class GoalService
             $report[$value['ga:eventLabel']]['conversions'] += (int) $value['ga:sessions'];
         }
 
-
+        ksort($report);
 
         /* Look for control and then unset it */
         $control = $report['ABTest-'.$campaign_id.':control'];
