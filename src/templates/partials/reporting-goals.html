@@ -135,7 +135,7 @@
                 var variation = goalData[goal_id].significance[label].variation;
                 var confidence = '';
                 if(vid != 'control') {
-                    statistics +=  '<div class="col-xs-4"><span>Visitors: <strong>'+ var_traffic + '</strong></div> \
+                    statistics +=  '<div class="col-xs-4"><span>Conversions: <strong>'+ var_traffic + '</strong></div> \
                                     <div class="col-xs-4"><span>CVR: <strong>'+ parseFloat(variation.conversion_rate).toFixed(2) + '</strong></div> \
                                     <div class="col-xs-4"><span>Z-Score: <strong>'+ parseFloat(variation.z_score).toFixed(2) + '</strong></div>';
 
@@ -143,7 +143,7 @@
                     confidence = '<small class="stats-label">Confidence</small> \
                                                 <h4>' + variation.confidence + '</h4>';
                 }else {
-                    statistics += '<div class="col-xs-4"><span>Visitors: <strong>'+ var_traffic + '</strong></span></div> \
+                    statistics += '<div class="col-xs-4"><span>Conversions: <strong>'+ var_traffic + '</strong></span></div> \
                                    <div class="col-xs-4"><span>CVR: <strong>'+ parseFloat(variation.conversion_rate).toFixed(2) + '</strong></div>';
 
                 }

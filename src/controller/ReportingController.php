@@ -147,12 +147,12 @@ class ReportingController implements ControllerProviderInterface
                     'property' => 'category'
                 );
                 if ($sequence != "") {
-                    $params['sequence'] = 'sessions::sequence::ga:landingPagePath'. $goal['action_arrive_pp_pattern'] . $goal['page_path'].';->>' . $sequence;
+                    $params['sequence'] = 'sessions::sequence::ga:pagePath'. $goal['action_arrive_pp_pattern'] . $goal['page_path'].';->>' . $sequence;
                 }
 
             } else if ($goal['action'] == 'action-pp') {
 
-                $sequence = 'sessions::sequence::ga:landingPagePath'. $goal['action_arrive_pp_pattern'] . $goal['page_path'] . ';->ga:pagePath' . $goal['action_pp_pattern'] . $goal['action_pp'];
+                $sequence = 'sessions::sequence::ga:pagePath'. $goal['action_arrive_pp_pattern'] . $goal['page_path'] . ';->ga:pagePath' . $goal['action_pp_pattern'] . $goal['action_pp'];
                 $params = array(
                     'metrics' => array('ga:sessions'),
                     'dimensions' => array('ga:eventLabel', 'ga:date', 'ga:segment'),
@@ -188,7 +188,7 @@ class ReportingController implements ControllerProviderInterface
             return $this->visitors[$goal['page_path']];
         }
 
-        $sequence = 'sessions::sequence::ga:landingPagePath'.$goal['action_arrive_pp_pattern'].$goal['page_path'];
+        $sequence = 'sessions::sequence::ga:pagePath'.$goal['action_arrive_pp_pattern'].$goal['page_path'];
         $params = array(
             'metrics'=> array('ga:sessions'),
             'dimensions'=> array('ga:eventLabel','ga:segment'),
@@ -213,7 +213,7 @@ class ReportingController implements ControllerProviderInterface
         $filters = $prefix.implode(','.$prefix,$vids);
 //        $filters = 'ga:eventLabel==ABTest-63:Control,ga:eventLabel==ABTest-63:Variation 1';
         if($addPagePath && $goal['page_path'] != '') {
-            $filters .= ';ga:landingPagePath=='.$goal['page_path'];
+            $filters .= ';ga:pagePath=='.$goal['page_path'];
         }
         return $filters;
 
