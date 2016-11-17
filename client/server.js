@@ -1,6 +1,6 @@
 var express	= require('express');
 var app = express();
-var debug = true;
+var debug = false;
 
 var allowCrossDomain = function(req, res, next) {
     res.header('Access-Control-Allow-Origin', '*');

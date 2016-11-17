@@ -615,10 +615,11 @@
 
         $('#new-variation-btn').click(function(e){
             e.preventDefault();
+            $('#new-variation-name').val('');
             $('#modal-new-variation').modal('show');
         });
 
-        var preview_cid, preview_vid;
+        var preview_cid, preview_vid,varObj;
         $(document).on('click','.preview-variation',function(e){
             e.preventDefault();
             preview_cid = $(this).data('cid');
@@ -626,9 +627,31 @@
             $('#modal-preview-variation').modal('show');
         });
 
+        $(document).on('click','.rename-variation',function(e){
+            e.preventDefault();
+            varObj = $(this).parents('li.dropdown').find('.variationTab');
+            $('#rename-variation-name').val(varObj.text());
+
+            $('#modal-rename-variation').modal('show');
+        });
+
+        $(document).on('click','#rename-variation-btn',function(e){
+            e.preventDefault();
+            $('#modal-rename-variation').modal('hide');
+            var newVarname = $('#rename-variation-name').val();
+            varObj.html('<i class="fa"></i>'+newVarname);
+            console.log('.traffic-block .' + varObj.data('variation') + ' label');
+            $('.traffic-block .' + varObj.data('variation') + ' label').text(newVarname);
+            $('#rename-variation-name').val('');
+            $('#campaign-save-btn').trigger('click');
+        });
+
         $('#variation-preview-btn').click(function(e){
             e.preventDefault();
             var url = $('#url-preview-input').val();
+            if (!url.match(/^http?:\/\//i)) {
+                url = 'https://' + url;
+            }
             window.open(url + '?preview=1&cid='+preview_cid+'&vid='+preview_vid);
             $('#modal-preview-variation').modal('hide');
         })
@@ -685,6 +708,7 @@
             var css = (typeof css == "undefined") ? "":css;
             var num = $('.nav-variations > li').length;
             var newVarId = 'variation-' + num;
+            var cid = $('#campaign-id').val();
             current_variation = newVarId;
 
             //add the tab
@@ -695,7 +719,7 @@
                 '<li><a href="#" class="rename-variation">Rename Variation</a></li>' +
                 '<li><a href="#"  class="delete-variation">Delete Variation</a></li>' +
                 '<li><a href="#">Pause Variation</a></li>' +
-                '<li><a href="#" class="preview-variation">Preview Variation</a></li>' +
+                '<li><a href="#" data-cid="'+cid+'" data-vid="'+newVarId+'" class="preview-variation">Preview Variation</a></li>' +
                 '</ul>' +
                 '</li>')
                 .appendTo('.nav-variations');
@@ -733,6 +757,8 @@
                             </div>');
 
             targetingTabEvents().resetTrafficDistribution();
+            //saha
+            $('#campaign-save-btn').trigger('click');
         }
     }
 

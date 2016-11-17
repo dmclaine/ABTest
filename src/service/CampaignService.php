@@ -1,6 +1,7 @@
 <?php
 namespace src\service;
 use Silex\Application;
+use src\model\CampaignModel;
 
 /**
  * Class CampaignService
@@ -12,7 +13,7 @@ class CampaignService
 {
 
     /**
-     * @var mixed  $campaignModel src\campaignModel
+     * @var CampaignModel
      */
     private $campaignModel;
 

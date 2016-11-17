@@ -91,6 +91,7 @@ class CampaignModel
     {
         if(is_array($campaign_ids))
         {
+            R::debug();
             foreach($campaign_ids as $id)
             {
                 //campaign cloning
@@ -102,7 +103,7 @@ class CampaignModel
                     $campaign->$col = $value;
                 }
                 $campaign->campaign_name = $campaign->campaign_name .'-clone-'. rand(999,99999);
-                $campaign->created_on = $campaign->campaign_name .'-clone-'. rand(999,99999);
+                $campaign->created_on = date('Y-m-d H:i:s');
                 $new_id = R::store($campaign);
 
                 // goals cloning
