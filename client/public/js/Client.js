@@ -541,7 +541,7 @@ var ABTest = (function (window, document, undefined) {
         },
         // for each experiment, load a variant if already saved for this session, or pick a random one
         init: function (accountId,params) {
-            snippetParams = params;
+            this.snippetParams = snippetParams = params;
 
             this.setDocumentUrl();
             try {
