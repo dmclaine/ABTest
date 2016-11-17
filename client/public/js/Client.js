@@ -779,7 +779,7 @@ var ABTest = (function (window, document, undefined) {
             } else {
                 styleElement.appendChild(document.createTextNode(css));
             }
-            //css.innerHTML = css;
+            styleElement.className = 'lift-ab-test-class';
             document.getElementsByTagName("head")[0].appendChild(styleElement);
         },
         jQueryLoaded: function (callback) {
