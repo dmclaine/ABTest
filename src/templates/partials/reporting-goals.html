@@ -64,7 +64,7 @@
 
                     labels.forEach(function(label){
                         var expectedLabel = 'ABTest-' + cid + ":" + label;
-                        if(self.data.report[count]['ga:eventLabel'] !== expectedLabel) {
+                        if(self.data.report[count] && (self.data.report[count]['ga:eventLabel'] !== expectedLabel)) {
                             var y = start.getFullYear().toString();
                             var m = ('0' + (start.getMonth() + 1)).slice(-2).toString();
                             var d = ('0' + start.getDate()).slice(-2).toString();
