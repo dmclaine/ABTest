@@ -288,7 +288,6 @@ class AnalyticsService
             $dimensionHeaders = $header->getDimensions();
             $metricHeaders = $header->getMetricHeader()->getMetricHeaderEntries();
             $rows = $report->getData()->getRows();
-
             for ( $rowIndex = 0; $rowIndex < count($rows); $rowIndex++) {
                 $data[$rowIndex] = array();
                 $row = $rows[ $rowIndex ];
@@ -309,6 +308,7 @@ class AnalyticsService
                 }
             }
         }
+
         return $data;
     }
 }

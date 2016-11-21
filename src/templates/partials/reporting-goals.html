@@ -53,7 +53,38 @@
             totalVariationVisitors: {},
             formattedData: null,
             totalVisitors: 0,
+            fillMissingValues: function() {
+                var labels = Object.keys(vnames);
+                var start = new Date(this.data.daterange.start);
+                var end = new Date(this.data.daterange.end);
+                var cid = this.data.campaign_id;
+                var self = this;
+                var count = 0;
+                while(start < end){
+
+                    labels.forEach(function(label){
+                        var expectedLabel = 'ABTest-' + cid + ":" + label;
+                        if(self.data.report[count]['ga:eventLabel'] !== expectedLabel) {
+                            var y = start.getFullYear().toString();
+                            var m = ('0' + (start.getMonth() + 1)).slice(-2).toString();
+                            var d = ('0' + start.getDate()).slice(-2).toString();
+                            self.data.report.splice(count, 0, {
+                                'ga:date': y + m  + d,
+                                'ga:eventLabel':expectedLabel,
+                                'ga:segment':"Dynamic Segment",
+                                'ga:sessions':"0"
+                            })
+                        }
+
+                        count++;
+                    });
+                    var newDate = start.setDate(start.getDate() + 1);
+                    start = new Date(newDate);
+
+                }
+            },
             manipulate: function() {
+                this.fillMissingValues();
                 this.data.report.forEach(function (ele) {
 
                     var date = ele['ga:date'].toString();
@@ -87,6 +118,7 @@
             executeChart: function(id,type) {
                 var ctx = document.getElementById(id);
                 var self = this;
+                console.log(self.formattedData);
                 var mybarChart = new Chart(ctx, {
                     type: type,
                     data: self.formattedData,

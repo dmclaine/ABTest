@@ -169,7 +169,12 @@ class ReportingController implements ControllerProviderInterface
 
             $data = array(
                 'report' => $this->analyticsService->analyticsRequest($params),
-                'participants' => $total_visitors
+                'participants' => $total_visitors,
+                'daterange' => array(
+                    'start' => $this->app['session']->get('campaign_start_date'),
+                    'end'   => $this->app['session']->get('campaign_end_date')
+                ),
+                'campaign_id' => $goal['campaign_id']
             );
             $this->app['cache']->save('report-'.$campaign_id, $data,$this->cacheTime);
         }
