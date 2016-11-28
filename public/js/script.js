@@ -649,8 +649,10 @@
         $('#variation-preview-btn').click(function(e){
             e.preventDefault();
             var url = $('#url-preview-input').val();
-            if (!url.match(/^http?:\/\//i)) {
+            if (!url.match(/^https?:\/\//i)) {
                 url = 'https://' + url;
+            }elseif(!url.match(/^http?:\/\//i)) {
+                url = 'http://' + url;
             }
             window.open(url + '?preview=1&cid='+preview_cid+'&vid='+preview_vid);
             $('#modal-preview-variation').modal('hide');

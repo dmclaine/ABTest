@@ -61,7 +61,6 @@
                 var self = this;
                 var count = 0;
                 while(start < end){
-
                     labels.forEach(function(label){
                         var expectedLabel = 'ABTest-' + cid + ":" + label;
                         if(self.data.report[count] && (self.data.report[count]['ga:eventLabel'] !== expectedLabel)) {
@@ -75,7 +74,6 @@
                                 'ga:sessions':"0"
                             })
                         }
-
                         count++;
                     });
                     var newDate = start.setDate(start.getDate() + 1);
