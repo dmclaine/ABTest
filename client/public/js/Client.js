@@ -667,7 +667,6 @@ var ABTest = (function (window, document, undefined) {
                         "cookies": self.getAllCookies()
                     }
                 }
-                console.log(data);
                 LOG(Date.now()-TIME_START + " : Experiments found in LocalStorage");
             }
             for(var campaign in campaigns) {
