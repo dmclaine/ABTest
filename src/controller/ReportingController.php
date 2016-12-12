@@ -165,6 +165,36 @@ class ReportingController implements ControllerProviderInterface
                     'sequence' => $sequence
                 );
 
+            } else if ($goal['action'] == 'segment-sequence') {
+
+                $sequence = 'sessions::sequence::ga:pagePath'. $goal['action_arrive_pp_pattern'] . $goal['page_path'] . ';->ga:pagePath' . $goal['action_pp_pattern'] . $goal['action_pp'];
+                $params = array(
+                    'metrics' => array('ga:sessions'),
+                    'dimensions' => array('ga:eventLabel', 'ga:date', 'ga:segment'),
+                    'filters' => $filters,
+                    'campaign_id' => $goal['campaign_id'],
+                    'sort' => array(
+                        'name' => 'ga:date',
+                        'order' => 'ASCENDING'
+                    ),
+                    'sequence' => $sequence
+                );
+
+            } else if ($goal['action'] == 'segment-condition') {
+
+                $sequence = 'sessions::sequence::ga:pagePath'. $goal['action_arrive_pp_pattern'] . $goal['page_path'] . ';->ga:pagePath' . $goal['action_pp_pattern'] . $goal['action_pp'];
+                $params = array(
+                    'metrics' => array('ga:sessions'),
+                    'dimensions' => array('ga:eventLabel', 'ga:date', 'ga:segment'),
+                    'filters' => $filters,
+                    'campaign_id' => $goal['campaign_id'],
+                    'sort' => array(
+                        'name' => 'ga:date',
+                        'order' => 'ASCENDING'
+                    ),
+                    'sequence' => $sequence
+                );
+
             }
 
             $data = array(
